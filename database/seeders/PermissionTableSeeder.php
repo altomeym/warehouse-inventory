@@ -116,6 +116,7 @@ class PermissionTableSeeder extends Seeder
         array('name' =>'manage_purchase_return-edit', 's_name' =>'W', 'guard_name' =>'web', 'display_name' => 'Manage Purchase Return','created_at' => '2022-11-22 05:14:09','updated_at' =>'2022-11-22 05:14:09'),
         array('name' =>'manage_purchase_return-delete', 's_name' =>'D', 'guard_name' =>'web', 'display_name' =>'Manage Purchase Return','created_at' => '2022-11-22 05:14:09','updated_at' =>'2022-11-22 05:14:09'),
 
+
         array('name' =>'manage_sale_return-index', 's_name' =>'R', 'guard_name' =>'web', 'display_name' => 'Manage Sale Return','created_at' => '2022-11-22 05:14:09','updated_at' =>'2022-11-22 05:14:09'),
         array('name' =>'manage_sale_return-create', 's_name' =>'C', 'guard_name' =>'web', 'display_name' =>'Manage Sale Return','created_at' => '2022-11-22 05:14:09','updated_at' =>'2022-11-22 05:14:09'),
         array('name' =>'manage_sale_return-edit', 's_name' =>'W', 'guard_name' =>'web', 'display_name' => 'Manage Sale Return','created_at' => '2022-11-22 05:14:09','updated_at' =>'2022-11-22 05:14:09'),
