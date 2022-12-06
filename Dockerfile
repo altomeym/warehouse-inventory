@@ -40,10 +40,10 @@ RUN cp ./php-conf/uploads.ini /usr/local/etc/php/conf.d/uploads.ini
 
 RUN chmod 755 /var/www/start.sh
 
-RUN chmod 0644 /etc/cron.d/cron-job
+#RUN chmod 0644 /etc/cron.d/cron-job
 
-RUN crontab /etc/cron.d/cron-job
+#RUN crontab /etc/cron.d/cron-job
 
-RUN touch /var/log/cron.log
+#RUN touch /var/log/cron.log
 
 CMD /var/www/start.sh
