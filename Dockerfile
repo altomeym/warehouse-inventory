@@ -38,7 +38,7 @@ RUN composer install
 
 RUN cp ./php-conf/uploads.ini /usr/local/etc/php/conf.d/uploads.ini
 
-RUN chmod 755 /laravel/start.sh
+RUN chmod 755 /var/www/start.sh
 
 RUN chmod 0644 /etc/cron.d/cron-job
 
