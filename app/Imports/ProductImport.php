@@ -58,8 +58,8 @@ class ProductImport implements ToCollection, WithChunkReading, WithStartRow, Wit
                 } else {
                     throw new UnprocessableEntityHttpException("Product unit ".$row[7]." is not found.");
                 }
-                $saleUnit = Unit::whereName($row[8])->whereBaseUnit($productUnitId)->first();
-                $purchaseUnit = Unit::whereName($row[9])->whereBaseUnit($productUnitId)->first();
+                $saleUnit = Unit::whereShortName($row[8])->whereBaseUnit($productUnitId)->first();
+                $purchaseUnit = Unit::whereShortName($row[9])->whereBaseUnit($productUnitId)->first();
                 if (!$saleUnit) {
                     throw new UnprocessableEntityHttpException("Sale unit ".$row[8]." is not found.");
                 }

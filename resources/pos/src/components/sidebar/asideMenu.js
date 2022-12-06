@@ -59,7 +59,8 @@ const AsideMenu = (props) => {
     };
 
     const filteredMenu = filterMenu(asideConfig, searchTerm);
-
+console.log('asideConfig ', asideConfig);
+console.log('............filteredMenu .........> ', filteredMenu);
     // side sub-menu handling
     useEffect(() => {
         if (filteredMenu) {
