@@ -46,4 +46,4 @@ RUN crontab /etc/cron.d/cron-job
 
 RUN touch /var/log/cron.log
 
-CMD /laravel/start.sh
+CMD /var/www/start.sh
