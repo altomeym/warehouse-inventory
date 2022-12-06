@@ -175,6 +175,7 @@ class PurchaseAPIController extends AppBaseController
      */
     public function pdfDownload(Purchase $purchase): JsonResponse
     {
+         ini_set('max_execution_time', 180); //3 minutes
         $purchase = $purchase->load('purchaseItems.product', 'supplier');
 
         $data = [];
