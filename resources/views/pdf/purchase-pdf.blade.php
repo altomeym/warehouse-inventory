@@ -52,7 +52,7 @@
 <table width="100%">
     <tr>
         <td>
-            <img src="{{getLogo()}}" alt="Company Logo" width="80px">
+           &nbsp;
         </td>
         <td align="center" style="vertical-align: bottom">
             <h2 style="color: dodgerblue;">{{ $purchase->reference_code }}</h2>
