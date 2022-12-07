@@ -2,7 +2,6 @@ FROM php:8.0.5-fpm-alpine
 
 EXPOSE 8080
 
-WORKDIR /var/www
 
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 
@@ -32,13 +31,15 @@ RUN apk add autoconf && pecl install -o -f redis \
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
+WORKDIR "/laravel"
+
 COPY . .
 
 RUN composer install
 
 RUN cp ./php-conf/uploads.ini /usr/local/etc/php/conf.d/uploads.ini
 
-RUN chmod 755 /var/www/start.sh
+RUN chmod 755 /laravel/start.sh
 
 #RUN chmod 0644 /etc/cron.d/cron-job
 
@@ -46,4 +47,4 @@ RUN chmod 755 /var/www/start.sh
 
 #RUN touch /var/log/cron.log
 
-CMD /var/www/start.sh
+CMD ["/laravel/start.sh"]
