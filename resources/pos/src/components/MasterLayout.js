@@ -25,6 +25,11 @@ const MasterLayout = (props) => {
         if (!token) {
             window.location.href = environment.URL + '#' + '/login';
         }
+       
+    }, []);
+
+    useEffect(() => {
+        props?.getConfigpermissionData ? props?.getConfigpermissionData(config) : []
     }, []);
 
     const menuClick = () => {
@@ -34,7 +39,6 @@ const MasterLayout = (props) => {
     const menuIconClick = () => {
         setIsMenuCollapse(!isMenuCollapse)
     };
-
     return (
         <div className='d-flex flex-row flex-column-fluid'>
             <AsideDefault asideConfig={newRoutes} frontSetting={frontSetting} isResponsiveMenu={isResponsiveMenu}

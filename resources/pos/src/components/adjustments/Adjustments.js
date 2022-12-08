@@ -15,7 +15,7 @@ import { fetchAllWarehouses } from '../../store/action/warehouseAction';
 import TopProgressBar from "../../shared/components/loaders/TopProgressBar";
 
 const Adjustments = (props) => {
-    const {adjustments, fetchAdjustments, totalRecord, isLoading, fetchFrontSetting, frontSetting, warehouses, fetchAllWarehouses, isCallSaleApi, allConfigData} = props;
+    const {adjustments, fetchAdjustments, totalRecord, isLoading, fetchFrontSetting, frontSetting, warehouses, fetchAllWarehouses, isCallSaleApi, allConfigData, config} = props;
     const [deleteModel, setDeleteModel] = useState(false);
     const [detailsModel, setDetailsModel] = useState(false);
     const [isShowPaymentModel, setIsShowPaymentModel] = useState(false);
@@ -61,6 +61,11 @@ const Adjustments = (props) => {
         id: item.id,
         currency: currencySymbol
     }));
+
+    let user_permissions = new Set(config);
+    const is_addedAble = user_permissions.has('manage_adjustments-create') ? true : false
+    const is_editAdable = user_permissions.has('manage_adjustments-edit') ? true : false
+    const is_deleteAdable = user_permissions.has('manage_adjustments-delete') ? true: false
 
     const columns = [
         {
@@ -110,8 +115,8 @@ const Adjustments = (props) => {
             allowOverflow: true,
             button: true,
             cell: row => <ActionButton isViewIcon={true} goToDetailScreen={onClickDetailsModel} item={row}
-                                       goToEditProduct={goToEdit} isEditMode={true}
-                                       onClickDeleteModel={onClickDeleteModel} />
+                                       goToEditProduct={goToEdit} isEditMode={is_editAdable}
+                                       onClickDeleteModel={onClickDeleteModel} isdeleteMode={is_deleteAdable} />
         }
     ];
 
@@ -125,7 +130,7 @@ const Adjustments = (props) => {
             <TabTitle title={placeholderText('adjustments.title')}/>
             { newArray.length > 1 &&
             <ReactDataTable columns={columns} items={itemsValue} to='#/app/adjustments/create'
-                            ButtonValue={getFormattedMessage('adjustments.create.title')} isShowPaymentModel={isShowPaymentModel} isCallSaleApi={isCallSaleApi}
+                            ButtonValue={is_addedAble ? getFormattedMessage('adjustments.create.title') : null } isShowPaymentModel={isShowPaymentModel} isCallSaleApi={isCallSaleApi}
                             onChange={onChange} totalRows={totalRecord} goToEdit={goToEdit} isShowFilterField
                             isLoading={isLoading} isWarehouseType={true} warehouseOptions={newArray}  warehouses={warehouses} />}
             <DeleteSaleAdjustMents onClickDeleteModel={onClickDeleteModel} deleteModel={deleteModel} onDelete={isDelete}/>
@@ -136,8 +141,8 @@ const Adjustments = (props) => {
 
 
 const mapStateToProps = (state) => {
-    const {adjustments, totalRecord, isLoading, frontSetting, warehouses, isCallSaleApi, allConfigData} = state;
-    return {adjustments, totalRecord, isLoading, frontSetting, warehouses, isCallSaleApi, allConfigData};
+    const {adjustments, totalRecord, isLoading, frontSetting, warehouses, isCallSaleApi, allConfigData, config} = state;
+    return {adjustments, totalRecord, isLoading, frontSetting, warehouses, isCallSaleApi, allConfigData, config};
 };
 
 export default connect(mapStateToProps, {fetchAdjustments, fetchAllWarehouses, fetchFrontSetting})(Adjustments);

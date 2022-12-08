@@ -29,7 +29,8 @@ const PurchaseReturn = (props) => {
         purchaseReturnPdfAction,
         fetchFrontSetting,
         frontSetting,
-        allConfigData
+        allConfigData,
+        config
     } = props;
     const [deleteModel, setDeleteModel] = useState(false);
     const [isDelete, setIsDelete] = useState(null);
@@ -88,6 +89,11 @@ const PurchaseReturn = (props) => {
             currency: currencySymbol
         })
     });
+
+    let user_permissions = new Set(config);
+    const is_addedAble = user_permissions.has('manage_purchase_return-create') ? true : false
+    const is_editAdable = user_permissions.has('manage_purchase_return-edit') ? true : false
+    const is_deleteAdable = user_permissions.has('manage_purchase_return-delete') ? true: false
 
     const columns = [
         {
@@ -186,10 +192,10 @@ const PurchaseReturn = (props) => {
             button: true,
             cell: row => <ActionDropDownButton isViewIcon={true} goToDetailScreen={goToPurchaseReturn} item={row}
                                                onClickDeleteModel={onClickDeleteModel} isPdfIcon={true}
-                                               goToEditProduct={goToEditProduct} isEditMode={true}
+                                               goToEditProduct={goToEditProduct} isEditMode={is_editAdable}
                                                title={getFormattedMessage('purchases.return.title')}
                                                onPdfClick={onPurchaseReturnPdf} onShowPaymentClick={onShowPaymentClick}
-                                               // isPaymentShow={true}
+                                               isPaymentShow={true}
             />
         }
     ];
@@ -199,7 +205,7 @@ const PurchaseReturn = (props) => {
             <TopProgressBar />
             <TabTitle title={placeholderText('purchases.return.title')}/>
             <ReactDataTable columns={columns} items={itemsValue} onChange={onChange} isLoading={isLoading}
-                            ButtonValue={getFormattedMessage('purchase.return.create.title')}
+                            ButtonValue={is_addedAble ? getFormattedMessage('purchase.return.create.title') : null}
                             totalRows={totalRecord} to='#/app/purchase-return/create' isShowDateRangeField
                             isShowFilterField isStatus/>
             <DeletePurchaseReturn onClickDeleteModel={onClickDeleteModel} deleteModel={deleteModel}
@@ -210,8 +216,8 @@ const PurchaseReturn = (props) => {
 };
 
 const mapStateToProps = (state) => {
-    const {purchaseReturn, totalRecord, isLoading, warehouses, suppliers, frontSetting, allConfigData} = state;
-    return {purchaseReturn, totalRecord, isLoading, warehouses, suppliers, frontSetting, allConfigData}
+    const {purchaseReturn, totalRecord, isLoading, warehouses, suppliers, frontSetting, allConfigData, config} = state;
+    return {purchaseReturn, totalRecord, isLoading, warehouses, suppliers, frontSetting, allConfigData, config}
 };
 
 export default connect(mapStateToProps, {

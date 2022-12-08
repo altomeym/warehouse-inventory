@@ -13,7 +13,7 @@ import {fetchFrontSetting} from '../../store/action/frontSettingAction';
 import TopProgressBar from "../../shared/components/loaders/TopProgressBar";
 
 const Expenses = (props) => {
-    const {fetchExpenses, expenses, totalRecord, isLoading, frontSetting, fetchFrontSetting, allConfigData} = props;
+    const {fetchExpenses, expenses, totalRecord, isLoading, frontSetting, fetchFrontSetting, allConfigData, config} = props;
     const [deleteModel, setDeleteModel] = useState(false);
     const [isDelete, setIsDelete] = useState(null);
     const navigate = useNavigate();
@@ -51,6 +51,11 @@ const Expenses = (props) => {
         currency: currencySymbol
 
     }));
+
+    let user_permissions = new Set(config);
+    let is_addedAble = user_permissions.has('manage_expenses-create') ? true : false;
+    let is_editAdable = user_permissions.has('manage_expenses-edit') ? true : false;
+    let is_deleteAdable = user_permissions.has('manage_expenses-delete') ? true : false;
 
     const columns = [
         {
@@ -107,8 +112,8 @@ const Expenses = (props) => {
             ignoreRowClick: true,
             allowOverflow: true,
             button: true,
-            cell: row => <ActionButton item={row} goToEditProduct={goToEditProduct} isEditMode={true}
-                                       onClickDeleteModel={onClickDeleteModel}/>
+            cell: row => <ActionButton item={row} goToEditProduct={goToEditProduct} isEditMode={is_editAdable}
+                                       onClickDeleteModel={onClickDeleteModel} isDeleteMode={is_deleteAdable} />
         }
     ];
 
@@ -117,7 +122,7 @@ const Expenses = (props) => {
             <TopProgressBar/>
             <TabTitle title={placeholderText('expenses.title')}/>
             <ReactDataTable columns={columns} items={itemsValue} onChange={onChange} isLoading={isLoading}
-                            ButtonValue={getFormattedMessage('expense.create.title')} totalRows={totalRecord}
+                            ButtonValue={is_addedAble ? getFormattedMessage('expense.create.title') : null} totalRows={totalRecord}
                             to='#/app/expenses/create'/>
             <DeleteExpense onClickDeleteModel={onClickDeleteModel} deleteModel={deleteModel} onDelete={isDelete}/>
         </MasterLayout>
@@ -125,8 +130,8 @@ const Expenses = (props) => {
 };
 
 const mapStateToProps = (state) => {
-    const {expenses, totalRecord, isLoading, frontSetting, allConfigData} = state;
-    return {expenses, totalRecord, isLoading, frontSetting, allConfigData}
+    const {expenses, totalRecord, isLoading, frontSetting, allConfigData, config} = state;
+    return {expenses, totalRecord, isLoading, frontSetting, allConfigData, config}
 };
 
 export default connect(mapStateToProps, {fetchExpenses, fetchFrontSetting})(Expenses);

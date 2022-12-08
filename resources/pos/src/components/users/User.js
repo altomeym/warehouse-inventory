@@ -14,7 +14,7 @@ import ActionButton from '../../shared/action-buttons/ActionButton';
 import TopProgressBar from "../../shared/components/loaders/TopProgressBar";
 
 const User = (props) => {
-    const {users, fetchUsers, totalRecord, isLoading, allConfigData} = props;
+    const {users, fetchUsers, totalRecord, isLoading, allConfigData, config} = props;
     const [deleteModel, setDeleteModel] = useState(false);
     const [isDelete, setIsDelete] = useState(null);
 
@@ -46,6 +46,11 @@ const User = (props) => {
         const id = item.id;
         window.location.href = '#/app/users/edit/' + id;
     };
+
+    let user_permissions = new Set(config);
+    const is_addedAble = user_permissions.has('manage_users-create') ? true : false
+    const is_editAdable = user_permissions.has('manage_users-edit') ? true : false
+    const is_deleteAdable = user_permissions.has('manage_users-delete') ? true: false
 
     const columns = [
         {
@@ -113,8 +118,8 @@ const User = (props) => {
             ignoreRowClick: true,
             allowOverflow: true,
             button: true,
-            cell: row => <ActionButton item={row} goToEditProduct={goToEdit} isEditMode={true}
-                                       onClickDeleteModel={onClickDeleteModel}/>
+            cell: row => <ActionButton item={row} goToEditProduct={goToEdit} isEditMode={is_editAdable}
+                                       onClickDeleteModel={onClickDeleteModel} isDeleteMode={is_deleteAdable} />
         }
     ];
 
@@ -123,7 +128,7 @@ const User = (props) => {
             <TopProgressBar />
             <TabTitle title={placeholderText('users.title')}/>
             <ReactDataTable columns={columns} items={itemsValue} onChange={onChange}
-                            ButtonValue={getFormattedMessage('user.create.title')}
+                            ButtonValue={is_addedAble ? getFormattedMessage('user.create.title') : null }
                             to='#/app/users/create' totalRows={totalRecord} isLoading={isLoading}/>
             <DeleteUser onClickDeleteModel={onClickDeleteModel} deleteModel={deleteModel} onDelete={isDelete}/>
         </MasterLayout>
@@ -131,7 +136,7 @@ const User = (props) => {
 };
 
 const mapStateToProps = (state) => {
-    const {users, totalRecord, isLoading, allConfigData} = state;
-    return {users, totalRecord, isLoading, allConfigData}
+    const {users, totalRecord, isLoading, allConfigData, config} = state;
+    return {users, totalRecord, isLoading, allConfigData, config}
 };
 export default connect(mapStateToProps, {fetchUsers})(User);

@@ -13,7 +13,7 @@ import ActionButton from '../../shared/action-buttons/ActionButton';
 import TopProgressBar from "../../shared/components/loaders/TopProgressBar";
 
 const Units = (props) => {
-    const {fetchUnits, units, totalRecord, isLoading, allConfigData} = props;
+    const {fetchUnits, units, totalRecord, isLoading, allConfigData, config} = props;
     const [deleteModel, setDeleteModel] = useState(false);
     const [isDelete, setIsDelete] = useState(null);
     const [editModel, setEditModel] = useState(false);
@@ -45,6 +45,11 @@ const Units = (props) => {
             }
         )
     });
+
+    let user_permissions = new Set(config);
+    const is_addedAble = user_permissions.has('manage_units-create') ? true : false
+    const is_editAdable = user_permissions.has('manage_units-edit') ? true : false
+    const is_deleteAdable = user_permissions.has('manage_units-delete') ? true: false
 
     const columns = [
         {
@@ -104,8 +109,8 @@ const Units = (props) => {
             ignoreRowClick: true,
             allowOverflow: true,
             button: true,
-            cell: row => <ActionButton item={row} goToEditProduct={handleClose} isEditMode={true}
-                                       onClickDeleteModel={onClickDeleteModel}/>
+            cell: row => <ActionButton item={row} goToEditProduct={handleClose} isEditMode={is_editAdable}
+                                       onClickDeleteModel={onClickDeleteModel} isDeleteMod={is_deleteAdable} />
         }
     ];
 
@@ -114,7 +119,7 @@ const Units = (props) => {
             <TopProgressBar />
             <TabTitle title={placeholderText('units.title')}/>
             <ReactDataTable columns={columns} items={itemsValue} onChange={onChange} isLoading={isLoading}
-                            AddButton={<CreateUnits/>} title={getFormattedMessage('unit.modal.input.base-unit.label')}
+                            AddButton={is_addedAble ? <CreateUnits /> : null} title={getFormattedMessage('unit.modal.input.base-unit.label')}
                             totalRows={totalRecord} isShowFilterField isUnitFilter/>
             <EditUnits handleClose={handleClose} show={editModel} unit={unit}/>
             <DeleteUnits onClickDeleteModel={onClickDeleteModel} deleteModel={deleteModel}
@@ -124,8 +129,8 @@ const Units = (props) => {
 };
 
 const mapStateToProps = (state) => {
-    const {units, totalRecord, isLoading, allConfigData} = state;
-    return {units, totalRecord, isLoading, allConfigData}
+    const {units, totalRecord, isLoading, allConfigData, config} = state;
+    return {units, totalRecord, isLoading, allConfigData, config}
 };
 
 export default connect(mapStateToProps, {fetchUnits})(Units);

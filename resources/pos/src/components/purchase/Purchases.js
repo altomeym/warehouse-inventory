@@ -30,7 +30,8 @@ const Product = (props) => {
         purchasePdfAction,
         frontSetting,
         fetchFrontSetting,
-        allConfigData
+        allConfigData,
+        config
     } = props;
     const [deleteModel, setDeleteModel] = useState(false);
     const [isDelete, setIsDelete] = useState(null);
@@ -136,6 +137,11 @@ const Product = (props) => {
             setTableArray([])
         }
     }, [purchases])
+
+    let user_permissions = new Set(config);
+    const is_addedAble = user_permissions.has('manage_purchase-create') ? true : false
+    const is_editAdable = user_permissions.has('manage_purchase-edit') ? true : false
+    const is_deleteAdable = user_permissions.has('manage_purchase-delete') ? true: false
 
     const columns = [
         {
@@ -248,14 +254,14 @@ const Product = (props) => {
             ignoreRowClick: true,
             allowOverflow: true,
             button: true,
-            cell: row => row.reference_code === "Total" ? null : <ActionDropDownButton item={row} goToEditProduct={goToEditProduct} isEditMode={true}
+            cell: row => row.reference_code === "Total" ? null : <ActionDropDownButton item={row} goToEditProduct={goToEditProduct} isEditMode={is_editAdable}
                                                isPdfIcon={true}
                                                onClickDeleteModel={onClickDeleteModel} isViewIcon={true}
                                                onPdfClick={onPdfClick}
                                                goToDetailScreen={goToDetailScreen}
                                                onShowPaymentClick={onShowPaymentClick}
                 // isPaymentShow={true}
-                                               title={getFormattedMessage('purchase.title')}/>
+                                               title={getFormattedMessage('purchase.title')} isDeleteMode={is_deleteAdable} />
         }
     ];
 
@@ -265,7 +271,7 @@ const Product = (props) => {
             <TabTitle title={placeholderText('purchases.title')}/>
             <ReactDataTable columns={columns} items={tableArray} onChange={onChange} isLoading={isLoading}
                             isShowDateRangeField
-                            ButtonValue={getFormattedMessage('purchase.create.title')} totalRows={totalRecord}
+                            ButtonValue={is_addedAble ? getFormattedMessage('purchase.create.title') : null} totalRows={totalRecord}
                             to='#/app/purchases/create' isShowFilterField isStatus/>
             <DeletePurchase onClickDeleteModel={onClickDeleteModel} deleteModel={deleteModel} onDelete={isDelete}/>
             <ShowPayment onShowPaymentClick={onShowPaymentClick} isShowPaymentModel={isShowPaymentModel}/>
@@ -282,9 +288,10 @@ const mapStateToProps = (state) => {
         suppliers,
         frontSetting,
         fetchFrontSetting,
-        allConfigData
+        allConfigData,
+        config
     } = state;
-    return {purchases, totalRecord, isLoading, warehouses, suppliers, frontSetting, fetchFrontSetting, allConfigData}
+    return {purchases, totalRecord, isLoading, warehouses, suppliers, frontSetting, fetchFrontSetting, allConfigData, config}
 };
 
 export default connect(mapStateToProps, {
@@ -292,6 +299,6 @@ export default connect(mapStateToProps, {
     fetchAllWarehouses,
     fetchAllSuppliers,
     purchasePdfAction,
-    fetchFrontSetting
+    fetchFrontSetting,
 })(Product);
 

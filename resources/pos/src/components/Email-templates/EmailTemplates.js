@@ -12,7 +12,7 @@ import TopProgressBar from "../../shared/components/loaders/TopProgressBar";
 import {fetchEmailTemplates, activeInactiveEmail} from "../../store/action/emailTemplatesAction";
 
 const EmailTemplates = (props) => {
-    const {fetchWarehouses, warehouses, totalRecord, isLoading,emailTemplates, fetchEmailTemplates, activeInactiveEmail} = props;
+    const {fetchWarehouses, warehouses, totalRecord, isLoading,emailTemplates, fetchEmailTemplates, activeInactiveEmail, config} = props;
     const [deleteModel, setDeleteModel] = useState(false);
     const [isDelete, setIsDelete] = useState(null);
     const navigate = useNavigate();
@@ -38,6 +38,11 @@ const EmailTemplates = (props) => {
         is_active: emailTemplate?.attributes?.status === 0 || emailTemplate?.attributes?.status === false ? false : true,
         id: emailTemplate.id
     }));
+
+    let user_permissions = new Set(config);
+    let is_addedAble = user_permissions.has('manage_email_templates-create') ? true : false;
+    let is_editAdable = user_permissions.has('manage_email_templates-edit') ? true : false;
+    let is_deleteAdable = user_permissions.has('manage_email_templates-delete') ? true : false;
 
     const columns = [
         {
@@ -83,7 +88,7 @@ const EmailTemplates = (props) => {
             ignoreRowClick: true,
             allowOverflow: true,
             button: true,
-            cell: row => <ActionButton  item={row} isDeleteMode={false} goToEditProduct={goToEditProduct} isEditMode={true}/>
+            cell: row => <ActionButton  item={row} isDeleteMode={is_deleteAdable} goToEditProduct={goToEditProduct} isEditMode={is_editAdable}/>
         }
     ];
 
@@ -102,8 +107,8 @@ const EmailTemplates = (props) => {
 };
 
 const mapStateToProps = (state) => {
-    const {totalRecord, isLoading, emailTemplates} = state;
-    return {totalRecord, isLoading, emailTemplates}
+    const {totalRecord, isLoading, emailTemplates, config} = state;
+    return {totalRecord, isLoading, emailTemplates, config}
 };
 
 export default connect(mapStateToProps, {fetchWarehouses, fetchEmailTemplates, activeInactiveEmail})(EmailTemplates);

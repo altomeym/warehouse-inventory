@@ -12,7 +12,7 @@ import ActionButton from '../../shared/action-buttons/ActionButton';
 import TopProgressBar from "../../shared/components/loaders/TopProgressBar";
 
 const Suppliers = (props) => {
-    const {fetchSuppliers, suppliers, totalRecord, isLoading, allConfigData} = props;
+    const {fetchSuppliers, suppliers, totalRecord, isLoading, allConfigData, config} = props;
     const [deleteModel, setDeleteModel] = useState(false);
     const [isDelete, setIsDelete] = useState(null);
     const navigate = useNavigate()
@@ -41,6 +41,10 @@ const Suppliers = (props) => {
         email: supplier.attributes.email,
         id: supplier.id
     }));
+    let user_permissions = new Set(config);
+    const is_addedAble = user_permissions.has('manage_suppliers-create') ? true : false
+    const is_editAdable = user_permissions.has('manage_suppliers-edit') ? true : false
+    const is_deleteAdable = user_permissions.has('manage_suppliers-delete') ? true: false
 
     const columns = [
         {
@@ -81,8 +85,8 @@ const Suppliers = (props) => {
             ignoreRowClick: true,
             allowOverflow: true,
             button: true,
-            cell: row => <ActionButton item={row} goToEditProduct={goToEditProduct} isEditMode={true}
-                                       onClickDeleteModel={onClickDeleteModel}/>
+            cell: row => <ActionButton item={row} goToEditProduct={goToEditProduct} isEditMode={is_editAdable}
+                                       onClickDeleteModel={onClickDeleteModel} isDeleteMode={is_deleteAdable} />
         }
     ];
 
@@ -91,7 +95,7 @@ const Suppliers = (props) => {
             <TopProgressBar />
             <TabTitle title={placeholderText('suppliers.title')}/>
             <ReactDataTable columns={columns} items={itemsValue} onChange={onChange} isLoading={isLoading}
-                            ButtonValue={getFormattedMessage('supplier.create.title')} totalRows={totalRecord}
+                            ButtonValue={is_addedAble ? getFormattedMessage('supplier.create.title') : null } totalRows={totalRecord}
                             to='#/app/suppliers/create'/>
             <DeleteSupplier onClickDeleteModel={onClickDeleteModel} deleteModel={deleteModel} onDelete={isDelete}/>
         </MasterLayout>
@@ -99,8 +103,8 @@ const Suppliers = (props) => {
 };
 
 const mapStateToProps = (state) => {
-    const {suppliers, totalRecord, isLoading, allConfigData} = state;
-    return {suppliers, totalRecord, isLoading, allConfigData}
+    const {suppliers, totalRecord, isLoading, allConfigData, config} = state;
+    return {suppliers, totalRecord, isLoading, allConfigData, config}
 };
 
 export default connect(mapStateToProps, {fetchSuppliers})(Suppliers);

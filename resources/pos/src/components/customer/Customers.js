@@ -12,7 +12,7 @@ import ActionButton from '../../shared/action-buttons/ActionButton';
 import TopProgressBar from "../../shared/components/loaders/TopProgressBar";
 
 const Customers = (props) => {
-    const {fetchCustomers, customers, totalRecord, isLoading, allConfigData} = props;
+    const {fetchCustomers, customers, totalRecord, isLoading, allConfigData, config} = props;
     const [deleteModel, setDeleteModel] = useState(false);
     const [isDelete, setIsDelete] = useState(null);
     const navigate = useNavigate();
@@ -41,6 +41,11 @@ const Customers = (props) => {
         city: customer.attributes.city,
         id: customer.id
     }));
+
+    let user_permissions = new Set(config);
+    let is_addedAble = user_permissions.has('manage_customers-create') ? true : false;
+    let is_editAdable = user_permissions.has('manage_customers-edit') ? true : false;
+    let is_deleteAdable = user_permissions.has('manage_customers-delete') ? true : false;
 
     const columns = [
         {
@@ -81,8 +86,8 @@ const Customers = (props) => {
             ignoreRowClick: true,
             allowOverflow: true,
             button: true,
-            cell: row => <ActionButton item={row} goToEditProduct={goToEditProduct} isEditMode={true}
-                                       onClickDeleteModel={onClickDeleteModel}/>
+            cell: row => <ActionButton item={row} goToEditProduct={goToEditProduct} isEditMode={is_editAdable}
+                                       onClickDeleteModel={onClickDeleteModel} isDeleteMode={is_deleteAdable} />
         }
     ];
 
@@ -91,7 +96,7 @@ const Customers = (props) => {
             <TopProgressBar />
             <TabTitle title={placeholderText('customers.title')}/>
             <ReactDataTable columns={columns} items={itemsValue} onChange={onChange} isLoading={isLoading}
-                            ButtonValue={getFormattedMessage('customer.create.title')} totalRows={totalRecord}
+                            ButtonValue={is_addedAble ? getFormattedMessage('customer.create.title') : null} totalRows={totalRecord}
                             to='#/app/customers/create'/>
             <DeleteCustomer onClickDeleteModel={onClickDeleteModel} deleteModel={deleteModel} onDelete={isDelete}/>
         </MasterLayout>
@@ -99,8 +104,8 @@ const Customers = (props) => {
 };
 
 const mapStateToProps = (state) => {
-    const {customers, totalRecord, isLoading, allConfigData} = state;
-    return {customers, totalRecord, isLoading, allConfigData}
+    const {customers, totalRecord, isLoading, allConfigData, config} = state;
+    return {customers, totalRecord, isLoading, allConfigData, config}
 };
 
 export default connect(mapStateToProps, {fetchCustomers})(Customers);
