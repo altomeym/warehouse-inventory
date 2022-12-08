@@ -110,7 +110,7 @@ const Units = (props) => {
             allowOverflow: true,
             button: true,
             cell: row => <ActionButton item={row} goToEditProduct={handleClose} isEditMode={is_editAdable}
-                                       onClickDeleteModel={onClickDeleteModel} isDeleteMod={is_deleteAdable} />
+                                       onClickDeleteModel={onClickDeleteModel} isDeleteMode={is_deleteAdable} />
         }
     ];
 

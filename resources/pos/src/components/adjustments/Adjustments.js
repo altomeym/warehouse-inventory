@@ -116,7 +116,7 @@ const Adjustments = (props) => {
             button: true,
             cell: row => <ActionButton isViewIcon={true} goToDetailScreen={onClickDetailsModel} item={row}
                                        goToEditProduct={goToEdit} isEditMode={is_editAdable}
-                                       onClickDeleteModel={onClickDeleteModel} isdeleteMode={is_deleteAdable} />
+                                       onClickDeleteModel={onClickDeleteModel} isDeleteMode={is_deleteAdable} />
         }
     ];
 
