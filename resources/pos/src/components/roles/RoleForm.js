@@ -150,7 +150,7 @@ const RoleForm = (props) => {
                                     {
                                         permissions && permissions.map((permission, index) => {
                                             return (
-                                                <div className="col-md-4">
+                                                <div className="col-md-3">
                                                     <label
                                                         className='form-check form-check-custom form-check-solid form-check-inline d-flex align-items-center my-3 cursor-pointer custom-label'
                                                         key={index}>

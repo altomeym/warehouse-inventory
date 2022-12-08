@@ -19,6 +19,7 @@ const ProductCategory = (props) => {
         productCategories,
         totalRecord,
         isLoading,
+        config,
     } = props
     const [deleteModel, setDeleteModel] = useState(false)
     const [isDelete, setIsDelete] = useState(null)
@@ -47,6 +48,11 @@ const ProductCategory = (props) => {
         id: product.id,
     }));
 
+    let user_permissions = new Set(config);
+    const is_addedAble = user_permissions.has('manage_product_categories-create') ? true : false
+    const is_editAdable = user_permissions.has('manage_product_categories-edit') ? true : false
+    const is_deleteAdable = user_permissions.has('manage_product_categories-delete') ? true: false
+    
     const columns = [
         {
             name: getFormattedMessage('product-category.title'),
@@ -81,8 +87,8 @@ const ProductCategory = (props) => {
             ignoreRowClick: true,
             allowOverflow: true,
             button: true,
-            cell: row => <ActionButton item={row} goToEditProduct={handleClose} isEditMode={true}
-                                      onClickDeleteModel={onClickDeleteModel}/>
+            cell: row => <ActionButton item={row} goToEditProduct={handleClose} isEditMode={is_editAdable}
+                                      onClickDeleteModel={onClickDeleteModel} isDeleteMode={is_deleteAdable} />
         }
     ];
 
@@ -91,7 +97,7 @@ const ProductCategory = (props) => {
             <TopProgressBar />
             <TabTitle title={placeholderText('product-categories.title')}/>
                 <ReactDataTable columns={columns} items={itemsValue} onChange={onChange} isLoading={isLoading}
-                                AddButton={<CreateProductCategory/>}
+                                AddButton={is_addedAble ? <CreateProductCategory/> : null}
                                 totalRows={totalRecord}/>
                 <EditProductCategory handleClose={handleClose} show={editModel} productCategory={productCategory}/>
                 <DeleteProductCategory onClickDeleteModel={onClickDeleteModel} deleteModel={deleteModel}
@@ -101,8 +107,8 @@ const ProductCategory = (props) => {
 };
 
 const mapStateToProps = (state) => {
-    const {productCategories, totalRecord, isLoading} = state;
-    return {productCategories, totalRecord, isLoading}
+    const {productCategories, totalRecord, isLoading, config} = state;
+    return {productCategories, totalRecord, isLoading, config}
 };
 
 export default connect(mapStateToProps, {fetchProductCategories})(ProductCategory);

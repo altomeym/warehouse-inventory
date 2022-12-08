@@ -10,10 +10,18 @@ import TabTitle from '../../shared/tab-title/TabTitle';
 import {getFormattedDate, getFormattedMessage, placeholderText} from "../../shared/sharedMethod";
 import TopProgressBar from "../../shared/components/loaders/TopProgressBar";
 
+let is_addedAble = true;
+let is_editAdable = true;
+let is_deleteAdable = true;
+
 const Role = (props) => {
-    const {roles, fetchRoles, totalRecord, isLoading, allConfigData} = props;
+    const {roles, fetchRoles, totalRecord, isLoading, allConfigData, config} = props;
     const [deleteModel, setDeleteModel] = useState(false);
     const [isDelete, setIsDelete] = useState(null);
+    const [isAddedAble, setIsAddedAble] = useState(true);
+    const [isEditAble, setIsEditAble] = useState(true);
+    const [isDeleteAble, setIsDeleteAble] = useState(true);
+    
 
     const onClickDeleteModel = (isDelete = null) => {
         setDeleteModel(!deleteModel);
@@ -34,6 +42,20 @@ const Role = (props) => {
         const id = item.id;
         window.location.href = '#/app/roles/edit/' + id;
     };
+    const handleConfigPermissionsData = (val)=>{
+        // let user_permissions = new Set(config);
+        //  is_addedAble = user_permissions.has('manage_roles-create') ? true : false
+        //  is_editAdable = user_permissions.has('manage_roles-edit') ? true : false
+        //  is_deleteAdable = user_permissions.has('manage_roles-delete') ? true : false
+        // setIsAddedAble(is_addedAble);
+        // setIsEditAble(is_editAdable);
+        // setIsDeleteAble(is_deleteAdable);
+        // console.log('cds ', user_permissions )
+}
+        let user_permissions = new Set(config);
+        is_addedAble = user_permissions.has('manage_roles-create') ? true : false;
+        is_editAdable = user_permissions.has('manage_roles-edit') ? true : false;
+        is_deleteAdable = user_permissions.has('manage_roles-delete') ? true : false;
 
     const columns = [
         {
@@ -54,17 +76,16 @@ const Role = (props) => {
             ignoreRowClick: true,
             allowOverflow: true,
             button: true,
-            cell: row => <ModalAction item={row} goToEditProduct={goToEdit} isEditMode={true}
+            cell: row => <ModalAction item={row} goToEditProduct={goToEdit} isDeleteMode={is_deleteAdable} isEditMode={is_editAdable}
                                       onClickDeleteModel={onClickDeleteModel}/>
         }
     ];
-
     return (
-        <MasterLayout>
+        <MasterLayout getConfigpermissionData={handleConfigPermissionsData}>
             <TopProgressBar />
             <TabTitle title={placeholderText("roles.title")}/>
                 <ReactDataTable columns={columns} items={itemsValue} onChange={onChange}
-                                ButtonValue={getFormattedMessage("role.create.title")}
+                                ButtonValue={is_addedAble ? getFormattedMessage("role.create.title") : null}
                                 to='#/app/roles/create' totalRows={totalRecord} isLoading={isLoading}/>
                 <DeleteRole onClickDeleteModel={onClickDeleteModel} deleteModel={deleteModel} onDelete={isDelete}/>
         </MasterLayout>
@@ -72,7 +93,7 @@ const Role = (props) => {
 }
 
 const mapStateToProps = (state) => {
-    const {roles, totalRecord, isLoading, allConfigData} = state;
-    return {roles, totalRecord, isLoading, allConfigData}
+    const {roles, totalRecord, isLoading, allConfigData, config} = state;
+    return {roles, totalRecord, isLoading, allConfigData, config}
 };
 export default connect(mapStateToProps, {fetchRoles})(Role);

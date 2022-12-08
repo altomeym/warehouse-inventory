@@ -19,7 +19,7 @@ import { productExcelAction } from '../../store/action/productExcelAction';
 
 
 const Product = (props) => {
-    const {fetchProducts, products, totalRecord, isLoading, frontSetting, fetchFrontSetting, productExcelAction, productUnitId, allConfigData} = props;
+    const {fetchProducts, products, totalRecord, isLoading, frontSetting, fetchFrontSetting, productExcelAction, productUnitId, allConfigData, config} = props;
     const [deleteModel, setDeleteModel] = useState(false);
     const [isDelete, setIsDelete] = useState(null);
     const [isOpen, setIsOpen] = useState(false);
@@ -82,7 +82,10 @@ const Product = (props) => {
             }
         )
     });
-
+    let user_permissions = new Set(config);
+    let is_addedAble = user_permissions.has('manage_products-create') ? true : false;
+    let is_editAdable = user_permissions.has('manage_products-edit') ? true : false;
+    let is_deleteAdable = user_permissions.has('manage_products-delete') ? true : false;
     const columns = [
         {
             name: getFormattedMessage('product.title'),
@@ -189,8 +192,8 @@ const Product = (props) => {
             button: true,
             width: '120px',
             cell: row => <ActionButton isViewIcon={true} goToDetailScreen={goToProductDetailPage} item={row}
-                                       goToEditProduct={goToEditProduct} isEditMode={true}
-                                       onClickDeleteModel={onClickDeleteModel}/>
+                                       goToEditProduct={goToEditProduct} isEditMode={is_editAdable}
+                                       onClickDeleteModel={onClickDeleteModel} isDeleteMode={is_deleteAdable} />
         }
     ];
 
@@ -199,7 +202,7 @@ const Product = (props) => {
             <TopProgressBar />
             <TabTitle title={placeholderText('products.title')}/>
             <ReactDataTable columns={columns} items={itemsValue} onChange={onChange} isLoading={isLoading}
-                            ButtonValue={getFormattedMessage('product.create.title')} totalRows={totalRecord}
+                            ButtonValue={is_addedAble ? getFormattedMessage('product.create.title') : null} totalRows={totalRecord}
                             to='#/app/products/create' isShowFilterField isUnitFilter
                             title={getFormattedMessage('product.input.product-unit.label')}
                             buttonImport={true}  goToImportProduct={handleClose}
@@ -213,8 +216,8 @@ const Product = (props) => {
 };
 
 const mapStateToProps = (state) => {
-    const {products, totalRecord, isLoading, frontSetting, productUnitId, allConfigData} = state;
-    return {products, totalRecord, isLoading, frontSetting, productUnitId, allConfigData}
+    const {products, totalRecord, isLoading, frontSetting, productUnitId, allConfigData, config} = state;
+    return {products, totalRecord, isLoading, frontSetting, productUnitId, allConfigData, config}
 };
 
 export default connect(mapStateToProps, {fetchProducts, fetchFrontSetting, productExcelAction})(Product);

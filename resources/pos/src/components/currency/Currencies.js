@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React,  {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
 import MasterLayout from '../MasterLayout';
 import {fetchCurrencies} from '../../store/action/currencyAction';
@@ -12,7 +12,7 @@ import ActionButton from '../../shared/action-buttons/ActionButton';
 import TopProgressBar from "../../shared/components/loaders/TopProgressBar";
 
 const Currencies = (props) => {
-    const {fetchCurrencies, currencies, totalRecord, isLoading} = props;
+    const {fetchCurrencies, currencies, totalRecord, isLoading, config} = props;
     const [deleteModel, setDeleteModel] = useState(false);
     const [isDelete, setIsDelete] = useState(null);
     const [toggle, setToggle] = useState(false);
@@ -31,14 +31,18 @@ const Currencies = (props) => {
     const onChange = (filter) => {
         fetchCurrencies(filter, true);
     };
-
+   
     const itemsValue = currencies.length >= 0 && currencies.map(item => ({
         name: item.attributes.name,
         code: item.attributes.code,
         symbol: item.attributes.symbol,
         id: item.id
     }));
-
+    let user_permissions = new Set(config);
+    const is_addedAble = user_permissions.has('manage_currency-create') ? true : false
+    const is_editAdable = user_permissions.has('manage_currency-edit') ? true : false
+    const is_deleteAdable = user_permissions.has('manage_currency-delete') ? true: false
+     
     const columns = [
         {
             name: getFormattedMessage('globally.input.name.label'),
@@ -74,27 +78,28 @@ const Currencies = (props) => {
             allowOverflow: true,
             button: true,
             cell: row => {
-                return <ActionButton item={row} goToEditProduct={handleClose} isEditMode={true}
-                                     onClickDeleteModel={onClickDeleteModel}/>
+                return <ActionButton item={row} goToEditProduct={handleClose} isEditMode={is_editAdable}
+                                     onClickDeleteModel={onClickDeleteModel}  isDeleteMode={is_deleteAdable} />
             }
         }
     ];
 
+console.log('allConfigData ', config)
     return (
-        <MasterLayout>
+        <MasterLayout getConfigpermissionData={handleConfigPermissionsData}  >
             <TopProgressBar />
             <TabTitle title={placeholderText('currencies.title')}/>
             <ReactDataTable columns={columns} items={itemsValue} onChange={onChange} isLoading={isLoading}
-                            totalRows={totalRecord} AddButton={<CreateCurrency/>}/>
-            <EditCurrency handleClose={handleClose} show={toggle} currency={currency}/>
-            <DeletCurrency onClickDeleteModel={onClickDeleteModel} deleteModel={deleteModel} onDelete={isDelete}/>
+                            totalRows={totalRecord}  AddButton={is_addedAble ==true ? <CreateCurrency />  : null} />
+            <EditCurrency handleClose={handleClose} show={toggle} currency={currency}/> {is_addedAble}
+              <DeletCurrency onClickDeleteModel={onClickDeleteModel} deleteModel={deleteModel} onDelete={isDelete}/>
         </MasterLayout>
     )
 };
 
-const mapStateToProps = (state) => {
-    const {currencies, totalRecord, isLoading} = state;
-    return {currencies, totalRecord, isLoading}
+const mapStateToProps = (state) => { 
+    const {currencies, totalRecord, isLoading, config } = state;
+    return {currencies, totalRecord, isLoading, config }
 };
 
 export default connect(mapStateToProps, {fetchCurrencies})(Currencies);
