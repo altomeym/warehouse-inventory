@@ -14,7 +14,7 @@ import { Tokens } from '../../constants';
 import TopProgressBar from "../../shared/components/loaders/TopProgressBar";
 
 const Brands = () => {
-    const {brands, totalRecord, isLoading, isCallBrandApi} = useSelector(state => state);
+    const {brands, totalRecord, isLoading, isCallBrandApi, config} = useSelector(state => state);
     const Dispatch = useDispatch();
     const [deleteModel, setDeleteModel] = useState(false);
     const [isDelete, setIsDelete] = useState(null);
@@ -42,6 +42,12 @@ const Brands = () => {
         product_count: item.attributes.product_count,
         id: item.id
     }));
+
+    let user_permissions = new Set(config);
+    const is_addedAble = user_permissions.has('manage_brands-create') ? true : false
+    const is_editAdable = user_permissions.has('manage_brands-edit') ? true : false
+    const is_deleteAdable = user_permissions.has('manage_brands-delete') ? true: false
+
 
     const columns = [
         {
@@ -77,8 +83,8 @@ const Brands = () => {
             ignoreRowClick: true,
             allowOverflow: true,
             button: true,
-            cell: row => <ActionButton item={row} goToEditProduct={handleClose} isEditMode={true}
-                                       onClickDeleteModel={onClickDeleteModel}/>
+            cell: row => <ActionButton item={row} goToEditProduct={handleClose} isEditMode={is_editAdable}
+                                       onClickDeleteModel={onClickDeleteModel} isDeleteMode={is_deleteAdable}  />
         }
     ];
 
@@ -86,7 +92,7 @@ const Brands = () => {
         <MasterLayout>
             <TopProgressBar />
             <TabTitle title={placeholderText('brands.title')}/>
-            <ReactDataTable columns={columns} items={itemsValue} onChange={onChange} AddButton={<CreateBrands/>}
+            <ReactDataTable columns={columns} items={itemsValue} onChange={onChange} AddButton={is_addedAble ?  <CreateBrands/> : null }
                             totalRows={totalRecord} isLoading={isLoading} isCallBrandApi={isCallBrandApi}/>
             <EditBrands handleClose={handleClose} show={edit} brand={brand}/>
             <DeleteBrands onClickDeleteModel={onClickDeleteModel} deleteModel={deleteModel} onDelete={isDelete}/>
