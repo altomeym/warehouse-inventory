@@ -22,7 +22,8 @@ const SaleReturn = (props) => {
         frontSetting,
         fetchFrontSetting,
         downloadSaleReturnPdf,
-        allConfigData
+        allConfigData,
+        config
     } = props;
     const [deleteModel, setDeleteModel] = useState(false);
     const [isDelete, setIsDelete] = useState(null);
@@ -73,6 +74,11 @@ const SaleReturn = (props) => {
         id: sale.id,
         currency: currencySymbol
     }));
+
+    let user_permissions = new Set(config);
+    const is_addedAble = user_permissions.has('manage_sale_return-create') ? true : false
+    const is_editAdable = user_permissions.has('manage_sale_return-edit') ? true : false
+    const is_deleteAdable = user_permissions.has('manage_sale_return-delete') ? true: false
 
     const columns = [
         {
@@ -163,11 +169,11 @@ const SaleReturn = (props) => {
             ignoreRowClick: true,
             allowOverflow: true,
             button: true,
-            cell: row => <ActionDropDownButton item={row}  isEditMode={true} isPdfIcon={true}
+            cell: row => <ActionDropDownButton item={row}  isEditMode={is_editAdable} isPdfIcon={true}
                                                onClickDeleteModel={onClickDeleteModel} onPdfClick={onPdfClick}
                                                title={getFormattedMessage('sale-return.title')}
                                                isViewIcon={true} goToDetailScreen={goToDetailScreen}
-                                               onShowPaymentClick={onShowPaymentClick} goToEditProduct={goToEdit}
+                                               onShowPaymentClick={onShowPaymentClick} goToEditProduct={goToEdit} isDeleteMode={is_deleteAdable} 
                                                // isPaymentShow={true}
             />
         }
@@ -178,7 +184,7 @@ const SaleReturn = (props) => {
             <TopProgressBar />
             <TabTitle title={placeholderText('sales-return.title')}/>
             <ReactDataTable columns={columns} items={itemsValue} to='#/app/sale-return/create' isShowDateRangeField
-                            // ButtonValue={getFormattedMessage('sale-return.create.title')}
+                            // ButtonValue={ is_addedAble ? getFormattedMessage('sale-return.create.title') : null}
                             onChange={onChange} totalRows={totalRecord} goToEdit={goToEdit} isLoading={isLoading}
                             isShowFilterField isStatus/>
             <DeleteSaleReturn onClickDeleteModel={onClickDeleteModel} deleteModel={deleteModel}
@@ -189,8 +195,8 @@ const SaleReturn = (props) => {
 }
 
 const mapStateToProps = (state) => {
-    const {salesReturn, totalRecord, isLoading, frontSetting, allConfigData} = state;
-    return {salesReturn, totalRecord, isLoading, frontSetting, allConfigData};
+    const {salesReturn, totalRecord, isLoading, frontSetting, allConfigData, config} = state;
+    return {salesReturn, totalRecord, isLoading, frontSetting, allConfigData, config};
 }
 
 export default connect(mapStateToProps, {fetchSalesReturn, fetchFrontSetting, downloadSaleReturnPdf})(SaleReturn);

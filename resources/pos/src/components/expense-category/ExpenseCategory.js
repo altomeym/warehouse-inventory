@@ -12,7 +12,7 @@ import ActionButton from '../../shared/action-buttons/ActionButton';
 import TopProgressBar from "../../shared/components/loaders/TopProgressBar";
 
 const ExpenseCategory = (props) => {
-    const {fetchExpenseCategories, expenseCategories, totalRecord, isLoading} = props;
+    const {fetchExpenseCategories, expenseCategories, totalRecord, isLoading, config} = props;
     const [deleteModel, setDeleteModel] = useState(false);
     const [isDelete, setIsDelete] = useState(null);
     const [editModel, setEditModel] = useState(false);
@@ -37,6 +37,11 @@ const ExpenseCategory = (props) => {
         id: expense.id
     }));
 
+    let user_permissions = new Set(config);
+    let is_addedAble = user_permissions.has('manage_expense_categories-create') ? true : false;
+    let is_editAdable = user_permissions.has('manage_expense_categories-edit') ? true : false;
+    let is_deleteAdable = user_permissions.has('manage_expense_categories-delete') ? true : false;
+
     const columns = [
         {
             name: getFormattedMessage('globally.input.name.label'),
@@ -50,7 +55,7 @@ const ExpenseCategory = (props) => {
             ignoreRowClick: true,
             allowOverflow: true,
             button: true,
-            cell: row => <ActionButton item={row} goToEditProduct={handleClose} isEditMode={true}
+            cell: row => <ActionButton item={row} goToEditProduct={handleClose} isEditMode={is_editAdable} isDeleteMode={is_deleteAdable}
                                       onClickDeleteModel={onClickDeleteModel}/>
         }
     ];
@@ -60,7 +65,7 @@ const ExpenseCategory = (props) => {
             <TopProgressBar />
             <TabTitle title={placeholderText('expense-categories.title')}/>
                 <ReactDataTable columns={columns} items={itemsValue} onChange={onChange} isLoading={isLoading}
-                                AddButton={<CreateExpenseCategory/>}
+                                AddButton={is_addedAble ? <CreateExpenseCategory/> : null }
                                 totalRows={totalRecord}/>
                 <EditExpenseCategory handleClose={handleClose} show={editModel} expenseCategory={expenseCategory}/>
                 <DeleteExpenseCategory onClickDeleteModel={onClickDeleteModel} deleteModel={deleteModel}
@@ -70,8 +75,8 @@ const ExpenseCategory = (props) => {
 };
 
 const mapStateToProps = (state) => {
-    const {expenseCategories, totalRecord, isLoading} = state;
-    return {expenseCategories, totalRecord, isLoading}
+    const {expenseCategories, totalRecord, isLoading, config} = state;
+    return {expenseCategories, totalRecord, isLoading, config}
 };
 
 export default connect(mapStateToProps, {fetchExpenseCategories})(ExpenseCategory);

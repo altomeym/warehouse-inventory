@@ -86,7 +86,7 @@ const Currencies = (props) => {
 
 console.log('allConfigData ', config)
     return (
-        <MasterLayout getConfigpermissionData={handleConfigPermissionsData}  >
+        <MasterLayout >
             <TopProgressBar />
             <TabTitle title={placeholderText('currencies.title')}/>
             <ReactDataTable columns={columns} items={itemsValue} onChange={onChange} isLoading={isLoading}

@@ -12,7 +12,7 @@ import ActionButton from '../../shared/action-buttons/ActionButton';
 import TopProgressBar from "../../shared/components/loaders/TopProgressBar";
 
 const Warehouses = (props) => {
-    const {fetchWarehouses, warehouses, totalRecord, isLoading, allConfigData} = props;
+    const {fetchWarehouses, warehouses, totalRecord, isLoading, allConfigData, config} = props;
     const [deleteModel, setDeleteModel] = useState(false);
     const [isDelete, setIsDelete] = useState(null);
     const navigate = useNavigate();
@@ -46,6 +46,11 @@ const Warehouses = (props) => {
         zip_code: warehouse.attributes.zip_code,
         id: warehouse.id
     }));
+
+    let user_permissions = new Set(config);
+    const is_addedAble = user_permissions.has('manage_warehouses-create') ? true : false
+    const is_editAdable = user_permissions.has('manage_warehouses-edit') ? true : false
+    const is_deleteAdable = user_permissions.has('manage_warehouses-delete') ? true: false
 
     const columns = [
         {
@@ -106,8 +111,8 @@ const Warehouses = (props) => {
             allowOverflow: true,
             button: true,
             cell: row => <ActionButton isViewIcon={true} item={row} goToDetailScreen={goToProductDetailPage}
-                                        goToEditProduct={goToEditProduct} isEditMode={true}
-                                       onClickDeleteModel={onClickDeleteModel}/>
+                                        goToEditProduct={goToEditProduct} isEditMode={is_editAdable}
+                                       onClickDeleteModel={onClickDeleteModel} isDeleteMode={is_deleteAdable} />
         }
     ];
 
@@ -116,7 +121,7 @@ const Warehouses = (props) => {
             <TopProgressBar />
             <TabTitle title={placeholderText('warehouse.title')}/>
             <ReactDataTable columns={columns} items={itemsValue} onChange={onChange} isLoading={isLoading}
-                            ButtonValue={getFormattedMessage('warehouse.create.title')} totalRows={totalRecord}
+                            ButtonValue={is_addedAble ? getFormattedMessage('warehouse.create.title') : null } totalRows={totalRecord}
                             to='#/app/warehouse/create'/>
             <DeleteWarehouse onClickDeleteModel={onClickDeleteModel} deleteModel={deleteModel} onDelete={isDelete}/>
         </MasterLayout>
@@ -124,8 +129,8 @@ const Warehouses = (props) => {
 };
 
 const mapStateToProps = (state) => {
-    const {warehouses, totalRecord, isLoading, allConfigData} = state;
-    return {warehouses, totalRecord, isLoading, allConfigData}
+    const {warehouses, totalRecord, isLoading, allConfigData, config} = state;
+    return {warehouses, totalRecord, isLoading, allConfigData, config}
 };
 
 export default connect(mapStateToProps, {fetchWarehouses})(Warehouses);

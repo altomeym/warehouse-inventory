@@ -14,7 +14,7 @@ import { fetchQuotations } from '../../store/action/quotationAction';
 import { quotationPdfAction } from '../../store/action/quotationPdfAction';
 
 const Quotations = (props) => {
-    const {totalRecord, isLoading, quotationPdfAction, fetchFrontSetting, frontSetting, isCallSaleApi, fetchQuotations, quotations, allConfigData} = props;
+    const {totalRecord, isLoading, quotationPdfAction, fetchFrontSetting, frontSetting, isCallSaleApi, fetchQuotations, quotations, allConfigData, config} = props;
     const [deleteModel, setDeleteModel] = useState(false);
     const [isDelete, setIsDelete] = useState(null);
 
@@ -72,6 +72,12 @@ const Quotations = (props) => {
         id: quotation.id,
         currency: currencySymbol
     }));
+
+    let user_permissions = new Set(config);
+    const is_addedAble = user_permissions.has('manage_quotations-create') ? true : false
+    const is_editAdable = user_permissions.has('manage_quotations-edit') ? true : false
+    const is_deleteAdable = user_permissions.has('manage_quotations-delete') ? true: false
+
 
     const columns = [
         {
@@ -140,10 +146,10 @@ const Quotations = (props) => {
             ignoreRowClick: true,
             allowOverflow: true,
             button: true,
-            cell: row => <ActionDropDownButton item={row} goToEditProduct={goToEdit} isEditMode={true} isPdfIcon={true}
+            cell: row => <ActionDropDownButton item={row} goToEditProduct={goToEdit} isEditMode={is_editAdable} isPdfIcon={true}
                                                onClickDeleteModel={onClickDeleteModel} onPdfClick={onPdfClick}
                                                title={getFormattedMessage("quotation.title")} isCreatesSales={true} onCreateSaleClick={onCreateSaleClick}
-                                               isViewIcon={true} goToDetailScreen={goToDetailScreen}
+                                               isViewIcon={true} goToDetailScreen={goToDetailScreen} isDeleteMode={is_deleteAdable}
             />
         }
     ];
@@ -153,7 +159,7 @@ const Quotations = (props) => {
             <TopProgressBar />
             <TabTitle title={placeholderText('quotations.title')}/>
             <ReactDataTable columns={columns} items={itemsValue} to='#/app/quotations/create'
-                            ButtonValue={getFormattedMessage('create-quotation.title')} isCallSaleApi={isCallSaleApi}
+                            ButtonValue={is_addedAble ? getFormattedMessage('create-quotation.title') : null } isCallSaleApi={isCallSaleApi}
                             isShowDateRangeField onChange={onChange} totalRows={totalRecord} goToEdit={goToEdit}
                             isLoading={isLoading} isShowFilterField isStatus />
             <DeleteQuotation onClickDeleteModel={onClickDeleteModel} deleteModel={deleteModel} onDelete={isDelete}/>
@@ -162,8 +168,8 @@ const Quotations = (props) => {
 };
 
 const mapStateToProps = (state) => {
-    const {sales, totalRecord, isLoading, frontSetting, isCallSaleApi, quotations, allConfigData} = state;
-    return {sales, totalRecord, isLoading, frontSetting, isCallSaleApi, quotations, allConfigData};
+    const {sales, totalRecord, isLoading, frontSetting, isCallSaleApi, quotations, allConfigData, config} = state;
+    return {sales, totalRecord, isLoading, frontSetting, isCallSaleApi, quotations, allConfigData, config};
 };
 
 export default connect(mapStateToProps, {fetchSales, fetchFrontSetting, fetchQuotations, quotationPdfAction})(Quotations);

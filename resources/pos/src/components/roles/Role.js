@@ -10,9 +10,6 @@ import TabTitle from '../../shared/tab-title/TabTitle';
 import {getFormattedDate, getFormattedMessage, placeholderText} from "../../shared/sharedMethod";
 import TopProgressBar from "../../shared/components/loaders/TopProgressBar";
 
-let is_addedAble = true;
-let is_editAdable = true;
-let is_deleteAdable = true;
 
 const Role = (props) => {
     const {roles, fetchRoles, totalRecord, isLoading, allConfigData, config} = props;
@@ -42,20 +39,11 @@ const Role = (props) => {
         const id = item.id;
         window.location.href = '#/app/roles/edit/' + id;
     };
-    const handleConfigPermissionsData = (val)=>{
-        // let user_permissions = new Set(config);
-        //  is_addedAble = user_permissions.has('manage_roles-create') ? true : false
-        //  is_editAdable = user_permissions.has('manage_roles-edit') ? true : false
-        //  is_deleteAdable = user_permissions.has('manage_roles-delete') ? true : false
-        // setIsAddedAble(is_addedAble);
-        // setIsEditAble(is_editAdable);
-        // setIsDeleteAble(is_deleteAdable);
-        // console.log('cds ', user_permissions )
-}
-        let user_permissions = new Set(config);
-        is_addedAble = user_permissions.has('manage_roles-create') ? true : false;
-        is_editAdable = user_permissions.has('manage_roles-edit') ? true : false;
-        is_deleteAdable = user_permissions.has('manage_roles-delete') ? true : false;
+
+       let user_permissions = new Set(config);
+       const is_addedAble = user_permissions.has('manage_roles-create') ? true : false;
+       const is_editAdable = user_permissions.has('manage_roles-edit') ? true : false;
+       const is_deleteAdable = user_permissions.has('manage_roles-delete') ? true : false;
 
     const columns = [
         {
@@ -81,7 +69,7 @@ const Role = (props) => {
         }
     ];
     return (
-        <MasterLayout getConfigpermissionData={handleConfigPermissionsData}>
+        <MasterLayout>
             <TopProgressBar />
             <TabTitle title={placeholderText("roles.title")}/>
                 <ReactDataTable columns={columns} items={itemsValue} onChange={onChange}

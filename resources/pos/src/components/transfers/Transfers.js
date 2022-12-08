@@ -20,7 +20,8 @@ const Transfers = (props) => {
         isLoading,
         frontSetting,
         fetchFrontSetting,
-        allConfigData
+        allConfigData,
+        config
     } = props;
     const [deleteModel, setDeleteModel] = useState(false);
     const [isDelete, setIsDelete] = useState(null);
@@ -67,6 +68,11 @@ const Transfers = (props) => {
             currency: currencySymbol
         })
     });
+
+    let user_permissions = new Set(config);
+    const is_addedAble = user_permissions.has('manage_transfers-create') ? true : false
+    const is_editAdable = user_permissions.has('manage_transfers-edit') ? true : false
+    const is_deleteAdable = user_permissions.has('manage_transfers-delete') ? true: false
 
     const columns = [
         {
@@ -147,7 +153,7 @@ const Transfers = (props) => {
             button: true,
             cell: row => <ActionButton isViewIcon={true} goToDetailScreen={onClickDetailsModel} item={row}
                                        goToEditProduct={goToEdit}
-                                       onClickDeleteModel={onClickDeleteModel} isEditMode={true}/>
+                                       onClickDeleteModel={onClickDeleteModel} isEditMode={is_editAdable} isDeleteMode={is_deleteAdable} />
         }
     ];
 
@@ -155,7 +161,7 @@ const Transfers = (props) => {
         <MasterLayout>
             <TabTitle title={placeholderText('transfers.title')}/>
             <ReactDataTable columns={columns} items={itemsValue} onChange={onChange} isLoading={isLoading}
-                            ButtonValue={getFormattedMessage('transfer.create.title')} totalRows={totalRecord}
+                            ButtonValue={is_addedAble ? getFormattedMessage('transfer.create.title') : null } totalRows={totalRecord}
                             to='#/app/transfers/create' isShowFilterField isTransferStatus/>
             <DeleteTransfer onClickDeleteModel={onClickDeleteModel} deleteModel={deleteModel} onDelete={isDelete}/>
             {lgShow &&  <TransferDetails onClickDetailsModel={onClickDetailsModel} detailsModel={detailsModel} onDetails={isDetails} setLgShow={setLgShow} lgShow={lgShow}/>}
@@ -164,8 +170,8 @@ const Transfers = (props) => {
 };
 
 const mapStateToProps = (state) => {
-    const {tansfers, totalRecord, isLoading, frontSetting, fetchFrontSetting, allConfigData} = state;
-    return {tansfers, totalRecord, isLoading, frontSetting, fetchFrontSetting, allConfigData}
+    const {tansfers, totalRecord, isLoading, frontSetting, fetchFrontSetting, allConfigData, config} = state;
+    return {tansfers, totalRecord, isLoading, frontSetting, fetchFrontSetting, allConfigData, config}
 };
 
 export default connect(mapStateToProps, {

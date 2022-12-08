@@ -12,7 +12,7 @@ import TopProgressBar from "../../shared/components/loaders/TopProgressBar";
 import {fetchSmsTemplates, activeInactiveSms} from "../../store/action/smsTemplatesAction";
 
 const SmsTemplates = (props) => {
-    const {fetchWarehouses, warehouses, totalRecord, isLoading,smsTemplates, fetchSmsTemplates, activeInactiveSms} = props;
+    const {fetchWarehouses, warehouses, totalRecord, isLoading,smsTemplates, fetchSmsTemplates, activeInactiveSms, config} = props;
     const [deleteModel, setDeleteModel] = useState(false);
     const [isDelete, setIsDelete] = useState(null);
     const navigate = useNavigate();
@@ -38,6 +38,11 @@ const SmsTemplates = (props) => {
         is_active: smsTemplate?.attributes?.status === 0 || smsTemplate?.attributes?.status === false ? false : true,
         id: smsTemplate.id
     }));
+
+    let user_permissions = new Set(config);
+    const is_addedAble = user_permissions.has('manage_sms_templates-create') ? true : false
+    const is_editAdable = user_permissions.has('manage_sms_templates-edit') ? true : false
+    const is_deleteAdable = user_permissions.has('manage_sms_templates-delete') ? true: false
 
     const columns = [
         {
@@ -82,7 +87,7 @@ const SmsTemplates = (props) => {
             ignoreRowClick: true,
             allowOverflow: true,
             button: true,
-            cell: row => <ActionButton  item={row} isDeleteMode={false} goToEditProduct={goToEditProduct} isEditMode={true}/>
+            cell: row => <ActionButton  item={row} isDeleteMode={is_deleteAdable} goToEditProduct={goToEditProduct} isEditMode={is_editAdable}  />
         }
     ];
 
@@ -101,8 +106,8 @@ const SmsTemplates = (props) => {
 };
 
 const mapStateToProps = (state) => {
-    const {totalRecord, isLoading, smsTemplates} = state;
-    return {totalRecord, isLoading, smsTemplates}
+    const {totalRecord, isLoading, smsTemplates, config} = state;
+    return {totalRecord, isLoading, smsTemplates, config}
 };
 
 export default connect(mapStateToProps, {fetchWarehouses, fetchSmsTemplates, activeInactiveSms})(SmsTemplates);

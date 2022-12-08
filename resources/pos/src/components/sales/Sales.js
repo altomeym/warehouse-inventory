@@ -26,7 +26,8 @@ const Sales = (props) => {
         fetchFrontSetting,
         frontSetting,
         isCallSaleApi,
-        allConfigData
+        allConfigData,
+        config
     } = props;
     const [deleteModel, setDeleteModel] = useState(false);
     const [isShowPaymentModel, setIsShowPaymentModel] = useState(false);
@@ -144,6 +145,11 @@ const Sales = (props) => {
             newItemValue.length && setTableArray(latestArray)
         }
     }, [sales])
+
+    let user_permissions = new Set(config);
+    const is_addedAble = user_permissions.has('manage_sale-create') ? true : false
+    const is_editAdable = user_permissions.has('manage_sale-edit') ? true : false
+    const is_deleteAdable = user_permissions.has('manage_sale-delete') ? true: false
 
     const columns = [
         {
@@ -279,13 +285,13 @@ const Sales = (props) => {
             ignoreRowClick: true,
             allowOverflow: true,
             button: true,
-            cell: row => row.reference_code === "Total" ? null : <ActionDropDownButton item={row} goToEditProduct={goToEdit} isEditMode={true} isPdfIcon={true}
+            cell: row => row.reference_code === "Total" ? null : <ActionDropDownButton item={row} goToEditProduct={goToEdit} isEditMode={is_editAdable} isPdfIcon={true}
                                                onClickDeleteModel={onClickDeleteModel} onPdfClick={onPdfClick}
                                                title={getFormattedMessage('sale.title')}
                                                isPaymentShow={true} isCreatePayment={true}
                                                isViewIcon={true} goToDetailScreen={goToDetailScreen}
                                                onShowPaymentClick={onShowPaymentClick} isCreateSaleReturn={true}
-                                               onCreatePaymentClick={onCreatePaymentClick} onCreateSaleReturnClick={onCreateSaleReturnClick}
+                                               onCreatePaymentClick={onCreatePaymentClick} onCreateSaleReturnClick={onCreateSaleReturnClick} isDeleteMode={is_deleteAdable} 
             />
         }
     ];
@@ -295,7 +301,7 @@ const Sales = (props) => {
             <TopProgressBar/>
             <TabTitle title={placeholderText('sales.title')}/>
             <ReactDataTable columns={columns} items={tableArray} to='#/app/sales/create'
-                            ButtonValue={getFormattedMessage('sale.create.title')}
+                            ButtonValue={is_addedAble ? getFormattedMessage('sale.create.title') : null}
                             isShowPaymentModel={isShowPaymentModel} isCallSaleApi={isCallSaleApi}
                             isShowDateRangeField onChange={onChange} totalRows={totalRecord} goToEdit={goToEdit}
                             isLoading={isLoading} isShowFilterField isPaymentStatus isStatus isPaymentType/>
@@ -313,8 +319,8 @@ const Sales = (props) => {
 };
 
 const mapStateToProps = (state) => {
-    const {sales, totalRecord, isLoading, frontSetting, isCallSaleApi, allConfigData} = state;
-    return {sales, totalRecord, isLoading, frontSetting, isCallSaleApi, allConfigData};
+    const {sales, totalRecord, isLoading, frontSetting, isCallSaleApi, allConfigData, config} = state;
+    return {sales, totalRecord, isLoading, frontSetting, isCallSaleApi, allConfigData, config};
 };
 
 export default connect(mapStateToProps, {fetchSales, salePdfAction, fetchFrontSetting})(Sales);
