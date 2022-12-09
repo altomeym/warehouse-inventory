@@ -1,4 +1,4 @@
 name,code,category,brand,Barcode symbol,product cost,product price,product unit,sale unit,purchase unit,stock alert,order tax Percentage,tax type,Notes
-Product 112,85958587,T-shirts,Zara,CODE128,20,85,kilogram,kilogram,kilogram,10,5,EXCLUSIVE,New fashion product.
-Product 223,46598686,Jeans,Zara,CODE128,45,96,Piece,Piece,Piece,10,3,INCLUSIVE,New fashion product.
-Product 334,53258696,Mobile,iPhone,CODE39,7,63,meter,meter,meter,10,7,EXCLUSIVE,New fashion product.
+Product 115,8595858777,T-shirts,Zara,CODE128,20,85,kilogram,kilogram,kilogram,10,5,EXCLUSIVE,New fashion product.
+Product 226,8595858787,Jeans,Zara,CODE128,45,96,Piece,Piece,Piece,10,3,INCLUSIVE,New fashion product.
+Product 337,8595858797,Mobile,iPhone,CODE39,7,63,meter,meter,meter,10,7,EXCLUSIVE,New fashion product.
