@@ -31,7 +31,6 @@ class RoleAPIController extends AppBaseController
      */
     public function index(Request $request)
     {
-
         $perPage = getPageSize($request);
         $roles = $this->roleRepository->paginate($perPage);
         RoleResource::usingWithCollection();
