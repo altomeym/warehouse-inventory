@@ -1,0 +1,3 @@
+# Email Cron Running Every Minute:
+#* * * * * /usr/local/bin/php /laravel/artisan escalation:users >> /dev/null 2>&1
+#* * * * * echo "Email Cron Working" >> /var/log/cron.log 2>&1
