@@ -29,6 +29,8 @@ use App\Http\Controllers\API\TransferAPIController;
 use App\Http\Controllers\API\UnitAPIController;
 use App\Http\Controllers\API\UserAPIController;
 use App\Http\Controllers\API\WarehouseAPIController;
+use App\Http\Controllers\API\ShippingTypeAPIController;
+
 use App\Http\Controllers\MailTemplateAPIController;
 use Illuminate\Support\Facades\Route;
 
@@ -55,6 +57,13 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::delete('/brands/{brand}', [BrandAPIController::class, 'destroy']);
     });
     Route::get('/brands', [BrandAPIController::class, 'index']);
+/*New added*/
+
+    Route::group(['middleware' => ['permission:manage_shipping_type']], function () {
+    });
+    Route::resource('shipping_type', ShippingTypeAPIController::class);
+    Route::get('shipping_type', [ShippingTypeAPIController::class, 'index']);
+    
 
     //Dashboard
     Route::get('today-sales-purchases-count', [DashboardAPIController::class, 'getPurchaseSalesCounts']);
