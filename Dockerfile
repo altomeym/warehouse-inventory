@@ -35,6 +35,8 @@ WORKDIR "/laravel"
 
 COPY . .
 
+RUN rm composer.lock
+
 RUN composer install
 
 RUN cp ./php-conf/uploads.ini /usr/local/etc/php/conf.d/uploads.ini
