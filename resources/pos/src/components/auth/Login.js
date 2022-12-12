@@ -95,7 +95,7 @@ const Login = () => {
                     </div>
                     <div
                         className='bg-theme-white rounded-15 shadow-md width-540 px-5 px-sm-7 py-10 mx-auto'>
-                        <h1 className='text-dark text-center mb-7'>{placeholderText('login-form.title')} Demo</h1>
+                        <h1 className='text-dark text-center mb-7'>{placeholderText('login-form.title')} </h1>
                         <form>
                             <div className='mb-sm-7 mb-4'>
                                 <label className='form-label'>
