@@ -83,7 +83,7 @@ const Login = () => {
     };
 
     return (
-        <div className='content d-flex flex-column flex-column-fluid'>
+        <div className='content d-flex flex-column flex-column-fluid login_bg'>
             <div className='d-flex flex-wrap flex-column-fluid'>
                 <div className='d-flex flex-column flex-column-fluid align-items-center justify-content-center p-4'>
                     <TabTitle title={placeholderText('login-form.login-btn.label')}/>

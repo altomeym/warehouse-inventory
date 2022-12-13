@@ -3512,13 +3512,13 @@ textarea.form-control-lg {
 
 .btn-primary {
   color: #FFFFFF;
-  background-color: #FF4F00;
-  border-color: #FF4F00;
+  background-color: #2B2358;
+  border-color: #2B2358;
 }
 .btn-primary:hover {
   color: #FFFFFF;
-  background-color: #2B2358;
-  border-color: #2B2358;
+  background-color: #FF4F00;
+  border-color: #FF4F00;
 }
 .btn-check:focus + .btn-primary, .btn-primary:focus {
   color: #FFFFFF;
@@ -16161,6 +16161,11 @@ html ::-webkit-scrollbar-resizer:vertical, html ::-webkit-scrollbar-resizer:hori
 }
 .dropdown-menu .dropdown-item .dropdown-icon {
   width: 20px;
+  
+}
+
+.dropdown-menu .dropdown-item .dropdown-icon svg {
+  color: #ff4f00 !important;
 }
 
 @media (min-width: 575px) {
@@ -16607,8 +16612,8 @@ tbody tr:last-child td {
 }
 
 .bg-light-primary {
-  color: #FF4F00;
-  background-color: #ff4f0021;
+  color: #fff;
+  background-color: #FF4F00;
 }
 
 .bg-light-secondary {
@@ -16616,23 +16621,23 @@ tbody tr:last-child td {
 }
 
 .bg-light-success {
-  color: #0AC074;
-  background-color: #CEF2E3;
+  color: #fff;
+  background-color: #0AC074;
 }
 
 .bg-light-info {
-  color: #0099FB;
-  background-color: #CCEBFE;
+  color: #fff;
+  background-color: #0099FB;
 }
 
 .bg-light-warning {
-  color: #FFB821;
-  background-color: #FFF1D3;
+  color: #fff;
+  background-color: #FFB821;
 }
 
 .bg-light-danger {
-  color: #F62947;
-  background-color: #FDD4DA;
+  color: #fff;
+  background-color: #F62947;
 }
 
 .bg-light-dark {
@@ -17255,4 +17260,174 @@ ul {
 
 .pricing-plan-btn {
   min-width: 120px;
+}
+
+.card_01 {
+  border: 1px solid #E0E0E0;
+  background: #fff !important;
+  transition: 0.3s;
+}
+
+.card_01 h2 {
+  color: #000 !important;
+}
+
+.card_01 h3 {
+  color: #000 !important;
+}
+
+.widget-bg1 .widget-icon {
+  background: #ff4f00 !important;
+}
+
+.widget-bg1:hover {
+  background: #ff4f0021 !important;
+  border-color: #ff4f00;
+}
+
+.widget-bg2 .widget-icon {
+  background: #ECB365 !important;
+}
+
+.widget-bg2:hover {
+  background: #ecb36521 !important;
+  border-color: #ECB365;
+}
+
+.widget-bg3 .widget-icon {
+  background: #b2417c !important;
+}
+
+.widget-bg3:hover {
+  background: #b2417c21 !important;
+  border-color: #b2417c;
+}
+
+.widget-bg4 .widget-icon {
+  background: #fca906 !important;
+}
+
+.widget-bg4:hover {
+  background: #fca90621 !important;
+  border-color: #fca906;
+}
+
+.widget-bg5 .widget-icon {
+  background: #1C315E !important;
+}
+
+.widget-bg5:hover {
+  background: #1c315e21 !important;
+  border-color: #1C315E;
+}
+
+.widget-bg6 .widget-icon {
+  background: #59C1BD !important;
+}
+
+.widget-bg6:hover {
+  background: #59c1bd21 !important;
+  border-color: #59C1BD;
+}
+
+.widget-bg7 .widget-icon {
+  background: #EB6440 !important;
+}
+
+.widget-bg7:hover {
+  background: #eb644021 !important;
+  border-color: #EB6440;
+}
+
+.widget-bg8 .widget-icon {
+  background: #6C4AB6 !important;
+}
+
+.widget-bg8:hover {
+  background: #6c4ab621 !important;
+  border-color: #6C4AB6;
+}
+
+.card_01 .widget-icon svg {
+
+}
+
+
+@media only screen and (max-width: 600px) {
+  .card_01 {
+    padding: 15px 15px !important;
+    display: flex;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    align-content: flex-start !important;
+    height: 145px;
+  }
+
+  .card_01 .widget-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .card_01 .widget-icon svg {
+    font-size: 20px;
+  }
+
+  .card_01 h2 {
+    font-size: 22px;
+    text-align: left;
+    margin: 8px 0px;
+    padding: 0;
+  }
+
+  .card_01 h3 {
+    font-size: 14px !important;
+    text-align: left;
+    margin: 0;
+    padding: 0;
+  }
+
+  .text-center {
+      align-items: center !important;
+  }
+
+  .menu-icon-grid button {
+      align-items: center;
+      color: #212529;
+      display: flex;
+      flex-direction: column;
+      padding: 6px 14px !important;
+      margin: 0 !important;
+      width: 100% !important;
+  }
+
+  .d-md-flex.align-items-center.justify-content-between.mb-5 {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.text-end.mt-4.mt-md-0 {
+  margin: 0 !important;
+}
+
+header.sc-dIouRR.TUEFO button.btn.btn-primary.mb-lg-0.mb-4 {
+  margin: 0 !important;
+  margin-right: 15px !important;
+}
+
+.position-relative.d-flex.width-320 {
+  width: 100%;
+}
+
+.modal {
+  display: flex !important;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.col-xl-4 .card {
+  padding: 20px 20px;
+  margin-top: 25px;
+}
+
 }
