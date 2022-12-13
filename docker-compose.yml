@@ -1,0 +1,12 @@
+version: '3.3'
+services:
+   wims:
+     build: ./
+     container_name: wims-cnt
+     command: php -S 0.0.0.0:8080 -t public
+     ports:
+       - "8080:8080"
+     restart: always
+     volumes:
+       - ./:/var/www
+       #- "./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini"

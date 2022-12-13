@@ -1,0 +1,31 @@
+version: 0.2
+phases:
+  
+  pre_build:
+    on-failure: ABORT
+    commands:
+      - echo logging in to AWS ECR...
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+      - aws secretsmanager get-secret-value --secret-id $SECRET_NAME --query SecretString --output text | jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]' > ./.env
+      - cat .env
+   
+  build:
+    on-failure: ABORT
+    commands:
+    - echo "Creating build"
+    - docker build -t $IMAGE_REPO_NAME .
+    - docker tag $IMAGE_REPO_NAME $IMAGE_URI:$IMAGE_TAG
+  
+  post_build:
+    on-failure: ABORT
+    commands: 
+    - echo Build completed on `date` 
+    - echo pushing to repo
+    - docker push $IMAGE_URI:$IMAGE_TAG
+    - echo Writing image definitions file...
+    - printf '[{"name":"%s","imageUri":"%s"}]' "$CONTAINER_NAME" "$IMAGE_URI:$IMAGE_TAG" > $IMAGE_DEFINATIONS
+    - pwd
+    - cat $IMAGE_DEFINATIONS
+artifacts:
+    files: 
+    - $IMAGE_DEFINATIONS

@@ -46,7 +46,7 @@ const TopSellingProduct = (props) => {
         <div className='pt-6'>
             <Row className='g-4'>
                 <div className='col-xxl-8 col-12'>
-                    <Card>
+                    <Card className='tsp_card'>
                         <Card.Header className='pb-0 px-10'>
                             <h5 className="mb-0">{getFormattedMessage('dashboard.TopSellingProducts.title')} ({moment().locale(languageCode).format('MMMM')})</h5>
                         </Card.Header>

@@ -1039,9 +1039,10 @@ div .rdt_Pagination div:nth-child(4) button:hover, div .rdt_Pagination div:nth-c
   border-color: #2B2358 !important;
 }
 div .rdt_Pagination div:first-of-type select {
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   padding: 6px 35px 6px 20px;
   border-radius: 8px;
+  border: 1px solid #ced4da;
 }
 div .rdt_Pagination div:first-of-type svg {
   top: 5px;
@@ -2112,10 +2113,35 @@ div .rdt_Pagination div:first-of-type svg {
   color: #FFFFFF;
   border-radius: 50%;
   display: flex;
-  width: 50px;
-  height: 50px;
+  width: 35px;
+  height: 35px;
   justify-content: center;
-  font-size: 25px;
+  font-size: 18px;
+}
+
+a.px-sm-3.px-2.d-flex.text-decoration-none.pos-button.pos-button-highlight {
+  box-shadow: none;
+  border-radius: 10px;
+  padding: 7px 25px !important;
+  font-size: 18px;
+  color: #fff;
+  margin-right: 10px;
+}
+
+a.px-sm-3.px-2.d-flex.text-decoration-none.pos-button.pos-button-highlight:hover {
+  color: #FF4F00;
+}
+
+.pos-button {
+  box-shadow: none !important;
+}
+
+svg.svg-inline--fa.fa-maximize.text-primary.fs-2 {
+  margin-right: 10px;
+}
+
+img.image {
+  margin-right: 10px;
 }
 
 .image-input img {
@@ -3360,4 +3386,13 @@ div .rdt_Pagination div:first-of-type svg {
 .product_brcode {
   width: 200px;
   height: 80px;
+}
+
+
+.col-xl-8 .card {
+  border: none;
+}
+
+.col-xl-4 .card {
+  padding: 20px 20px;
 }

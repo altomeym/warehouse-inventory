@@ -4990,6 +4990,10 @@ textarea.form-control-lg {
   background-clip: border-box;
   border: 1px solid #E0E0E0;
   border-radius: 0.625rem;
+  /* height: 100%; */
+}
+.twsp_card, .tsp_card {
+  height: 100%;
 }
 .card > hr {
   margin-right: 0;
@@ -5016,7 +5020,7 @@ textarea.form-control-lg {
 
 .card-body {
   flex: 1 1 auto;
-  padding: 2.5rem 2.5rem;
+  padding: 20px 20px;
 }
 
 .card-title {
@@ -5037,7 +5041,7 @@ textarea.form-control-lg {
 }
 
 .card-header {
-  padding: 1.75rem 1.75rem;
+  padding: 20px 20px !important;
   margin-bottom: 0;
   background-color: #FFFFFF;
   border-bottom: 0 solid rgba(6, 9, 23, 0.125);
@@ -5045,7 +5049,9 @@ textarea.form-control-lg {
 .card-header:first-child {
   border-radius: 0.625rem 0.625rem 0 0;
 }
-
+.card-header h5 {
+  font-size: 18px;
+}
 .card-footer {
   padding: 1.75rem 1.75rem;
   background-color: #FFFFFF;
