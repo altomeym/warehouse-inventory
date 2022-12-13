@@ -50,27 +50,7 @@ const Shipping = (props) => {
             sortable: true,
             sortField: 'name',
         },
-        {
-            name: getFormattedMessage('currency.modal.input.code.label'),
-            selector: row => row.code,
-            sortField: 'code',
-            sortable: true,
-            cell: row => {
-                return <span className='badge bg-light-info'>
-                            <span>{row.code}</span>
-                        </span>
-            }
-        },
-        {
-            name: getFormattedMessage('currency.modal.input.symbol.label'),
-            sortField: 'symbol',
-            sortable: true,
-            cell: row => {
-                return <span className='badge bg-light-primary'>
-                            <span>{row.symbol}</span>
-                        </span>
-            }
-        },
+        
         {
             name: getFormattedMessage('react-data-table.action.column.label'),
             right: true,
@@ -88,7 +68,7 @@ console.log('allConfigData ', config)
     return (
         <MasterLayout >
             <TopProgressBar />
-            <TabTitle title={placeholderText('currencies.title') + 'Shippiing'}/>
+            <TabTitle title={placeholderText('shipping.title')}/>
             <ReactDataTable columns={columns} items={itemsValue} onChange={onChange} isLoading={isLoading}
                             totalRows={totalRecord}  AddButton={is_addedAble ==true ? <CreateShipping />  : null} />
             <EditShipping handleClose={handleClose} show={toggle} currency={currency}/> {is_addedAble}

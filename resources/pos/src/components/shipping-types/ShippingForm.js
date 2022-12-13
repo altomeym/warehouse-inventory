@@ -100,33 +100,13 @@ const ShippingForm = (props) => {
                                 className='form-label'>{getFormattedMessage("globally.input.name.label")}: </label>
                             <span className='required'/>
                             <input type='text' name='name' value={formValue.name}
-                                   placeholder={placeholderText("currency.modal.input.name.placeholder.label")}
+                                   placeholder={placeholderText("shipping.modal.input.name.placeholder.label")}
                                    className='form-control' ref={innerRef} autoComplete='off'
                                    onChange={(e) => onChangeInput(e)}/>
                             <span
                                 className='text-danger d-block fw-400 fs-small mt-2'>{errors['name'] ? errors['name'] : null}</span>
                         </div>
-                        <div className='col-md-12 mb-5'>
-                                <label
-                                    className='form-label'>{getFormattedMessage("currency.modal.input.code.label")} : </label>
-                                <span className='required'/>
-                                <input type='text' name='code'
-                                              placeholder={placeholderText("currency.modal.input.code.placeholder.label")}
-                                              className='form-control' value={formValue.code}
-                                              onChange={(e) => onChangeInput(e)}
-                                />
-                                <span className='text-danger d-block fw-400 fs-small mt-2'>{errors['code'] ? errors['code'] : null}</span>
-                        </div>
-                        <div className='col-md-12'>
-                            <label
-                                className='form-label'>{getFormattedMessage("currency.modal.input.symbol.label")} : </label>
-                            <span className='required'/>
-                            <input type='text' name='symbol'
-                                          placeholder={placeholderText("currency.modal.input.symbol.placeholder.label")}
-                                          className='form-control' value={formValue.symbol}
-                                          onChange={(e) => onChangeInput(e)}/>
-                            <span className='text-danger d-block fw-400 fs-small mt-2'>{errors['symbol'] ? errors['symbol'] : null}</span>
-                        </div>
+                       
                     </div>
                 </Modal.Body>
             </Form>

@@ -734,5 +734,11 @@
     "settings.clear-cache.success.message": "cache clear successfully",
     "product.product-in-stock.label" : "In stock",
     "product-items.label" : "Items",
-    "Payload.key.lable": "Payload"
+    "Payload.key.lable": "Payload", 
+    "shipping.title": "Shipping",
+    "shipping.create.title": "Create Shipping",
+    "shipping.edit.title": "Edit Shipping",
+    "shipping.modal.input.name.placeholder.label": "Enter Shipping Name",
+    "shipping.success.edit.message": "Shipping updated successfully",
+    "shipping.success.delete.message": "Shipping deleted successfully"
 }
