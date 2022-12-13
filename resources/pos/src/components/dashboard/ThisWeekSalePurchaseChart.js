@@ -92,12 +92,12 @@ const ThisWeekSalePurchaseChart = (props) => {
             {
                 label: placeholderText("sales.title"),
                 data: weekSalePurchase ? weekSalePurchase.sales : '',
-                backgroundColor: '#6571FF',
+                backgroundColor: '#ff4f00',
             },
             {
                 label: placeholderText("purchases.title"),
                 data: weekSalePurchase ? weekSalePurchase.purchases : '',
-                backgroundColor: '#38c074',
+                backgroundColor: '#2b2358',
             },
         ],
     };
@@ -105,8 +105,8 @@ const ThisWeekSalePurchaseChart = (props) => {
     return (
         <Row className='g-4'>
             <div className='col-xxl-8 col-12'>
-                <Card>
-                    <Card.Header className='pb-0 px-10'>
+                <Card className='twsp_card'>
+                    <Card.Header className='pb-0 px-5'>
                         <h5 className="mb-0">{getFormattedMessage('dashboard.ThisWeekSales&Purchases.title')}</h5>
                         <div className='mb-2 chart-dropdown'>
                             <NavDropdown title={<FontAwesomeIcon icon={faBars}/>}>
@@ -130,7 +130,7 @@ const ThisWeekSalePurchaseChart = (props) => {
                 </Card>
             </div>
             <div className='col-xxl-4 col-12'>
-                <Card>
+                <Card className='tsp_card'>
                     <Card.Header className='pb-0 px-0 justify-content-center'>
                         <h4 className='mb-3 me-1'>{getFormattedMessage('dashboard.TopSellingProducts.title')}</h4>
                         <h4>({moment(year).format('YYYY')})</h4>
