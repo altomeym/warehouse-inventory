@@ -20,11 +20,10 @@ class CreateShippingTypeTable extends Migration
             $table->timestamps();
         });
         $permissions = array(
-            array('name' =>'shipping_type-index', 's_name' =>'R', 'guard_name' =>'web', 'display_name' => 'Shipping Type','created_at' => '2022-11-22 05:14:09','updated_at' =>'2022-11-22 05:14:09'),
-            array('name' =>'shipping_type-create', 's_name' =>'C', 'guard_name' =>'web', 'display_name' =>'Shipping Type','created_at' => '2022-11-22 05:14:09','updated_at' =>'2022-11-22 05:14:09'),
-            array('name' =>'shipping_type-edit', 's_name' =>'W', 'guard_name' =>'web', 'display_name' => 'Shipping Type','created_at' => '2022-11-22 05:14:09','updated_at' =>'2022-11-22 05:14:09'),
-            array('name' =>'shipping_type-delete', 's_name' =>'D', 'guard_name' =>'web', 'display_name' =>'Shipping Type','created_at' => '2022-11-22 05:14:09','updated_at' =>'2022-11-22 05:14:09'),
-
+            array('name' =>'shipping_type', 's_name' =>'R', 'guard_name' =>'web', 'display_name' => 'Shipping Type View','created_at' => '2022-11-22 05:14:09','updated_at' =>'2022-11-22 05:14:09'),
+            array('name' =>'shipping_type-create', 's_name' =>'C', 'guard_name' =>'web', 'display_name' =>'Shipping Type Create','created_at' => '2022-11-22 05:14:09','updated_at' =>'2022-11-22 05:14:09'),
+            array('name' =>'shipping_type-edit', 's_name' =>'W', 'guard_name' =>'web', 'display_name' => 'Shipping Type Edit','created_at' => '2022-11-22 05:14:09','updated_at' =>'2022-11-22 05:14:09'),
+            array('name' =>'shipping_type-delete', 's_name' =>'D', 'guard_name' =>'web', 'display_name' =>'Shipping Type Delete','created_at' => '2022-11-22 05:14:09','updated_at' =>'2022-11-22 05:14:09'),
         );
         Permission::insert($permissions);
     }
