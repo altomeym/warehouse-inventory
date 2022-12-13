@@ -549,7 +549,8 @@ export const Permissions = {
     MANAGE_EMAIL_TEMPLATES : "manage_email_templates",
     MANAGE_QUOTATION : "manage_quotations",
     MANAGE_SMS_API: "manage_sms_apis",
-    MANAGE_SMS_TEMPLATES: "manage_sms_templates"
+    MANAGE_SMS_TEMPLATES: "manage_sms_templates",
+    MANAGE_SHIPPING_TYPES: "manage_shipping_types"
 };
 
 //POS Screen Constants

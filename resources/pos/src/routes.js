@@ -83,7 +83,9 @@ import CustomersReport from "./components/report/customer-report/CustomersReport
 import SmsApi from "./components/sms-api/SmsApi";
 import CreateSaleSaleReturn from "./components/sales/CreateSaleSaleReturn";
 import EditSaleReturnFromSale from "./components/saleReturn/EditSaleReturnFromSale";
-
+import ShippingTypes from "./components/shipping-types/Shipping";
+import CreateShipping from "./components/shipping-types/CreateShipping";
+import EditShipping from "./components/shipping-types/EditShipping";
 
 export const route = [
     {
@@ -505,5 +507,20 @@ export const route = [
         path: "sms-api",
         ele: <SmsApi/>,
         permission: Permissions.MANAGE_SMS_API
+    },  // Start new development 
+    {
+        path: "shipping-types",
+        ele: <ShippingTypes />,
+        permission: Permissions.MANAGE_EXPENSES
+    }, 
+    {
+        path: "shipping-types/create",
+        ele: <CreateShipping />,
+        permission: Permissions.MANAGE_EXPENSES
+    }, 
+    {
+        path: "shipping-types/edit/:id",
+        ele: <EditShipping />,
+        permission: Permissions.MANAGE_EXPENSES
     }
 ]
