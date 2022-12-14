@@ -87,9 +87,30 @@ class PurchaseRepository extends BaseRepository
 
             $purchase = $this->storePurchaseItems($purchase, $input);
 
+            echo "<pre>";
+            print_r($purchase); exit;
             // manage stock 
             foreach ($input['purchase_items'] as $purchaseItem) {
                 manageStock($input['warehouse_id'], $purchaseItem['product_id'], $purchaseItem['quantity']);
+            }
+            if(!empty($request->shipping_type_id))
+            {
+             for ($i = 0; $i < count($request->shipping_type_id); $i++) {
+                        if ($request->shipping_type_id[$i] != '') {
+                            $requestData = [
+                                'shipping_type_id' => $request->shipping_type_id,
+                                'sale_purchases_id' => $purchase->id,
+                                'slug' => $request->slug,
+                                'tax_rate' => $request->tax_rate,
+                                'tax_amount' => $request->tax_amount,
+                                'discount' => $request->discount,
+                                'total' => $request->total,
+                               
+                            ];
+                           $shipping_has_values = \App\Models\Shipping_has_values::create($requestData);
+
+                        }
+                    }
             }
 
             DB::commit();
