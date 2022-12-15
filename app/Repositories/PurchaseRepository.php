@@ -31,6 +31,7 @@ class PurchaseRepository extends BaseRepository
         'paid_amount',
         'payment_type',
         'notes',
+        'shipping_data',
         'created_at',
     ];
 
@@ -46,6 +47,7 @@ class PurchaseRepository extends BaseRepository
         'grand_total',
         'received_amount',
         'notes',
+        'shipping_data',
     ];
 
     /**
