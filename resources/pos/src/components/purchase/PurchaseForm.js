@@ -280,9 +280,6 @@ const PurchaseForm = (props) => {
     const onBlurInput = (i, el) => {
         if (el.target.value === '') {
             if (el.target.name === 'shipping') {
-                let newFormValues = [...customDynamicFields];
-                // newFormValues[i]['shipping_value'] = '0.00';
-                // setCustomDynamicFields(newFormValues);
                 // setPurchaseValue({...purchaseValue, shipping: '0.00'})
             }
             if (el.target.name === 'discount') {
