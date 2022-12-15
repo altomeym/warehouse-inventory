@@ -69,6 +69,9 @@ class PurchaseRepository extends BaseRepository
 
     public function storePurchase($input)
     {
+        /*echo "<pre>";
+        print_r($input);
+        exit;*/
         try {
             DB::beginTransaction();
             foreach ($input['purchase_items'] as $purchase_items) {
@@ -79,40 +82,25 @@ class PurchaseRepository extends BaseRepository
 
             $purchaseInputArray = Arr::only($input, [
                 'supplier_id', 'warehouse_id', 'date', 'tax_rate', 'tax_amount', 'discount', 'shipping', 'grand_total',
-                'received_amount', 'paid_amount', 'payment_type', 'notes', 'status',
+                'received_amount', 'paid_amount', 'payment_type', 'notes', 'status','shipping_data',
             ]);
 
-            /** @var Purchase $purchase */
+            $purchaseInputArray['shipping_data'] = json_encode($input['shipping_data']);
+           
+             /** @var Purchase $purchase */
+            /* echo "<pre>";
+             print_r($purchaseInputArray); exit;*/
             $purchase = Purchase::create($purchaseInputArray);
 
             $purchase = $this->storePurchaseItems($purchase, $input);
 
             // manage stock 
-            foreach ($input['purchase_items'] as $purchaseIt            echo "<pre>";
-            print_r($purchase); exit;
-            // manage stock 
             foreach ($input['purchase_items'] as $purchaseItem) {
                 manageStock($input['warehouse_id'], $purchaseItem['product_id'], $purchaseItem['quantity']);
-            }
-            if(!empty($request->shipping_type_id))
-            {
-             for ($i = 0; $i < count($request->shipping_type_id); $i++) {
-                        if ($request->shipping_type_id[$i] != '') {
-                            $requestData = [
-                                'shipping_type_id' => $request->shipping_type_id,
-                                'sale_purchases_id' => $purchase->id,
-                                'slug' => $request->slug,
-                                'tax_rate' => $request->tax_rate,
-                                'tax_amount' => $request->tax_amount,
-                                'discount' => $request->discount,
-                                'total' => $request->total,
-                               
-                            ];
-                           $shipping_has_values = \App\Models\Shipping_has_values::create($requestData);
+            }          
 
-                        }
-                    }
- $e) {
+        return $purchase;
+        } catch (Exception $e) {
             DB::rollBack();
             throw new UnprocessableEntityHttpException($e->getMessage());
         }

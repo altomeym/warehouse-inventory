@@ -78,6 +78,7 @@ class Purchase extends BaseModel implements HasMedia, JsonResourceful
         'notes',
         'status',
         'reference_code',
+        'shipping_data',
     ];
 
     public static $rules = [
@@ -95,6 +96,7 @@ class Purchase extends BaseModel implements HasMedia, JsonResourceful
         'notes'           => 'nullable',
         'status'          => 'integer|required',
         'reference_code'  => 'nullable',
+        'shipping_data'  => 'nullable',
     ];
 
     public $casts = [
@@ -164,6 +166,7 @@ class Purchase extends BaseModel implements HasMedia, JsonResourceful
             'created_at'      => $this->created_at,
             'status'          => $this->status,
             'purchase_items'  => $this->purchaseItems,
+            'shipping_data'   => $this->shipping_data,
         ];
 
         return $fields;
