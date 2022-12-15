@@ -6,7 +6,10 @@ import {InputGroup, Table} from 'react-bootstrap-v5';
 import {searchPurchaseProduct} from '../../store/action/purchaseProductAction';
 import {editPurchaseReturn} from '../../store/action/purchaseReturnAction';
 import status from '../../shared/option-lists/status.json'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import { faTrash} from '@fortawesome/free-solid-svg-icons';
 import {fetchAllProducts, fetchProductsByWarehouse} from '../../store/action/productAction';
+import {fetchShippingTypes} from '../../store/action/shippingAction'
 import PurchaseReturnTable from '../../shared/components/purchase/PurchaseTable';
 import {preparePurchaseReturnArray} from './preparePurchaseReturnArray';
 import {decimalValidate, getFormattedMessage, placeholderText, onFocusInput, getFormattedOptions} from '../../shared/sharedMethod';
@@ -21,7 +24,7 @@ import ReactSelect from '../../shared/select/reactSelect';
 
 const PurchaseReturnForm = (props) => {
     const { addPurchaseReturnData, id, editPurchaseReturn, customProducts, singlePurchase, warehouses, suppliers,
-        fetchProductsByWarehouse, products, frontSetting, allConfigData
+        fetchProductsByWarehouse, products, frontSetting, allConfigData, fetchShippingTypes, shipingTypes
     } = props;
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -57,6 +60,12 @@ const PurchaseReturnForm = (props) => {
         status_id: ''
     });
 
+    const [customDynamicFields, setCustomDynamicFields] = useState([{
+            shipping_type_id:"", 
+            shipping_value:"",
+            shipping_type_name:"",
+        }]);
+
     useEffect(() => {
         setUpdateProducts(updateProducts);
     }, [updateProducts, quantity, newCost, newDiscount, newTax, subTotal, newPurchaseUnit]);
@@ -74,6 +83,10 @@ const PurchaseReturnForm = (props) => {
     useEffect(()=>{
         purchaseValue.warehouse_id.value ? fetchProductsByWarehouse(purchaseValue?.warehouse_id?.value) : null
     },[purchaseValue.warehouse_id])
+
+    useEffect(()=>{
+        fetchShippingTypes()
+      },[])
 
     const handleValidation = () => {
         let errorss = {};
@@ -117,6 +130,45 @@ const PurchaseReturnForm = (props) => {
     const onStatusChange = (obj) => {
         setPurchaseValue(inputs => ({...inputs, status_id: obj}))
     };
+
+    let  onShippingTypeChange = (i, e) => {
+        let newFormValues = [...customDynamicFields];  
+        newFormValues[i]['shipping_type_id'] = e;
+        newFormValues[i]['shipping_type_name'] = e.label;
+        setCustomDynamicFields(newFormValues);
+    };
+
+    let  addDynamicField = ()=>{
+        setCustomDynamicFields([...customDynamicFields, { shipping_type_id: "", shipping_value: "" }])
+
+    }
+
+    let handleChange = (i, e) => {
+        let newFormValues = [...customDynamicFields];
+        newFormValues[i][e.target.name] = e.target.value;
+        setCustomDynamicFields(newFormValues);
+        calShippingTotal();
+      }
+
+       let removeFormFields = (i) => {
+        let newFormValues = [...customDynamicFields];
+        newFormValues.splice(i, 1);
+        setCustomDynamicFields(newFormValues)
+       calShippingTotal(customDynamicFields[i]['shipping_value'])
+       
+    }
+
+    let calShippingTotal = (singleVal=0)=>{
+        let totalShipTax = 0;
+        if(singleVal)
+          totalShipTax =  parseFloat(purchaseValue.shipping) -   parseFloat(singleVal);
+        else
+        customDynamicFields.map((element)=>(
+          totalShipTax = parseFloat(totalShipTax) + parseFloat(element.shipping_value)
+        ));
+
+        setPurchaseValue(inputs => ({...inputs, ['shipping']: totalShipTax && totalShipTax}))
+    }
 
     const updateCost = (item) => {
         setNewCost(item);
@@ -177,6 +229,14 @@ const PurchaseReturnForm = (props) => {
             label: option.name
         }
     })
+    const shippingTypeValues = [];
+    const shippingTypeDefaultValue = shipingTypes.map((option) => {
+        shippingTypeValues.push({
+            id: option.id,
+            name: option.attributes.name
+        })
+    })
+
 
     const prepareData = (prepareData) => {
         const formValue = {
@@ -196,6 +256,8 @@ const PurchaseReturnForm = (props) => {
             reference_code: '',
             status: prepareData.status_id.value ? prepareData.status_id.value : prepareData.status_id,
             payment_status: 2,
+            shipping_data:customDynamicFields ? customDynamicFields : [],
+
         }
         return formValue
     };
@@ -216,7 +278,7 @@ const PurchaseReturnForm = (props) => {
     const onBlurInput = (el) => {
         if (el.target.value === '') {
             if(el.target.name === "shipping"){
-                setPurchaseValue({...purchaseValue, shipping: "0.00"})
+                // setPurchaseValue({...purchaseValue, shipping: "0.00"})
             }
             if(el.target.name === "discount"){
                 setPurchaseValue({...purchaseValue, discount: "0.00"})
@@ -303,7 +365,7 @@ const PurchaseReturnForm = (props) => {
                             </Table>
                         </div>
                         <div className='col-12'>
-                            <ProductMainCalculation inputValues={purchaseValue} allConfigData={allConfigData} updateProducts={updateProducts} frontSetting={frontSetting}/>
+                            <ProductMainCalculation inputValues={purchaseValue} shippingInputValues={customDynamicFields} allConfigData={allConfigData} updateProducts={updateProducts} frontSetting={frontSetting}/>
                         </div>
                         <div className='col-md-4 mb-5'>
                             <label className='form-label'>
@@ -338,7 +400,7 @@ const PurchaseReturnForm = (props) => {
                             </InputGroup>
                             <span className='text-danger d-block fw-400 fs-small mt-2'>{errors['discount'] ? errors['discount'] : null}</span>
                         </div>
-                        <div className='col-md-4 mb-5'>
+                        {/* <div className='col-md-4 mb-5'>
                             <label className='form-label'>
                                 {getFormattedMessage('purchase.input.shipping.label')}:
                             </label>
@@ -353,7 +415,7 @@ const PurchaseReturnForm = (props) => {
                                 <InputGroup.Text>{frontSetting.value && frontSetting.value.currency_symbol}</InputGroup.Text>
                             </InputGroup>
                             <span className='text-danger d-block fw-400 fs-small mt-2'>{errors['shipping'] ? errors['shipping'] : null}</span>
-                        </div>
+                        </div> */}
                         <div className='col-md-4'>
                             <ReactSelect multiLanguageOption={statusFilterOptions} onChange={onStatusChange} name='status'
                          title={getFormattedMessage('purchase.select.status.label')}
@@ -361,6 +423,50 @@ const PurchaseReturnForm = (props) => {
                          defaultValue={statusDefaultValue[0]}
                          placeholder={getFormattedMessage('purchase.select.status.label')}/>
                         </div>
+
+                         {/* .......... */}
+                         {customDynamicFields.map((element, index) => (
+                        <React.Fragment key={index}>
+                        <div className='col-md-5'>
+                             <ReactSelect multiLanguageOption={shippingTypeValues} onChange={e => onShippingTypeChange(index, e)} name='shipping_type_id'
+                          title={'Shipping Type'}
+                          value={element.shipping_type_id || ""}  errors={errors['status_id']}
+                        //  defaultValue={shippingTypeValues}
+                         placeholder={'shipping type '}/>
+                        </div>
+                        {/* ... */}
+                        <div className='col-md-5 mb-5'>
+                            <label
+                                className='form-label'>
+                               Shipping value
+                            </label>
+                            <InputGroup>
+                                <input aria-label='Dollar amount (with dot and two decimal places)'
+                                              className='form-control'  value={element.shipping_value || ""}
+                                              type='text' name='shipping_value'
+                                              onBlur={(event) => onBlurInput(index, event)}
+                                              onFocus={(event) => onFocusInput(event)}
+                                              onKeyPress={(event) => decimalValidate(event)}
+                                              onChange={e => handleChange(index, e)}
+                                />
+                                <InputGroup.Text>{frontSetting.value && frontSetting.value.currency_symbol}</InputGroup.Text>
+                            </InputGroup>
+                            <span className='text-danger d-block fw-400 fs-small mt-2'>{errors['shipping'] ? errors['shipping'] : null}</span>
+                        </div>
+                        <div>
+                            {
+                                index ? 
+                    <button type="button"  className="btn btn-danger remove" onClick={() => removeFormFields(index)}><FontAwesomeIcon icon={faTrash}/></button> 
+                                : null
+                            }
+                        </div>
+                        </React.Fragment>
+                        )) }
+                          <div  className='col-md-2 '>
+                             <button className='btn btn-primary me-2 float-lg-right' onClick={addDynamicField} type='submit' > + </button> 
+                           </div>
+                        {/* ................... */}
+
                         <div className='col-md-12 mb-5'>
                             <label className='form-label'>
                                 {getFormattedMessage('globally.input.notes.label')}:
@@ -381,8 +487,8 @@ const PurchaseReturnForm = (props) => {
 };
 
 const mapStateToProps = (state) => {
-    const {purchaseProducts, products, frontSetting, allConfigData} = state;
-    return {customProducts: preparePurchaseReturnArray(products), purchaseProducts, products, frontSetting, allConfigData, fetchAllProducts}
+    const {purchaseProducts, products, frontSetting, allConfigData, shipingTypes} = state;
+    return {customProducts: preparePurchaseReturnArray(products), purchaseProducts, products, frontSetting, allConfigData, shipingTypes, fetchAllProducts}
 };
 
-export default connect(mapStateToProps, {editPurchaseReturn, fetchProductsByWarehouse, searchPurchaseProduct, fetchAllProducts})(PurchaseReturnForm);
+export default connect(mapStateToProps, {editPurchaseReturn, fetchProductsByWarehouse, searchPurchaseProduct, fetchAllProducts, fetchShippingTypes})(PurchaseReturnForm);
