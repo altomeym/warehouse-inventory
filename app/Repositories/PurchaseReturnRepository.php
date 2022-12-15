@@ -121,12 +121,12 @@ class PurchaseReturnRepository extends BaseRepository
             {
              $last_id = PurchaseReturn::orderBy('id','DESC')->first();
               for ($i = 0; $i < count($input['shipping_data']); $i++) {
-                        if ($input['shipping_data'][$i] != '') {
+                        if ($input['shipping_data'][$i]['shipping_value'] != '') {
                             $requestData = [
-                                'shipping_type_id' => $input['shipping_data'][$i]['shipping_value'],
-                                'sale_purchases_id' =>  $last_id['id'],
+                                'shipping_type_id' => (!empty($input['shipping_data'][$i]['shipping_value']) ? $input['shipping_data'][$i]['shipping_value']: ''),
+                                'sale_purchases_id' =>  (!empty($last_id['id']) ? $last_id['id']: ''),
                                 'slug' => 'purchases_return',
-                                'shipping_type_name' => $input['shipping_data'][$i]['shipping_type_name'],           
+                                'shipping_type_name' => (!empty($input['shipping_data'][$i]['shipping_type_name']) ? $input['shipping_data'][$i]['shipping_type_name']: ''),           
                             ];
                          $shipping_has_values = \App\Models\Shipping_has_values::create($requestData);
 
