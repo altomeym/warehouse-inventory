@@ -85,8 +85,6 @@ class PurchaseAPIController extends AppBaseController
     public function store(CreatePurchaseRequest $request)
     {
         $input = $request->all();
-        /*echo "<pre>";
-        print_r($input); exit;*/
         $purchase = $this->purchaseRepository->storePurchase($input);
 
         return new PurchaseResource($purchase);

@@ -18,10 +18,7 @@ class CreateShippingHasValuesTable extends Migration
             $table->integer('shipping_type_id')->nullable();
             $table->integer('sale_purchases_id')->nullable();
             $table->string('slug')->nullable();
-            $table->string('tax_rate')->nullable();
-            $table->string('tax_amount')->nullable();
-            $table->string('discount')->nullable();
-            $table->string('total')->nullable();
+            $table->string('shipping_type_name')->nullable();
             $table->timestamps();
         });
     }

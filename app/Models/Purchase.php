@@ -96,7 +96,7 @@ class Purchase extends BaseModel implements HasMedia, JsonResourceful
         'notes'           => 'nullable',
         'status'          => 'integer|required',
         'reference_code'  => 'nullable',
-        'shipping_data'  => 'nullable',
+        'reference_code'  => 'nullable',
     ];
 
     public $casts = [

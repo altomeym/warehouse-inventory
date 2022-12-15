@@ -98,6 +98,7 @@ class SaleRepository extends BaseRepository
             ]);
 
             /** @var Sale $sale */
+            $saleInputArray['shipping_data'] = json_encode($input['shipping_data']);
             $sale = Sale::create($saleInputArray);
             if ($input['is_sale_created'] && $QuotationId) {
                 $quotation =Quotation::find($QuotationId);
@@ -195,7 +196,24 @@ class SaleRepository extends BaseRepository
             }
 
             DB::commit();
+             /*new code*/
+            if(!empty($input['shipping_data']))
+            {
+             $last_id = Sale::orderBy('id','DESC')->first();
+              for ($i = 0; $i < count($input['shipping_data']); $i++) {
+                        if ($input['shipping_data'][$i] != '') {
+                            $requestData = [
+                                'shipping_type_id' => $input['shipping_data'][$i]['shipping_value'],
+                                'sale_purchases_id' =>  $last_id['id'],
+                                'slug' => 'sale',
+                                'shipping_type_name' => $input['shipping_data'][$i]['shipping_type_name'],           
+                            ];
+                         $shipping_has_values = \App\Models\Shipping_has_values::create($requestData);
 
+                        }
+                    }
+            }
+            /**/
             return $sale;
         } catch (Exception $e) {
             DB::rollBack();

@@ -71,9 +71,6 @@ class PurchaseRepository extends BaseRepository
 
     public function storePurchase($input)
     {
-        /*echo "<pre>";
-        print_r($input);
-        exit;*/
         try {
             DB::beginTransaction();
             foreach ($input['purchase_items'] as $purchase_items) {
@@ -87,20 +84,37 @@ class PurchaseRepository extends BaseRepository
                 'received_amount', 'paid_amount', 'payment_type', 'notes', 'status','shipping_data',
             ]);
 
-            $purchaseInputArray['shipping_data'] = json_encode($input['shipping_data']);
            
              /** @var Purchase $purchase */
-            /* echo "<pre>";
-             print_r($purchaseInputArray); exit;*/
+            $purchaseInputArray['shipping_data'] = json_encode($input['shipping_data']);
             $purchase = Purchase::create($purchaseInputArray);
 
             $purchase = $this->storePurchaseItems($purchase, $input);
+
 
             // manage stock 
             foreach ($input['purchase_items'] as $purchaseItem) {
                 manageStock($input['warehouse_id'], $purchaseItem['product_id'], $purchaseItem['quantity']);
             }          
+            DB::commit();
+             /*new code*/
+            if(!empty($input['shipping_data']))
+            {
+             $last_id = Purchase::orderBy('id','DESC')->first();
+              for ($i = 0; $i < count($input['shipping_data']); $i++) {
+                        if ($input['shipping_data'][$i] != '') {
+                            $requestData = [
+                                'shipping_type_id' => $input['shipping_data'][$i]['shipping_value'],
+                                'sale_purchases_id' =>  $last_id['id'],
+                                'slug' => 'purchases',
+                                'shipping_type_name' => $input['shipping_data'][$i]['shipping_type_name'],           
+                            ];
+                         $shipping_has_values = \App\Models\Shipping_has_values::create($requestData);
 
+                        }
+                    }
+            }
+            /**/
         return $purchase;
         } catch (Exception $e) {
             DB::rollBack();

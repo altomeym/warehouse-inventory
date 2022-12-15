@@ -37,20 +37,17 @@ class Shipping_has_values extends BaseModel
         'shipping_type_id',
         'code',
         'slug',
-        'tax_rate',
-        'tax_amount',
-        'discount',
-        'total',
+        'shipping_type_name',
+        'sale_purchases_id',
+        
     ];
 
     public static $rules = [
         'shipping_type_id'   => 'required',
         'code'   => 'required',
         'slug' => 'required',
-        'tax_rate' => 'required',
-        'tax_amount' => 'required',
-        'discount' => 'required',
-        'total' => 'required',
+        'shipping_type_name' => 'required',
+        
     ];
 
     /**

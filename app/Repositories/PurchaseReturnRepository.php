@@ -27,6 +27,8 @@ class PurchaseReturnRepository extends BaseRepository
         'tax_rate',
         'tax_amount',
         'discount',
+        'discount',
+        'shipping_data',
         'shipping',
         'grand_total',
         'received_amount',
@@ -44,6 +46,7 @@ class PurchaseReturnRepository extends BaseRepository
         'tax_rate',
         'tax_amount',
         'discount',
+        'shipping_data',
         'shipping',
         'grand_total',
         'received_amount',
@@ -85,11 +88,11 @@ class PurchaseReturnRepository extends BaseRepository
             }
 
             $purchaseReturnInputArray = Arr::only($input, [
-                'supplier_id', 'warehouse_id', 'date', 'tax_rate', 'tax_amount', 'discount', 'shipping', 'grand_total',
+                'supplier_id', 'warehouse_id', 'date', 'tax_rate', 'tax_amount', 'discount', 'shipping_data','shipping', 'grand_total',
                 'received_amount', 'paid_amount', 'payment_type', 'notes', 'status', 'payment_status',
             ]);
 
-
+            $purchaseReturnInputArray['shipping_data'] = json_encode($input['shipping_data']);
             $purchaseReturn = PurchaseReturn::create($purchaseReturnInputArray);
 
             $purchaseReturn = $this->storePurchaseReturnItems($purchaseReturn, $input);
@@ -113,6 +116,24 @@ class PurchaseReturnRepository extends BaseRepository
                 }
             }
             DB::commit();
+             /*new code*/
+            if(!empty($input['shipping_data']))
+            {
+             $last_id = PurchaseReturn::orderBy('id','DESC')->first();
+              for ($i = 0; $i < count($input['shipping_data']); $i++) {
+                        if ($input['shipping_data'][$i] != '') {
+                            $requestData = [
+                                'shipping_type_id' => $input['shipping_data'][$i]['shipping_value'],
+                                'sale_purchases_id' =>  $last_id['id'],
+                                'slug' => 'purchases_return',
+                                'shipping_type_name' => $input['shipping_data'][$i]['shipping_type_name'],           
+                            ];
+                         $shipping_has_values = \App\Models\Shipping_has_values::create($requestData);
+
+                        }
+                    }
+            }
+            /**/
 
             return $purchaseReturn;
         } catch (Exception $e) {
@@ -253,6 +274,7 @@ class PurchaseReturnRepository extends BaseRepository
                         'tax_amount', 'discount_type', 'discount_value', 'discount_amount', 'purchase_unit', 'quantity',
                         'sub_total',
                     ]);
+                    $purchaseReturnItemArr['shipping_data'] = json_encode($input['shipping_data']);
                     $purchaseReturn->purchaseReturnItems()->create($purchaseReturnItemArr);
                     $product = ManageStock::whereWarehouseId($input['warehouse_id'])->whereProductId($purchaseReturnItem['product_id'])->first();
                     $purchaseExist = PurchaseItem::where('product_id',

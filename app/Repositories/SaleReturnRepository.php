@@ -100,6 +100,7 @@ class SaleReturnRepository extends BaseRepository
             ]);
 
             /** @var Sale $sale */
+            $saleReturnInputArray['shipping_data'] = json_encode($input['shipping_data']);
             $saleReturn = SaleReturn::create($saleReturnInputArray);
             $saleUpdate = $sale->update(['is_return' => 1]);
             $saleReturn = $this->storeSaleReturnItems($saleReturn, $input);
@@ -191,6 +192,24 @@ class SaleReturnRepository extends BaseRepository
             }
 
             DB::commit();
+            /*new code*/
+            if(!empty($input['shipping_data']))
+            {
+             $last_id = SaleReturn::orderBy('id','DESC')->first();
+              for ($i = 0; $i < count($input['shipping_data']); $i++) {
+                        if ($input['shipping_data'][$i] != '') {
+                            $requestData = [
+                                'shipping_type_id' => $input['shipping_data'][$i]['shipping_value'],
+                                'sale_purchases_id' =>  $last_id['id'],
+                                'slug' => 'sale_return',
+                                'shipping_type_name' => $input['shipping_data'][$i]['shipping_type_name'],           
+                            ];
+                         $shipping_has_values = \App\Models\Shipping_has_values::create($requestData);
+
+                        }
+                    }
+            }
+            /**/
 
             return $saleReturn;
         } catch (Exception $e) {
