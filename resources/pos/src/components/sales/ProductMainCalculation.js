@@ -6,7 +6,7 @@ import {
 import {currencySymbolHendling, getFormattedMessage} from '../../shared/sharedMethod';
 
 const ProductMainCalculation = (props) => {
-    const {inputValues, updateProducts, frontSetting, allConfigData} = props;
+    const {inputValues, updateProducts, frontSetting, allConfigData, shippingInputValues} = props;
     let totalAmountAfterDiscount = calculateSubTotal(updateProducts) - inputValues.discount
     let taxCal = (totalAmountAfterDiscount * inputValues.tax_rate / 100).toFixed(2)
 
@@ -28,11 +28,13 @@ const ProductMainCalculation = (props) => {
                                 <td className='py-3'>{getFormattedMessage('purchase.order-item.table.discount.column.label')}</td>
                                 <td className='py-3'>{currencySymbolHendling(allConfigData, frontSetting.value && frontSetting.value.currency_symbol, inputValues.discount ? inputValues.discount : 0)}</td>
                             </tr>
-                            <tr>
-                                <td className='py-3'>{getFormattedMessage('purchase.input.shipping.label')}</td>
+                            {shippingInputValues && shippingInputValues.length > 0 ? shippingInputValues.map((element, index) => (
+                            <tr key={index} >
+                                <td className='py-3'>{element?.shipping_type_name ? element?.shipping_type_name : 'Shipping'} </td>
                                 <td className='py-3'>
-                                    {currencySymbolHendling(allConfigData, frontSetting.value && frontSetting.value.currency_symbol, inputValues.shipping ? inputValues.shipping : 0)}</td>
+                                    {currencySymbolHendling(allConfigData, frontSetting.value && frontSetting.value.currency_symbol, element?.shipping_value ? element?.shipping_value : 0)}</td>
                             </tr>
+                            )) : null}
                             <tr>
                                 <td className='py-3 text-primary'>{getFormattedMessage('purchase.grant-total.label')}</td>
                                 <td className='py-3 text-primary'>

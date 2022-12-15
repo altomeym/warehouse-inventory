@@ -91,6 +91,7 @@ import customerReportWidgetReducer from './customerReportWidgetReducer';
 import customerPaymentReportReducer from './customerPaymentReportReducer';
 import HoldListReducer from './pos/HoldListReducer';
 import EditHoldList from './pos/EditHoldList';
+import ShippingTypeReducer from './ShippingTypeReducer';
 
 export default combineReducers({
     loginUser: loginReducers,
@@ -184,5 +185,6 @@ export default combineReducers({
     defaultCountry: defaultCountryReducer,
     smsApiData: smsApiReducer,
     holdListData: HoldListReducer,
-    editholdListData: EditHoldList
+    editholdListData: EditHoldList, 
+    shipingTypes: ShippingTypeReducer 
 });

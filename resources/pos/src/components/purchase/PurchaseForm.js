@@ -3,10 +3,13 @@ import {connect, useDispatch} from 'react-redux';
 import {useNavigate} from 'react-router-dom';
 import moment from 'moment';
 import {InputGroup, Table} from 'react-bootstrap-v5';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import { faTrash} from '@fortawesome/free-solid-svg-icons';
 import {searchPurchaseProduct} from '../../store/action/purchaseProductAction';
 import {editPurchase} from '../../store/action/purchaseAction';
 import status from '../../shared/option-lists/status.json'
 import {fetchAllProducts} from '../../store/action/productAction';
+import {fetchShippingTypes} from '../../store/action/shippingAction';
 import PurchaseTable from '../../shared/components/purchase/PurchaseTable';
 import {preparePurchaseProductArray} from '../../shared/prepareArray/preparePurchaseArray';
 import {decimalValidate, getFormattedMessage, placeholderText, onFocusInput, getFormattedOptions} from '../../shared/sharedMethod';
@@ -29,7 +32,7 @@ const PurchaseForm = (props) => {
         warehouses,
         suppliers,
         fetchAllProducts,
-        products, frontSetting ,allConfigData
+        products, frontSetting ,allConfigData, fetchShippingTypes, shipingTypes
     } = props;
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -65,6 +68,7 @@ const PurchaseForm = (props) => {
         status_id: ''
     });
 
+    const [customDynamicFields, setCustomDynamicFields] = useState([{shipping_type_id:"", shipping_value:"", shipping_type_name:"",}]);
     useEffect(() => {
         setUpdateProducts(updateProducts);
     }, [updateProducts, quantity, newCost, newDiscount, newTax, subTotal, newPurchaseUnit]);
@@ -82,6 +86,10 @@ const PurchaseForm = (props) => {
     useEffect(()=>{
         purchaseValue.warehouse_id.value ? fetchAllProducts() : null
     },[purchaseValue.warehouse_id])
+
+    useEffect(()=>{
+      fetchShippingTypes()
+    },[])
 
     const handleValidation = () => {
         let errorss = {};
@@ -124,7 +132,47 @@ const PurchaseForm = (props) => {
 
     const onStatusChange = (obj) => {
         setPurchaseValue(inputs => ({...inputs, status_id: obj}))
+        
     };
+
+    let  onShippingTypeChange = (i, e) => {
+        let newFormValues = [...customDynamicFields];  
+        newFormValues[i]['shipping_type_id'] = e;
+        newFormValues[i]['shipping_type_name'] = e.label;
+        setCustomDynamicFields(newFormValues);
+    };
+
+    let  addDynamicField = ()=>{
+        setCustomDynamicFields([...customDynamicFields, { shipping_type_id: "", shipping_value: "" }])
+
+    }
+
+    let handleChange = (i, e) => {
+        let newFormValues = [...customDynamicFields];
+        newFormValues[i][e.target.name] = e.target.value;
+        setCustomDynamicFields(newFormValues);
+        calShippingTotal();
+      }
+
+       let removeFormFields = (i) => {
+        let newFormValues = [...customDynamicFields];
+        newFormValues.splice(i, 1);
+        setCustomDynamicFields(newFormValues)
+       calShippingTotal(customDynamicFields[i]['shipping_value'])
+       
+    }
+
+    let calShippingTotal = (singleVal=0)=>{
+        let totalShipTax = 0;
+        if(singleVal)
+          totalShipTax =  parseFloat(purchaseValue.shipping) -   parseFloat(singleVal);
+        else
+        customDynamicFields.map((element)=>(
+          totalShipTax = parseFloat(totalShipTax) + parseFloat(element.shipping_value)
+        ));
+
+        setPurchaseValue(inputs => ({...inputs, ['shipping']: totalShipTax && totalShipTax}))
+    }
 
     const updateCost = (item) => {
         setNewCost(item);
@@ -185,8 +233,15 @@ const PurchaseForm = (props) => {
             label: option.name
         }
     })
+    const shippingTypeValues = [];
+    const shippingTypeDefaultValue = shipingTypes.map((option) => {
+        shippingTypeValues.push({
+            id: option.id,
+            name: option.attributes.name
+        })
+    })
 
-
+    
     const prepareData = (prepareData) => {
         const formValue = {
             date: moment(prepareData.date).toDate(),
@@ -204,6 +259,7 @@ const PurchaseForm = (props) => {
             notes: prepareData.notes,
             reference_code: '',
             status: prepareData.status_id.value ? prepareData.status_id.value : prepareData.status_id,
+            shipping_data:customDynamicFields ? customDynamicFields : [],
         }
         return formValue
     };
@@ -221,10 +277,13 @@ const PurchaseForm = (props) => {
         }
     };
 
-    const onBlurInput = (el) => {
+    const onBlurInput = (i, el) => {
         if (el.target.value === '') {
             if (el.target.name === 'shipping') {
-                setPurchaseValue({...purchaseValue, shipping: '0.00'})
+                let newFormValues = [...customDynamicFields];
+                // newFormValues[i]['shipping_value'] = '0.00';
+                // setCustomDynamicFields(newFormValues);
+                // setPurchaseValue({...purchaseValue, shipping: '0.00'})
             }
             if (el.target.name === 'discount') {
                 setPurchaseValue({...purchaseValue, discount: '0.00'})
@@ -234,7 +293,6 @@ const PurchaseForm = (props) => {
             }
         }
     }
-
     return (
         <div className='card'>
             <div className='card-body'>
@@ -312,7 +370,7 @@ const PurchaseForm = (props) => {
                             </Table>
                         </div>
                         <div className='col-12'>
-                            <ProductMainCalculation inputValues={purchaseValue} updateProducts={updateProducts}
+                            <ProductMainCalculation inputValues={purchaseValue} shippingInputValues={customDynamicFields} updateProducts={updateProducts}
                                                     frontSetting={frontSetting}  allConfigData={allConfigData}/>
                         </div>
                         <div className='col-md-4 mb-5'>
@@ -350,7 +408,14 @@ const PurchaseForm = (props) => {
                             </InputGroup>
                             <span className='text-danger d-block fw-400 fs-small mt-2'>{errors['discount'] ? errors['discount'] : null}</span>
                         </div>
-                        <div className='col-md-4 mb-5'>
+                        <div className='col-md-4'>
+                             <ReactSelect multiLanguageOption={statusFilterOptions} onChange={onStatusChange} name='status'
+                         title={getFormattedMessage('purchase.select.status.label')}
+                         value={purchaseValue.status_id} errors={errors['status_id']}
+                         defaultValue={statusDefaultValue[0]}
+                         placeholder={getFormattedMessage('purchase.select.status.label')}/>
+                        </div>
+                        {/* <div className='col-md-4 mb-5'>
                             <label
                                 className='form-label'>
                                 {getFormattedMessage('purchase.input.shipping.label')}:
@@ -367,14 +432,50 @@ const PurchaseForm = (props) => {
                                 <InputGroup.Text>{frontSetting.value && frontSetting.value.currency_symbol}</InputGroup.Text>
                             </InputGroup>
                             <span className='text-danger d-block fw-400 fs-small mt-2'>{errors['shipping'] ? errors['shipping'] : null}</span>
+                        </div> */}
+                        {/* .......... */}
+                        {customDynamicFields.map((element, index) => (
+                        <React.Fragment key={index}>
+                        <div className='col-md-5'>
+                             <ReactSelect multiLanguageOption={shippingTypeValues} onChange={e => onShippingTypeChange(index, e)} name='shipping_type_id'
+                          title={'Shipping Type'}
+                          value={element.shipping_type_id || ""}  errors={errors['status_id']}
+                        //  defaultValue={shippingTypeValues}
+                         placeholder={'shipping type '}/>
                         </div>
-                        <div className='col-md-4'>
-                             <ReactSelect multiLanguageOption={statusFilterOptions} onChange={onStatusChange} name='status'
-                         title={getFormattedMessage('purchase.select.status.label')}
-                         value={purchaseValue.status_id} errors={errors['status_id']}
-                         defaultValue={statusDefaultValue[0]}
-                         placeholder={getFormattedMessage('purchase.select.status.label')}/>
+                        {/* ... */}
+                        <div className='col-md-5 mb-5'>
+                            <label
+                                className='form-label'>
+                               Shipping value
+                            </label>
+                            <InputGroup>
+                                <input aria-label='Dollar amount (with dot and two decimal places)'
+                                              className='form-control'  value={element.shipping_value || ""}
+                                              type='text' name='shipping_value'
+                                              onBlur={(event) => onBlurInput(index, event)}
+                                              onFocus={(event) => onFocusInput(event)}
+                                              onKeyPress={(event) => decimalValidate(event)}
+                                              onChange={e => handleChange(index, e)}
+                                />
+                                <InputGroup.Text>{frontSetting.value && frontSetting.value.currency_symbol}</InputGroup.Text>
+                            </InputGroup>
+                            <span className='text-danger d-block fw-400 fs-small mt-2'>{errors['shipping'] ? errors['shipping'] : null}</span>
                         </div>
+                        <div>
+                            {
+                                index ? 
+                    <button type="button"  className="btn btn-danger remove" onClick={() => removeFormFields(index)}><FontAwesomeIcon icon={faTrash}/></button> 
+                                : null
+                            }
+                        </div>
+                        </React.Fragment>
+                        )) }
+                          <div  className='col-md-2 '>
+                             <button className='btn btn-primary me-2 float-lg-right' onClick={addDynamicField} type='submit' > + </button> 
+                           </div>
+                        {/* ................... */}
+                       
                         <div className='col-md-12 mb-5'>
                             <label className='form-label'>
                                 {getFormattedMessage('globally.input.notes.label')}:
@@ -395,8 +496,8 @@ const PurchaseForm = (props) => {
 };
 
 const mapStateToProps = (state) => {
-    const {purchaseProducts, products, frontSetting, allConfigData} = state;
-    return {customProducts: preparePurchaseProductArray(products), purchaseProducts, products, frontSetting, allConfigData}
+    const {purchaseProducts, products, frontSetting, allConfigData, shipingTypes} = state;
+    return {customProducts: preparePurchaseProductArray(products), purchaseProducts, products, frontSetting, allConfigData, shipingTypes}
 };
 
-export default connect(mapStateToProps, {editPurchase, fetchAllProducts, searchPurchaseProduct,})(PurchaseForm);
+export default connect(mapStateToProps, {editPurchase, fetchAllProducts, searchPurchaseProduct, fetchShippingTypes})(PurchaseForm);

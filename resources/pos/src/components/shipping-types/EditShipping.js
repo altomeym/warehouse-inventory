@@ -3,12 +3,12 @@ import ShippingForm from './ShippingForm';
 import {getFormattedMessage} from '../../shared/sharedMethod';
 
 const EditShipping = (props) => {
-    const {handleClose, show, currency} = props;
+    const {handleClose, show, shippingType} = props;
 
     return (
         <>
-            {currency &&
-            <ShippingForm handleClose={handleClose} show={show} singleCurrency={currency}
+            {shippingType &&
+            <ShippingForm handleClose={handleClose} show={show} singleShippingType={shippingType}
                           title={getFormattedMessage('currency.edit.title')}/>}
         </>
     )

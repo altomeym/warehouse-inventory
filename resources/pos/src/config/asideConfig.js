@@ -4,7 +4,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {
     faPieChart, faUser, faTruck, faUserGroup, faHome, faBoxes, faPrint, faBookmark, faBoxOpen,
     faMoneyCheckDollar, faMoneyBills, faQuoteRight, faDollarSign, faReceipt, faArrowRight, faArrowLeft,
-    faEnvelope, faCartShopping, faChartColumn, faGear, faMapLocation, faBasketShopping, faSms, faCube, faFile
+    faEnvelope, faCartShopping, faChartColumn, faGear, faMapLocation, faBasketShopping, faSms, faCube, faFile,faShippingFast
 } from '@fortawesome/free-solid-svg-icons';
 import {getFormattedMessage} from '../shared/sharedMethod';
 import {ShieldLock} from "react-bootstrap-icons";
@@ -94,6 +94,20 @@ export default [
             {
                 title: getFormattedMessage("adjustments.title"),
                 to: '/app/adjustments'
+            }
+        ],
+    },
+    {
+        title: "shipping.title",
+        name: "shipping.title",
+        fontIcon: <FontAwesomeIcon icon={faShippingFast}/>,
+        to: '/app/shipping-types',
+        class: 'd-flex',
+        permission: Permissions.MANAGE_ADJUSTMENTS,
+        items: [
+            {
+                title: getFormattedMessage("shipping.title"),
+                to: '/app/shipping-types'
             }
         ],
     },

@@ -1,7 +1,7 @@
 import React,  {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
 import MasterLayout from '../MasterLayout';
-import {fetchCurrencies} from '../../store/action/currencyAction';
+import {fetchShippingTypes} from '../../store/action/shippingAction';
 import ReactDataTable from '../../shared/table/ReactDataTable';
 import DeletShipping from './DeleteShipping';
 import CreateShipping from './CreateShipping';
@@ -12,15 +12,15 @@ import ActionButton from '../../shared/action-buttons/ActionButton';
 import TopProgressBar from "../../shared/components/loaders/TopProgressBar";
 
 const Shipping = (props) => {
-    const {fetchCurrencies, currencies, totalRecord, isLoading, config} = props;
+    const {fetchShippingTypes, shipingTypes, totalRecord, isLoading, config} = props;
     const [deleteModel, setDeleteModel] = useState(false);
     const [isDelete, setIsDelete] = useState(null);
     const [toggle, setToggle] = useState(false);
-    const [currency, setCurrency] = useState();
+    const [shippingType, setShippingType] = useState();
 
     const handleClose = (item = null) => {
         setToggle(!toggle);
-        setCurrency(item);
+        setShippingType(item);
     };
 
     const onClickDeleteModel = (isDelete = null) => {
@@ -29,19 +29,17 @@ const Shipping = (props) => {
     };
 
     const onChange = (filter) => {
-        fetchCurrencies(filter, true);
+        fetchShippingTypes(filter, true);
     };
    
-    const itemsValue = currencies.length >= 0 && currencies.map(item => ({
-        name: item.attributes.name,
-        code: item.attributes.code,
-        symbol: item.attributes.symbol,
-        id: item.id
+    const itemsValue = shipingTypes?.length >= 0 && shipingTypes.map(item => ({
+        name: item?.attributes?.name,
+        id: item?.id
     }));
     let user_permissions = new Set(config);
-    const is_addedAble = user_permissions.has('manage_currency-create') ? true : false
-    const is_editAdable = user_permissions.has('manage_currency-edit') ? true : false
-    const is_deleteAdable = user_permissions.has('manage_currency-delete') ? true: false
+    const is_addedAble = user_permissions.has('manage_sale-create') ? true : false
+    const is_editAdable = user_permissions.has('manage_shipping-edit') ? true : false
+    const is_deleteAdable = user_permissions.has('manage_shipping-delete') ? true: false
      
     const columns = [
         {
@@ -64,23 +62,22 @@ const Shipping = (props) => {
         }
     ];
 
-console.log('allConfigData ', config)
     return (
         <MasterLayout >
             <TopProgressBar />
             <TabTitle title={placeholderText('shipping.title')}/>
             <ReactDataTable columns={columns} items={itemsValue} onChange={onChange} isLoading={isLoading}
                             totalRows={totalRecord}  AddButton={is_addedAble ==true ? <CreateShipping />  : null} />
-            <EditShipping handleClose={handleClose} show={toggle} currency={currency}/> {is_addedAble}
+            <EditShipping handleClose={handleClose} show={toggle} shippingType={shippingType}/> {is_addedAble}
               <DeletShipping onClickDeleteModel={onClickDeleteModel} deleteModel={deleteModel} onDelete={isDelete}/>
         </MasterLayout>
     )
 };
 
 const mapStateToProps = (state) => { 
-    const {currencies, totalRecord, isLoading, config } = state;
-    return {currencies, totalRecord, isLoading, config }
+    const {shipingTypes, totalRecord, isLoading, config } = state;
+    return {shipingTypes, totalRecord, isLoading, config }
 };
 
-export default connect(mapStateToProps, {fetchCurrencies})(Shipping);
+export default connect(mapStateToProps, {fetchShippingTypes})(Shipping);
 

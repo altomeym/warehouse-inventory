@@ -90,7 +90,9 @@ export const apiBaseURL = {
     MAIL_SETTINGS_UPDATE: "mail-settings/update",
     TODAY_SALE_OVERALL_REPORT : "today-sales-overall-report",
     EDIT_SALE_FROM_SALE : "sales-return-edit",
-    HOLDS_LIST:"holds"
+    HOLDS_LIST:"holds",
+    SHIPPING: '/shipping_type',
+
 };
 
 export const authActionType = {
@@ -439,6 +441,15 @@ export const weekSalePurchasesActionType = {
 export const yearTopProductActionType = {
     YEAR_TOP_PRODUCT: 'YEAR_TOP_PRODUCT'
 };
+
+export const shippingTypeActionType = {
+    FETCH_SHIPPINGTYPES: 'FETCH_SHIPPINGTYPES',
+    FETCH_SHIPPINGTYPE: 'FETCH_SHIPPINGTYPE',
+    ADD_SHIPPINGTYPE: 'ADD_SHIPPINGTYPE',
+    EDIT_SHIPPINGTYPE: 'EDIT_SHIPPINGTYPE',
+    DELETE_SHIPPINGTYPE: 'DELETE_SHIPPINGTYPE'
+};
+
 
 export const Filters = {
     PAGE: 1,

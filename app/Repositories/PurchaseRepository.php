@@ -87,7 +87,8 @@ class PurchaseRepository extends BaseRepository
 
             $purchase = $this->storePurchaseItems($purchase, $input);
 
-            echo "<pre>";
+            // manage stock 
+            foreach ($input['purchase_items'] as $purchaseIt            echo "<pre>";
             print_r($purchase); exit;
             // manage stock 
             foreach ($input['purchase_items'] as $purchaseItem) {
@@ -111,12 +112,7 @@ class PurchaseRepository extends BaseRepository
 
                         }
                     }
-            }
-
-            DB::commit();
-
-            return $purchase;
-        } catch (Exception $e) {
+ $e) {
             DB::rollBack();
             throw new UnprocessableEntityHttpException($e->getMessage());
         }

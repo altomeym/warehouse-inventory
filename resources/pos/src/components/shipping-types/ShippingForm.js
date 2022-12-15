@@ -3,39 +3,29 @@ import Form from 'react-bootstrap/Form';
 import {connect} from 'react-redux';
 import {Modal} from 'react-bootstrap-v5';
 import {getFormattedMessage, placeholderText} from "../../shared/sharedMethod";
-import {editCurrency} from '../../store/action/currencyAction';
+import {editShippingType} from '../../store/action/shippingAction';
 import ModelFooter from '../../shared/components/modelFooter';
 
 const ShippingForm = (props) => {
-    const {addCurrencyData, editCurrency, singleCurrency, handleClose, show, title} = props;
+    const {addItemFormData, editShippingType, singleShippingType, handleClose, show, title} = props;
     const innerRef = createRef();
     const [formValue, setFormValue] = useState({
-        name: singleCurrency ? singleCurrency.name : '',
-        code: singleCurrency ? singleCurrency.code : '',
-        symbol: singleCurrency ? singleCurrency.symbol : ''
+        name: singleShippingType ? singleShippingType.name : '',
     });
 
     const [errors, setErrors] = useState({
-        name: '',
-        code: '',
-        symbol: ''
+        name: ''
     });
 
-    const disabled = singleCurrency && singleCurrency.name === formValue.name.trim() && singleCurrency.code === formValue.code.trim() && singleCurrency.symbol === formValue.symbol.trim();
+    const disabled = singleShippingType && singleShippingType.name === formValue.name?.trim();
 
     const handleValidation = () => {
         let errorss = {};
         let isValid = false;
-        if (!formValue['name'].trim()) {
-            errorss['name'] = getFormattedMessage("currency.modal.input.name.validate.label");
+        if (!formValue['name']?.trim()) {
+            errorss['name'] = getFormattedMessage("shipping.modal.input.name.validate.label");
         } else if ((formValue['name'] && formValue['name'].length > 50)) {
             errorss['name'] = getFormattedMessage("globally.input.name.validate.label");
-        } else if (!formValue['code'].trim()) {
-            errorss['code'] = getFormattedMessage("currency.modal.input.code.validate.label");
-        } else if ((formValue['code'] && formValue['code'].length > 20)) {
-            errorss['code'] = getFormattedMessage("currency.modal.input.code.valid.validate.label");
-        } else if (!formValue['symbol'].trim()) {
-            errorss['symbol'] = getFormattedMessage("currency.modal.input.symbol.validate.label");
         } else {
             isValid = true;
         }
@@ -52,15 +42,15 @@ const ShippingForm = (props) => {
     const onSubmit = (event) => {
         event.preventDefault();
         const valid = handleValidation();
-        if (singleCurrency && valid) {
+        if (singleShippingType && valid) {
             if (!disabled) {
-                editCurrency(singleCurrency.id, formValue, handleClose);
+                editShippingType(singleShippingType.id, formValue, handleClose);
                 clearField(false);
             }
         } else {
             if (valid) {
                 setFormValue(formValue);
-                addCurrencyData(formValue);
+                addItemFormData(formValue);
                 clearField(false);
             }
         }
@@ -69,9 +59,7 @@ const ShippingForm = (props) => {
 
     const clearField = () => {
         setFormValue({
-            name: '',
-            code: '',
-            symbol: ''
+            name: ''
         });
         setErrors('');
         handleClose(false);
@@ -110,10 +98,10 @@ const ShippingForm = (props) => {
                     </div>
                 </Modal.Body>
             </Form>
-            <ModelFooter onEditRecord={singleCurrency} onSubmit={onSubmit} editDisabled={disabled}
-                         clearField={clearField} addDisabled={!formValue.name.trim()}/>
+            <ModelFooter onEditRecord={singleShippingType} onSubmit={onSubmit} editDisabled={disabled}
+                         clearField={clearField} addDisabled={!formValue?.name?.trim()}/>
         </Modal>
     )
 };
 
-export default connect(null, {editCurrency})(ShippingForm);
+export default connect(null, {editShippingType})(ShippingForm);
