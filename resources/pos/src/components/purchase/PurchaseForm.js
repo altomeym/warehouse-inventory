@@ -447,35 +447,35 @@ const PurchaseForm = (props) => {
                         </div>
                         {/* ... */}
                         <div className='col-md-5 mb-5'>
-                            <label
-                                className='form-label'>
-                               Shipping value
-                            </label>
-                            <InputGroup>
-                                <input aria-label='Dollar amount (with dot and two decimal places)'
-                                              className='form-control'  value={element.shipping_value || ""}
-                                              type='text' name='shipping_value'
-                                              onBlur={(event) => onBlurInput(index, event)}
-                                              onFocus={(event) => onFocusInput(event)}
-                                              onKeyPress={(event) => decimalValidate(event)}
-                                              onChange={e => handleChange(index, e)}
-                                />
-                                <InputGroup.Text>{frontSetting.value && frontSetting.value.currency_symbol}</InputGroup.Text>
-                            </InputGroup>
-                            <span className='text-danger d-block fw-400 fs-small mt-2'>{errors['shipping'] ? errors['shipping'] : null}</span>
-                        </div>
-                        <div>
-                            {
-                                index ? 
-                    <button type="button"  className="btn btn-danger remove" onClick={() => removeFormFields(index)}><FontAwesomeIcon icon={faTrash}/></button> 
-                                : null
-                            }
+                            <div className='align_o'>
+                                <label
+                                    className='form-label'>
+                                Shipping value
+                                </label>
+                                <InputGroup>
+                                    <input aria-label='Dollar amount (with dot and two decimal places)'
+                                                className='form-control'  value={element.shipping_value || ""}
+                                                type='text' name='shipping_value'
+                                                onBlur={(event) => onBlurInput(index, event)}
+                                                onFocus={(event) => onFocusInput(event)}
+                                                onKeyPress={(event) => decimalValidate(event)}
+                                                onChange={e => handleChange(index, e)}
+                                    />
+                                    <InputGroup.Text>{frontSetting.value && frontSetting.value.currency_symbol}</InputGroup.Text>
+                                </InputGroup>
+                                <span className='text-danger d-block fw-400 fs-small mt-2'>{errors['shipping'] ? errors['shipping'] : null}</span>
+                                {
+                                    index ? 
+                        <button type="button"  className="btn btn-danger remove" onClick={() => removeFormFields(index)}><FontAwesomeIcon icon={faTrash}/></button> 
+                                    : null
+                                }
+                            </div>
                         </div>
                         </React.Fragment>
                         )) }
-                          <div  className='col-md-2 '>
-                             <button className='btn btn-primary me-2 float-lg-right' onClick={addDynamicField} type='submit' > + </button> 
-                           </div>
+                        <div  className='col-md-2 '>
+                            <button className='btn btn-primary me-2 float-lg-right float_plus' onClick={addDynamicField} type='submit' > + </button> 
+                        </div>
                         {/* ................... */}
                        
                         <div className='col-md-12 mb-5'>

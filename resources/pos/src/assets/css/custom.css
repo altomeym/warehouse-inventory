@@ -3433,3 +3433,24 @@ a.link-info.fs-6.text-decoration-none {
   box-shadow: none !important;
 }
 
+.align_o {
+  position: relative;
+}
+
+.align_o .input-group {
+  width: 87%;
+}
+
+.align_o button.btn.btn-danger.remove {
+  position: absolute;
+  right: 0;
+  top: 28px;
+  height: 45px;
+}
+
+.float_plus {
+  position: relative;
+  top: 27px;
+  height: 45px;
+}
+
