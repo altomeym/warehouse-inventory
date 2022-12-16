@@ -15,6 +15,8 @@ import TopProgressBar from "../../shared/components/loaders/TopProgressBar";
 
 const PurchaseReturnDetails = (props) => {
     const {fetchPurchaseReturnDetails, purchaseReturnDetails, fetchFrontSetting, frontSetting, allConfigData} = props;
+    const shippingData = purchaseReturnDetails?.shipping_data ? JSON.parse(purchaseReturnDetails?.shipping_data) : [];
+
     const {id} = useParams();
 
     useEffect(() => {
@@ -163,11 +165,12 @@ const PurchaseReturnDetails = (props) => {
                                                 <td className='py-3'>
                                                 {currencySymbolHendling(allConfigData, frontSetting.value && frontSetting.value.currency_symbol, purchaseReturnDetails && purchaseReturnDetails.discount )}</td>
                                             </tr>
+                                            {shippingData && shippingData.map((shipItem)=>(
                                             <tr>
-                                                <td className='py-3'>{getFormattedMessage('globally.detail.shipping')}</td>
-                                                <td className='py-3'>
-                                                {currencySymbolHendling(allConfigData, frontSetting.value && frontSetting.value.currency_symbol, purchaseReturnDetails && purchaseReturnDetails.shipping)}</td>
+                                                <td className='py-3'>{shipItem?.shipping_type_name ? shipItem?.shipping_type_name : 'Shipping'} </td>
+                                                <td className='py-3'>{currencySymbolHendling(allConfigData, frontSetting.value && frontSetting.value.currency_symbol, shipItem?.shipping_value ? shipItem?.shipping_value : 0)}</td>
                                             </tr>
+                                            )) }
                                             <tr>
                                                 <td className='py-3 text-primary'>{getFormattedMessage('globally.detail.grand.total')}</td>
                                                 <td className='py-3 text-primary'>

@@ -3,8 +3,11 @@ import {useNavigate} from 'react-router-dom';
 import {Form, InputGroup} from 'react-bootstrap-v5';
 import moment from 'moment';
 import {connect, useDispatch} from 'react-redux';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import { faTrash} from '@fortawesome/free-solid-svg-icons';
 import {fetchProductsByWarehouse} from '../../store/action/productAction';
 import {editSale} from '../../store/action/salesAction';
+import {fetchShippingTypes} from '../../store/action/shippingAction'
 import ProductSearch from '../../shared/components/product-cart/search/ProductSearch';
 import ProductRowTable from '../../shared/components/sales/ProductRowTable';
 import {placeholderText, getFormattedMessage, decimalValidate, onFocusInput, getFormattedOptions} from '../../shared/sharedMethod';
@@ -34,7 +37,7 @@ const SalesForm = (props) => {
         fetchProductsByWarehouse,
         fetchFrontSetting,
         frontSetting,
-        isQuotation, allConfigData
+        isQuotation, allConfigData, fetchShippingTypes, shipingTypes
     } = props;
 
     const navigate = useNavigate();
@@ -73,6 +76,12 @@ const SalesForm = (props) => {
         payment_type: ''
     });
 
+    const [customDynamicFields, setCustomDynamicFields] = useState([{
+        shipping_type_id:"", 
+        shipping_value:"",
+        shipping_type_name:"",
+    }]);
+
     useEffect(() => {
         setUpdateProducts(updateProducts)
     }, [updateProducts, quantity, newCost, newDiscount, newTax, subTotal, newSaleUnit])
@@ -99,7 +108,9 @@ const SalesForm = (props) => {
                 grand_total: singleSale ? singleSale.grand_total : '0.00',
                 status_id: singleSale ? singleSale.status_id : '',
                 payment_status: singleSale.is_Partial === 3 ? { "label": getFormattedMessage('payment-status.filter.partial.label'), "value": 3} : singleSale ? singleSale.payment_status : '',
-                payment_type: singleSale ? singleSale.payment_type : ''
+                payment_type: singleSale ? singleSale.payment_type : '',
+                shipping_data: singleSale?.shipping_data ? singleSale?.shipping_data : '',
+
             })
         }
         if(singleSale && isQuotation){
@@ -115,6 +126,7 @@ const SalesForm = (props) => {
                 grand_total: singleSale ? singleSale.grand_total : '0.00',
                 status_id: singleSale ? singleSale.status_id : '',
                 payment_status: saleValue.payment_status ? saleValue.payment_status : '',
+                shipping_data: saleValue?.shipping_data ? saleValue?.shipping_data : '',
                 payment_type: {label: getFormattedMessage("payment-type.filter.cash.label"), value: 1}
             })
         }
@@ -156,6 +168,15 @@ const SalesForm = (props) => {
         setErrors(error);
         return isValid;
     };
+
+    useEffect(()=>{
+        // fetchShippingTypes()
+      },[])
+
+      useEffect(()=>{
+        if(singleSale)
+        setCustomDynamicFields(singleSale?.shipping_data);
+  },[])
 
     const onWarehouseChange = (obj) => {
         setSaleValue(inputs => ({...inputs, warehouse_id: obj}));
@@ -200,6 +221,45 @@ const SalesForm = (props) => {
     const onPaymentTypeChange = (obj) => {
         setSaleValue(inputs => ({...inputs, payment_type: obj}));
     };
+    
+    let  onShippingTypeChange = (i, e) => {
+        let newFormValues = [...customDynamicFields];  
+        newFormValues[i]['shipping_type_id'] = e;
+        newFormValues[i]['shipping_type_name'] = e.label;
+        setCustomDynamicFields(newFormValues);
+    };
+
+    let  addDynamicField = ()=>{
+        setCustomDynamicFields([...customDynamicFields, { shipping_type_id: "", shipping_value: "" }])
+
+    }
+
+    let handleChange = (i, e) => {
+        let newFormValues = [...customDynamicFields];
+        newFormValues[i][e.target.name] = e.target.value;
+        setCustomDynamicFields(newFormValues);
+        calShippingTotal();
+      }
+
+       let removeFormFields = (i) => {
+        let newFormValues = [...customDynamicFields];
+        newFormValues.splice(i, 1);
+        setCustomDynamicFields(newFormValues)
+       calShippingTotal(customDynamicFields[i]['shipping_value'])
+       
+    }
+
+    let calShippingTotal = (singleVal=0)=>{
+        let totalShipTax = 0;
+        if(singleVal)
+          totalShipTax =  parseFloat(purchaseValue.shipping) -   parseFloat(singleVal);
+        else
+        customDynamicFields.map((element)=>(
+          totalShipTax = parseFloat(totalShipTax) + parseFloat(element.shipping_value)
+        ));
+
+        setPurchaseValue(inputs => ({...inputs, ['shipping']: totalShipTax && totalShipTax}))
+    }
 
     const updatedQty = (qty) => {
         setQuantity(qty);
@@ -257,6 +317,13 @@ const SalesForm = (props) => {
         }
     })
 
+    const shippingTypeValues = [];
+    const shippingTypeDefaultValue = shipingTypes.map((option) => {
+        shippingTypeValues.push({
+            id: option.id,
+            name: option.attributes.name
+        })
+    })
 
 
     const prepareFormData = (prepareData) => {
@@ -277,7 +344,9 @@ const SalesForm = (props) => {
             note: prepareData.notes,
             status: prepareData.status_id.value ? prepareData.status_id.value : prepareData.status_id,
             payment_status: prepareData.payment_status.value ? prepareData.payment_status.value : prepareData.payment_status,
-            payment_type: prepareData.payment_status.value === 2 ? 0 : prepareData.payment_type.value ? prepareData.payment_type.value : prepareData.payment_type
+            payment_type: prepareData.payment_status.value === 2 ? 0 : prepareData.payment_type.value ? prepareData.payment_type.value : prepareData.payment_type,
+            shipping_data:customDynamicFields ? customDynamicFields : [],
+
         }
         return formValue
     };
@@ -298,7 +367,7 @@ const SalesForm = (props) => {
     const onBlurInput = (el) => {
         if (el.target.value === '') {
             if(el.target.name === "shipping"){
-                setSaleValue({...saleValue, shipping: "0.00"});
+                // setSaleValue({...saleValue, shipping: "0.00"});
             }
             if(el.target.name === "discount"){
                 setSaleValue({...saleValue, discount: "0.00"});
@@ -389,7 +458,7 @@ const SalesForm = (props) => {
                                 <InputGroup.Text>{frontSetting.value && frontSetting.value.currency_symbol}</InputGroup.Text>
                             </InputGroup>
                         </div>
-                        <div className='col-md-4 mb-3'>
+                        {/* <div className='col-md-4 mb-3'>
                             <label
                                 className='form-label'>{getFormattedMessage('purchase.input.shipping.label')}: </label>
                             <InputGroup>
@@ -402,7 +471,7 @@ const SalesForm = (props) => {
                                 />
                                 <InputGroup.Text>{frontSetting.value && frontSetting.value.currency_symbol}</InputGroup.Text>
                             </InputGroup>
-                        </div>
+                        </div> */}
                         <div className='col-md-4'>
                     <ReactSelect multiLanguageOption={statusFilterOptions} onChange={onStatusChange} name='status_id'
                          title={getFormattedMessage('purchase.select.status.label')}
@@ -410,6 +479,48 @@ const SalesForm = (props) => {
                          defaultValue={statusDefaultValue[0]}
                          placeholder={getFormattedMessage('purchase.select.status.label')}/>
                         </div>
+                         {/* .......... */}
+                         {customDynamicFields.map((element, index) => (
+                        <React.Fragment key={index}>
+                        <div className='col-md-5'>
+                             <ReactSelect multiLanguageOption={shippingTypeValues} onChange={e => onShippingTypeChange(index, e)} name='shipping_type_id'
+                          title={'Shipping Type'}
+                          value={element.shipping_type_id || ""}  errors={errors['status_id']}
+                        //  defaultValue={shippingTypeValues}
+                         placeholder={'shipping type '}/>
+                        </div>
+                        {/* ... */}
+                        <div className='col-md-5 mb-5'>
+                            <label
+                                className='form-label'>
+                               Shipping value
+                            </label>
+                            <InputGroup>
+                                <input aria-label='Dollar amount (with dot and two decimal places)'
+                                              className='form-control'  value={element.shipping_value || ""}
+                                              type='text' name='shipping_value'
+                                              onBlur={(event) => onBlurInput(index, event)}
+                                              onFocus={(event) => onFocusInput(event)}
+                                              onKeyPress={(event) => decimalValidate(event)}
+                                              onChange={e => handleChange(index, e)}
+                                />
+                                <InputGroup.Text>{frontSetting.value && frontSetting.value.currency_symbol}</InputGroup.Text>
+                            </InputGroup>
+                            <span className='text-danger d-block fw-400 fs-small mt-2'>{errors['shipping'] ? errors['shipping'] : null}</span>
+                        </div>
+                        <div>
+                            {
+                                index ? 
+                    <button type="button"  className="btn btn-danger remove" onClick={() => removeFormFields(index)}><FontAwesomeIcon icon={faTrash}/></button> 
+                                : null
+                            }
+                        </div>
+                        </React.Fragment>
+                        )) }
+                          <div  className='col-md-2 '>
+                             <button className='btn btn-primary me-2 float-lg-right' onClick={addDynamicField} type='submit' > + </button> 
+                           </div>
+                        {/* ................... */}
                         { !singleSale && <div className='col-md-4'>
                     <ReactSelect multiLanguageOption={paymentStatusFilterOptions} onChange={onPaymentStatusChange} name='payment_status'
                          title={getFormattedMessage('dashboard.recentSales.paymentStatus.label')}
@@ -461,9 +572,9 @@ const SalesForm = (props) => {
 }
 
 const mapStateToProps = (state) => {
-    const {purchaseProducts, products, frontSetting, allConfigData} = state;
-    return {customProducts: prepareSaleProductArray(products), purchaseProducts, products, frontSetting, allConfigData}
+    const {purchaseProducts, products, frontSetting, allConfigData,  shipingTypes} = state;
+    return {customProducts: prepareSaleProductArray(products), purchaseProducts, products, frontSetting, allConfigData, shipingTypes}
 }
 
-export default connect(mapStateToProps, {editSale, fetchProductsByWarehouse, fetchFrontSetting})(SalesForm)
+export default connect(mapStateToProps, {editSale, fetchProductsByWarehouse, fetchFrontSetting, fetchShippingTypes})(SalesForm)
 
