@@ -54,6 +54,7 @@ const PurchaseForm = (props) => {
         shipping: singlePurchase ? singlePurchase.shipping.toFixed(2) : '0.00',
         grand_total: singlePurchase ? singlePurchase.grand_total : '0.00',
         notes: singlePurchase ? singlePurchase.notes : '',
+        shipping_data: singlePurchase ? singlePurchase.shipping_data : '',
         status_id: singlePurchase ? singlePurchase.status_id : {label: getFormattedMessage("status.filter.received.label"), value: 1},
     });
 
@@ -68,7 +69,7 @@ const PurchaseForm = (props) => {
         status_id: ''
     });
 
-    const [customDynamicFields, setCustomDynamicFields] = useState([{shipping_type_id:"", shipping_value:"", shipping_type_name:"",}]);
+    const [customDynamicFields, setCustomDynamicFields] = useState([{shipping_type_id: "", shipping_value:"", shipping_type_name:"",}]);
     useEffect(() => {
         setUpdateProducts(updateProducts);
     }, [updateProducts, quantity, newCost, newDiscount, newTax, subTotal, newPurchaseUnit]);
@@ -88,8 +89,13 @@ const PurchaseForm = (props) => {
     },[purchaseValue.warehouse_id])
 
     useEffect(()=>{
-      fetchShippingTypes()
-    },[])
+        // fetchShippingTypes()
+      },[])
+
+    useEffect(()=>{
+        if(singlePurchase)
+        setCustomDynamicFields(singlePurchase?.shipping_data);
+  },[])
 
     const handleValidation = () => {
         let errorss = {};

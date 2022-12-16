@@ -416,8 +416,9 @@ class PurchaseReturnRepository extends BaseRepository
 
         $purchaseReturnInputArray = Arr::only($input, [
             'supplier_id', 'warehouse_id', 'date', 'tax_rate', 'tax_amount', 'discount', 'shipping', 'grand_total',
-            'received_amount', 'paid_amount', 'payment_type', 'notes', 'status', 'payment_status',
+            'received_amount', 'paid_amount', 'payment_type', 'notes', 'status', 'payment_status', 'shipping_data'
         ]);
+        $purchaseReturnInputArray['shipping_data'] = json_encode($input['shipping_data']);
         $purchaseReturn->update($purchaseReturnInputArray);
 
         return $purchaseReturn;

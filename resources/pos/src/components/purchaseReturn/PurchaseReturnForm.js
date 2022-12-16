@@ -46,6 +46,7 @@ const PurchaseReturnForm = (props) => {
         shipping: singlePurchase ? singlePurchase.shipping.toFixed(2) : "0.00",
         grand_total: singlePurchase ? singlePurchase.grand_total : '0.00',
         notes: singlePurchase ? singlePurchase.notes : '',
+        shipping_data: singlePurchase ? singlePurchase.shipping_data : '',
         status_id: singlePurchase ? singlePurchase.status_id : {label: getFormattedMessage("status.filter.received.label"), value: 1},
     });
 
@@ -87,6 +88,11 @@ const PurchaseReturnForm = (props) => {
     useEffect(()=>{
         fetchShippingTypes()
       },[])
+
+      useEffect(()=>{
+        if(singlePurchase)
+        setCustomDynamicFields(singlePurchase?.shipping_data);
+  },[])
 
     const handleValidation = () => {
         let errorss = {};

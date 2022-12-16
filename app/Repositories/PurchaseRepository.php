@@ -311,8 +311,9 @@ class PurchaseRepository extends BaseRepository
 
         $purchaseInputArray = Arr::only($input, [
             'supplier_id', 'warehouse_id', 'date', 'tax_rate', 'tax_amount', 'discount', 'shipping', 'grand_total',
-            'received_amount', 'paid_amount', 'payment_type', 'notes', 'status'
+            'received_amount', 'paid_amount', 'payment_type', 'notes', 'status', 'shipping_data'
         ]);
+        $purchaseItemArr['shipping_data'] = json_encode($input['shipping_data']);
         $purchase->update($purchaseInputArray);
 
         return $purchase;
