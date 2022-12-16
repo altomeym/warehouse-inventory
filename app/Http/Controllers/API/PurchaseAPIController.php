@@ -157,6 +157,7 @@ class PurchaseAPIController extends AppBaseController
             }
             $this->purchaseRepository->delete($id);
             DB::commit();
+            $shipping_has_values = \App\Models\Shipping_has_values::where('slug','purchases')->where('sale_purchases_id',$id)->delete();
 
             return $this->sendSuccess('Purchase Deleted successfully');
         } catch (Exception $e) {

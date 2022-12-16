@@ -602,7 +602,7 @@ class SaleReturnRepository extends BaseRepository
         /*new code*/
             if(!empty($input['shipping_data']))
             {
-             $last_id = \App\Models\Shipping_has_values::where('slug','sale')->where('sale_purchases_id',$id)->delete();
+             $last_id = \App\Models\Shipping_has_values::where('slug','sale_return')->where('sale_purchases_id',$id)->delete();
               for ($i = 0; $i < count($input['shipping_data']); $i++) {
                         if ($input['shipping_data'][$i]['shipping_value'] != '') {
                             $requestData = [
