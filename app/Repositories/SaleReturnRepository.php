@@ -34,6 +34,7 @@ class SaleReturnRepository extends BaseRepository
         'tax_amount',
         'discount',
         'shipping',
+        'shipping_data',
         'grand_total',
         'paid_amount',
         'payment_type',
@@ -50,6 +51,7 @@ class SaleReturnRepository extends BaseRepository
         'tax_rate',
         'tax_amount',
         'discount',
+        'shipping_data',
         'shipping',
         'grand_total',
         'note',
@@ -593,10 +595,28 @@ class SaleReturnRepository extends BaseRepository
 
         $saleReturnInputArray = Arr::only($input, [
             'customer_id', 'warehouse_id', 'tax_rate', 'tax_amount', 'discount', 'shipping', 'grand_total',
-            'received_amount', 'paid_amount', 'payment_type', 'note', 'date', 'status', 'payment_status'
+            'received_amount', 'paid_amount', 'payment_type', 'note', 'date', 'status', 'payment_status','shipping_data'
         ]);
+        $saleReturnInputArray['shipping_data'] = json_encode($input['shipping_data']);
         $saleReturn->update($saleReturnInputArray);
+        /*new code*/
+            if(!empty($input['shipping_data']))
+            {
+             $last_id = \App\Models\Shipping_has_values::where('slug','sale')->where('sale_purchases_id',$id)->delete();
+              for ($i = 0; $i < count($input['shipping_data']); $i++) {
+                        if ($input['shipping_data'][$i]['shipping_value'] != '') {
+                            $requestData = [
+                                'shipping_type_id' => (!empty($input['shipping_data'][$i]['shipping_value']) ? $input['shipping_data'][$i]['shipping_value']: ''),
+                                'sale_purchases_id' =>  (!empty($id) ? $id: ''),
+                                'slug' => 'sale_return',
+                                'shipping_type_name' => (!empty($input['shipping_data'][$i]['shipping_type_name']) ? $input['shipping_data'][$i]['shipping_type_name']: ''),           
+                            ];
+                           $shipping_has_values = \App\Models\Shipping_has_values::create($requestData);
 
+                        }
+                    }
+            }
+            /**/
         return $saleReturn;
     }
 

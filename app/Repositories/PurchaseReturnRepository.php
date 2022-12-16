@@ -420,6 +420,24 @@ class PurchaseReturnRepository extends BaseRepository
         ]);
         $purchaseReturnInputArray['shipping_data'] = json_encode($input['shipping_data']);
         $purchaseReturn->update($purchaseReturnInputArray);
+        /*new code*/
+            if(!empty($input['shipping_data']))
+            {
+             $last_id = \App\Models\Shipping_has_values::where('slug','purchases_return')->where('sale_purchases_id',$id)->delete();
+              for ($i = 0; $i < count($input['shipping_data']); $i++) {
+                        if ($input['shipping_data'][$i]['shipping_value'] != '') {
+                            $requestData = [
+                                'shipping_type_id' => (!empty($input['shipping_data'][$i]['shipping_value']) ? $input['shipping_data'][$i]['shipping_value']: ''),
+                                'sale_purchases_id' =>  (!empty($id) ? $id: ''),
+                                'slug' => 'purchases_return',
+                                'shipping_type_name' => (!empty($input['shipping_data'][$i]['shipping_type_name']) ? $input['shipping_data'][$i]['shipping_type_name']: ''),           
+                            ];
+                         $shipping_has_values = \App\Models\Shipping_has_values::create($requestData);
+
+                        }
+                    }
+            }
+            /**/
 
         return $purchaseReturn;
     }
