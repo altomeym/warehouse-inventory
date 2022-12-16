@@ -27,7 +27,7 @@ const CreatePurchaseReturn = (props) => {
     const addPurchaseReturnData = (formValue) => {
         addPurchaseReturn(formValue, navigate);
     };
-
+ 
     return (
         <MasterLayout>
             <HeaderTitle title={getFormattedMessage('purchase.return.create.title')} to='/app/purchase-return'/>

@@ -122,7 +122,6 @@ const SaleReturnForm = (props) => {
         if(singleSale)
           singleSale?.shipping_data ? setCustomDynamicFields(singleSale?.shipping_data) : '';
   },[])
-
     const handleValidation = () => {
         let error = {};
         let isValid = false;

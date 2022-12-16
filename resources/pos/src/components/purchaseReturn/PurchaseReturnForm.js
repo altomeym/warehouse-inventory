@@ -119,7 +119,7 @@ const PurchaseReturnForm = (props) => {
         } else {
             isValid = true;
         }
-        setErrors(errorss);
+        setErrors(errorss); 
         return isValid;
     };
 
