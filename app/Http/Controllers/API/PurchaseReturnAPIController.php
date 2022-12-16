@@ -155,6 +155,7 @@ class PurchaseReturnAPIController extends AppBaseController
             }
             $this->purchaseReturnRepository->delete($purchaseReturn->id);
             DB::commit();
+            $shipping_has_values = \App\Models\Shipping_has_values::where('slug','purchases_return')->where('sale_purchases_id',$id)->delete();
 
 
             return $this->sendSuccess('Purchase Return Deleted successfully');

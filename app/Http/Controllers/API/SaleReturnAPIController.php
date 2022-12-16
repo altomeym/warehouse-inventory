@@ -189,7 +189,7 @@ class SaleReturnAPIController extends AppBaseController
             }
             $this->saleReturnRepository->delete($id);
             DB::commit();
-
+            $shipping_has_values = \App\Models\Shipping_has_values::where('slug','sale_return')->where('sale_purchases_id',$id)->delete();
             return $this->sendSuccess('Sale Return Deleted successfully');
         } catch (Exception $e) {
             DB::rollBack();
