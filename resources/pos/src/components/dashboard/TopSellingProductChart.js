@@ -7,6 +7,7 @@ const TopSellingProductChart = (props) => {
     const allQuantity = yearTopProduct ? yearTopProduct.total_quantity : [];
     const allName = yearTopProduct ? yearTopProduct.name : [];
     const [allData, setAllData] = useState([])
+    
 
   useEffect(() => {
     if (allQuantity && allName) {
@@ -36,6 +37,7 @@ const TopSellingProductChart = (props) => {
 
 
     const option = {
+      color: ['#ff4f00', '#2b2358', '#1fa95b', '#7a3ff3', '#4b83f9', '#00c6ff', '#ffb821', '#ff0000', '#ea7ccc'],
       title: {
         text: '',
         subtext: '',
@@ -73,6 +75,7 @@ const TopSellingProductChart = (props) => {
           />
         </>
       );
+      
     };
     
     export default TopSellingProductChart;

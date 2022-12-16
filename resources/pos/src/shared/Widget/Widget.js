@@ -12,7 +12,7 @@ const Widget = (props) => {
     );
 
     return (
-        <div className="col-xxl-3 col-xl-4 col-sm-6 widget" onClick={onClick}>
+        <div className="col-xxl-3 col-xl-4 col-sm-6 col-6 widget" onClick={onClick}>
             <div
                 className={`${className} shadow-md rounded-10 p-xxl-10 px-7 py-10 d-flex align-items-center justify-content-between my-3`}>
                 <div
