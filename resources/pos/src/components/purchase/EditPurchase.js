@@ -7,6 +7,7 @@ import MasterLayout from '../MasterLayout';
 import PurchaseForm from './PurchaseForm';
 import {fetchAllSuppliers} from '../../store/action/supplierAction';
 import {fetchPurchase} from '../../store/action/purchaseAction';
+import {fetchShippingTypes} from '../../store/action/shippingAction';
 import status from '../../shared/option-lists/status.json'
 import {editPrepareArray} from '../../shared/prepareArray/editPrepareArray';
 import {getFormattedMessage, getFormattedOptions} from '../../shared/sharedMethod';
@@ -15,13 +16,18 @@ import TopProgressBar from "../../shared/components/loaders/TopProgressBar";
 import { saleStatusOptions } from '../../constants';
 
 const EditPurchase = (props) => {
-    const {fetchPurchase, purchases, warehouses, fetchAllSuppliers, suppliers, fetchAllWarehouses, isLoading} = props;
+    const {fetchPurchase, purchases, warehouses, fetchAllSuppliers, suppliers, fetchAllWarehouses, shipingTypes, fetchShippingTypes, isLoading} = props;
     const {id} = useParams();
 
     useEffect(() => {
         fetchAllWarehouses();
         fetchAllSuppliers();
         fetchPurchase(id);
+
+    }, []);
+
+    useEffect(() => {
+        fetchShippingTypes();
     }, []);
 
     const supplierId = purchases && purchases.attributes && purchases.attributes.supplier_id
@@ -76,15 +82,15 @@ const EditPurchase = (props) => {
             <TopProgressBar/>
             <HeaderTitle title={getFormattedMessage('purchase.edit.title')} to='/app/purchases'/>
             {isLoading ? <Spinner /> :
-                <PurchaseForm singlePurchase={itemsValue} id={id} warehouses={warehouses} suppliers={suppliers}/>}
+                <PurchaseForm singlePurchase={itemsValue} id={id} allShipingTypes={shipingTypes} warehouses={warehouses} suppliers={suppliers}/>}
         </MasterLayout>
     )
 };
 
 const mapStateToProps = (state) => {
-    const {purchases, warehouses, suppliers, isLoading} = state;
-    return {purchases, warehouses, suppliers, isLoading}
+    const {purchases, warehouses, suppliers, shipingTypes, isLoading} = state;
+    return {purchases, warehouses, suppliers, shipingTypes, isLoading}
 };
 
-export default connect(mapStateToProps, {fetchPurchase, fetchAllSuppliers, fetchAllWarehouses})(EditPurchase);
+export default connect(mapStateToProps, {fetchPurchase, fetchAllSuppliers, fetchAllWarehouses, fetchShippingTypes})(EditPurchase);
 

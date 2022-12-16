@@ -5,17 +5,23 @@ import MasterLayout from '../MasterLayout';
 import HeaderTitle from '../header/HeaderTitle';
 import {fetchAllWarehouses} from '../../store/action/warehouseAction';
 import {fetchAllSuppliers} from '../../store/action/supplierAction';
+import {fetchShippingTypes} from '../../store/action/shippingAction';
 import PurchaseReturnForm from './PurchaseReturnForm';
 import {addPurchaseReturn} from '../../store/action/purchaseReturnAction';
 import {getFormattedMessage} from '../../shared/sharedMethod';
 
 const CreatePurchaseReturn = (props) => {
-    const {addPurchaseReturn, warehouses, fetchAllWarehouses, fetchAllSuppliers, suppliers} = props;
+    const {addPurchaseReturn, warehouses, fetchAllWarehouses, fetchAllSuppliers, suppliers, shipingTypes, fetchShippingTypes} = props;
     const navigate = useNavigate();
 
     useEffect(() => {
         fetchAllWarehouses();
         fetchAllSuppliers();
+
+    }, []);
+
+    useEffect(() => {
+        fetchShippingTypes();
     }, []);
 
     const addPurchaseReturnData = (formValue) => {
@@ -25,19 +31,20 @@ const CreatePurchaseReturn = (props) => {
     return (
         <MasterLayout>
             <HeaderTitle title={getFormattedMessage('purchase.return.create.title')} to='/app/purchase-return'/>
-            <PurchaseReturnForm addPurchaseReturnData={addPurchaseReturnData} warehouses={warehouses}
+            <PurchaseReturnForm addPurchaseReturnData={addPurchaseReturnData} warehouses={warehouses} allShipingTypes={shipingTypes}
                                 suppliers={suppliers}/>
         </MasterLayout>
     );
 }
 
 const mapStateToProps = (state) => {
-    const {warehouses, suppliers, totalRecord} = state;
-    return {warehouses, suppliers, totalRecord}
+    const {warehouses, suppliers, totalRecord, shipingTypes} = state;
+    return {warehouses, suppliers, totalRecord, shipingTypes}
 };
 
 export default connect(mapStateToProps, {
     addPurchaseReturn,
     fetchAllWarehouses,
-    fetchAllSuppliers
+    fetchAllSuppliers,
+    fetchShippingTypes
 })(CreatePurchaseReturn);

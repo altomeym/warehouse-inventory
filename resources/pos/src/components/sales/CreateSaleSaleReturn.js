@@ -42,6 +42,7 @@ const CreateSaleSaleReturn = (props) => {
         tax_amount: sales.attributes.tax_amount,
         discount: sales.attributes.discount,
         shipping: sales.attributes.shipping,
+        shipping_data: JSON.parse(sales.attributes.shipping_data),
         grand_total: sales.attributes.grand_total,
         amount: sales.attributes.amount,
         sale_items: sales.attributes.sale_items.map((item) => ({

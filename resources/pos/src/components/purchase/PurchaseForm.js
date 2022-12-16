@@ -9,7 +9,7 @@ import {searchPurchaseProduct} from '../../store/action/purchaseProductAction';
 import {editPurchase} from '../../store/action/purchaseAction';
 import status from '../../shared/option-lists/status.json'
 import {fetchAllProducts} from '../../store/action/productAction';
-import {fetchShippingTypes} from '../../store/action/shippingAction';
+// import {fetchShippingTypes} from '../../store/action/shippingAction';
 import PurchaseTable from '../../shared/components/purchase/PurchaseTable';
 import {preparePurchaseProductArray} from '../../shared/prepareArray/preparePurchaseArray';
 import {decimalValidate, getFormattedMessage, placeholderText, onFocusInput, getFormattedOptions} from '../../shared/sharedMethod';
@@ -32,7 +32,7 @@ const PurchaseForm = (props) => {
         warehouses,
         suppliers,
         fetchAllProducts,
-        products, frontSetting ,allConfigData, fetchShippingTypes, shipingTypes
+        products, frontSetting ,allConfigData, allShipingTypes
     } = props;
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -240,13 +240,13 @@ const PurchaseForm = (props) => {
         }
     })
     const shippingTypeValues = [];
-    const shippingTypeDefaultValue = shipingTypes.map((option) => {
+    const shippingTypeDefaultValue = allShipingTypes?.length >0 ? allShipingTypes.map((option) => {
         shippingTypeValues.push({
             id: option.id,
             name: option.attributes.name
         })
-    })
-
+    }) : [];
+// console.log('allShipingTypes ', allShipingTypes)
     
     const prepareData = (prepareData) => {
         const formValue = {
@@ -499,8 +499,8 @@ const PurchaseForm = (props) => {
 };
 
 const mapStateToProps = (state) => {
-    const {purchaseProducts, products, frontSetting, allConfigData, shipingTypes} = state;
-    return {customProducts: preparePurchaseProductArray(products), purchaseProducts, products, frontSetting, allConfigData, shipingTypes}
+    const {purchaseProducts, products, frontSetting, allConfigData} = state;
+    return {customProducts: preparePurchaseProductArray(products), purchaseProducts, products, frontSetting, allConfigData}
 };
 
-export default connect(mapStateToProps, {editPurchase, fetchAllProducts, searchPurchaseProduct, fetchShippingTypes})(PurchaseForm);
+export default connect(mapStateToProps, {editPurchase, fetchAllProducts, searchPurchaseProduct})(PurchaseForm);

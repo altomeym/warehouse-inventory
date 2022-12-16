@@ -7,6 +7,7 @@ import MasterLayout from '../MasterLayout';
 import PurchaseReturnForm from './PurchaseReturnForm';
 import {fetchAllSuppliers} from '../../store/action/supplierAction';
 import {fetchPurchaseReturn} from '../../store/action/purchaseReturnAction';
+import {fetchShippingTypes} from '../../store/action/shippingAction';
 import status from '../../shared/option-lists/status.json'
 import {getFormattedMessage, getFormattedOptions} from '../../shared/sharedMethod';
 import {editPurchaseReturnArray} from './editPurchaseReturnArray';
@@ -14,13 +15,17 @@ import TopProgressBar from "../../shared/components/loaders/TopProgressBar";
 import { saleStatusOptions } from '../../constants';
 
 const EditPurchaseReturn = (props) => {
-    const {fetchPurchaseReturn, purchaseReturn, warehouses, fetchAllSuppliers, suppliers, fetchAllWarehouses} = props;
+    const {fetchPurchaseReturn, purchaseReturn, warehouses, fetchAllSuppliers, suppliers, fetchAllWarehouses, shipingTypes, fetchShippingTypes} = props;
     const {id} = useParams();
 
     useEffect(() => {
         fetchAllWarehouses();
         fetchAllSuppliers();
         fetchPurchaseReturn(id);
+    }, []);
+
+    useEffect(() => {
+        fetchShippingTypes();
     }, []);
 
     const supplierId = purchaseReturn && purchaseReturn.attributes && purchaseReturn.attributes.supplier_id
@@ -71,16 +76,16 @@ const EditPurchaseReturn = (props) => {
             <TopProgressBar/>
             <HeaderTitle title={getFormattedMessage('purchase.return.edit.title')} to='/app/purchase-return'/>
             {purchaseReturn && supplierName && warehouseName &&
-            <PurchaseReturnForm singlePurchase={itemsValue} id={id} warehouses={warehouses}
+            <PurchaseReturnForm singlePurchase={itemsValue} id={id} warehouses={warehouses} allShipingTypes={shipingTypes}
                           suppliers={suppliers}/>}
         </MasterLayout>
     )
 };
 
 const mapStateToProps = (state) => {
-    const {purchaseReturn, warehouses, suppliers} = state;
-    return {purchaseReturn, warehouses, suppliers}
+    const {purchaseReturn, warehouses, suppliers, shipingTypes} = state;
+    return {purchaseReturn, warehouses, suppliers, shipingTypes}
 };
 
-export default connect(mapStateToProps, {fetchPurchaseReturn, fetchAllSuppliers, fetchAllWarehouses})(EditPurchaseReturn);
+export default connect(mapStateToProps, {fetchPurchaseReturn, fetchAllSuppliers, fetchAllWarehouses, fetchShippingTypes})(EditPurchaseReturn);
 

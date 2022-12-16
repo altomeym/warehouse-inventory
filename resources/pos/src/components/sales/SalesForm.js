@@ -37,7 +37,7 @@ const SalesForm = (props) => {
         fetchProductsByWarehouse,
         fetchFrontSetting,
         frontSetting,
-        isQuotation, allConfigData, fetchShippingTypes, shipingTypes
+        isQuotation, allConfigData, fetchShippingTypes, shipingTypes, allShipingTypes
     } = props;
 
     const navigate = useNavigate();
@@ -172,7 +172,7 @@ const SalesForm = (props) => {
     useEffect(()=>{
         // fetchShippingTypes()
       },[])
-
+console.log('allShipingTypes ', allShipingTypes)
       useEffect(()=>{
         if(singleSale)
         setCustomDynamicFields(singleSale?.shipping_data);
@@ -318,12 +318,12 @@ const SalesForm = (props) => {
     })
 
     const shippingTypeValues = [];
-    const shippingTypeDefaultValue = shipingTypes.map((option) => {
+    const shippingTypeDefaultValue = allShipingTypes.length > 0 ? allShipingTypes.map((option) => {
         shippingTypeValues.push({
             id: option.id,
             name: option.attributes.name
         })
-    })
+    }) : []
 
 
     const prepareFormData = (prepareData) => {
