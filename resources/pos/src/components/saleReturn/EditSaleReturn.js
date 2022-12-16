@@ -50,7 +50,7 @@ const EditSaleReturn = (props) => {
         tax_amount: salesReturn.attributes.tax_amount,
         discount: salesReturn.attributes.discount,
         shipping: salesReturn.attributes.shipping,
-        shipping_data: JSON.parse(sales.attributes.shipping_data),
+        shipping_data: JSON.parse(salesReturn.attributes.shipping_data),
         grand_total : salesReturn.attributes.grand_total,
         amount: salesReturn.attributes.amount,
         sale_items: salesReturn.attributes.sale_return_items.map((item) => ({

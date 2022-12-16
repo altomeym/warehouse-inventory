@@ -24,13 +24,15 @@ const CreateSaleReturn = (props) => {
         fetchAllCustomer();
         fetchAllWarehouses();
         fetchSale(id)
+    }, []);
+
+    useEffect(() => {
         fetchShippingTypes();
     }, []);
 
     const addSaleData = (formValue, navigate) => {
         addSaleReturn(formValue, navigate)
     }
-console.log('shipingTypes ', shipingTypes);
     const selectedStatus = sales.attributes && sales.attributes.status && saleReturnStatus.filter((item) => item.value === sales.attributes.status)
 
     const itemsValue = sales && sales.attributes && {
@@ -93,7 +95,7 @@ console.log('shipingTypes ', shipingTypes);
             <TopProgressBar/>
             <HeaderTitle title={getFormattedMessage('sale-return.create.title')} to='/app/sales'/>
             {isLoading ? <Spinner /> :
-                sales && <SaleReturnForm addSaleData={addSaleData} singleSale={itemsValue} allShipingTypes={shipingTypes} id={id} customers={customers} warehouses={warehouses}/>}
+                sales && <SaleReturnForm addSaleData={addSaleData} singleSale={itemsValue}  id={id} customers={customers} warehouses={warehouses} allShipingTypes={shipingTypes} />}
         </MasterLayout>
     )
 }

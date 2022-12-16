@@ -3,6 +3,8 @@ import {useNavigate} from 'react-router-dom';
 import {InputGroup} from 'react-bootstrap-v5';
 import moment from 'moment';
 import {connect, useDispatch} from 'react-redux';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import { faTrash} from '@fortawesome/free-solid-svg-icons';
 import {fetchProductsByWarehouse} from '../../store/action/productAction';
 import {fetchShippingTypes} from '../../store/action/shippingAction'
 import ProductRowTable from '../../shared/components/sales/ProductRowTable';
@@ -24,11 +26,10 @@ const SaleReturnForm = (props) => {
         addSaleData,
         editSaleReturn,
         id,
-        fetchShippingTypes,
         singleSale,
         fetchProductsByWarehouse,
         fetchFrontSetting,
-        frontSetting, allConfigData, isEdit, shipingTypes, allShipingTypes
+        frontSetting, allConfigData, isEdit,  allShipingTypes
     } = props;
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -116,13 +117,10 @@ const SaleReturnForm = (props) => {
         saleReturnValue.warehouse_id.value && fetchProductsByWarehouse(saleReturnValue?.warehouse_id?.value)
     },[saleReturnValue.warehouse_id.value])
 
-    useEffect(()=>{
-        // !singleSale?.shipping_data ? fetchShippingTypes() : null
-      },[])
 
       useEffect(()=>{
         if(singleSale)
-        setCustomDynamicFields(singleSale?.shipping_data);
+          singleSale?.shipping_data ? setCustomDynamicFields(singleSale?.shipping_data) : '';
   },[])
 
     const handleValidation = () => {
@@ -247,9 +245,9 @@ const SaleReturnForm = (props) => {
 
         setPurchaseValue(inputs => ({...inputs, ['shipping']: totalShipTax && totalShipTax}))
     }
-console.log('allShipingTypes ', allShipingTypes);
+
     const shippingTypeValues = [];
-    const shippingTypeDefaultValue = allShipingTypes?.length > 0 ? allShipingTypes.map((option) => {
+    const shippingTypeDefaultValue = allShipingTypes && allShipingTypes?.length > 0 ? allShipingTypes.map((option) => {
         shippingTypeValues.push({
             id: option.id,
             name: option.attributes.name
@@ -499,8 +497,8 @@ console.log('allShipingTypes ', allShipingTypes);
 }
 
 const mapStateToProps = (state) => {
-    const {purchaseProducts, products, frontSetting, shipingTypes, allConfigData } = state;
-    return {customProducts: prepareSaleProductArray(products), purchaseProducts, products, frontSetting, shipingTypes, allConfigData }
+    const {purchaseProducts, products, frontSetting,  allConfigData } = state;
+    return {customProducts: prepareSaleProductArray(products), purchaseProducts, products, frontSetting,  allConfigData }
 }
 
-export default connect(mapStateToProps, {editSaleReturn, fetchProductsByWarehouse, fetchFrontSetting, fetchShippingTypes})(SaleReturnForm)
+export default connect(mapStateToProps, {editSaleReturn, fetchProductsByWarehouse, fetchFrontSetting})(SaleReturnForm)

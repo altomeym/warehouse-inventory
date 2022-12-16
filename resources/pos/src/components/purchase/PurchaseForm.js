@@ -246,7 +246,6 @@ const PurchaseForm = (props) => {
             name: option.attributes.name
         })
     }) : [];
-// console.log('allShipingTypes ', allShipingTypes)
     
     const prepareData = (prepareData) => {
         const formValue = {

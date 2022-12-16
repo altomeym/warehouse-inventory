@@ -37,7 +37,7 @@ const SalesForm = (props) => {
         fetchProductsByWarehouse,
         fetchFrontSetting,
         frontSetting,
-        isQuotation, allConfigData, fetchShippingTypes, shipingTypes, allShipingTypes
+        isQuotation, allConfigData, allShipingTypes
     } = props;
 
     const navigate = useNavigate();
@@ -169,10 +169,6 @@ const SalesForm = (props) => {
         return isValid;
     };
 
-    useEffect(()=>{
-        // fetchShippingTypes()
-      },[])
-console.log('allShipingTypes ', allShipingTypes)
       useEffect(()=>{
         if(singleSale)
         setCustomDynamicFields(singleSale?.shipping_data);
@@ -572,9 +568,9 @@ console.log('allShipingTypes ', allShipingTypes)
 }
 
 const mapStateToProps = (state) => {
-    const {purchaseProducts, products, frontSetting, allConfigData,  shipingTypes} = state;
-    return {customProducts: prepareSaleProductArray(products), purchaseProducts, products, frontSetting, allConfigData, shipingTypes}
+    const {purchaseProducts, products, frontSetting, allConfigData} = state;
+    return {customProducts: prepareSaleProductArray(products), purchaseProducts, products, frontSetting, allConfigData}
 }
 
-export default connect(mapStateToProps, {editSale, fetchProductsByWarehouse, fetchFrontSetting, fetchShippingTypes})(SalesForm)
+export default connect(mapStateToProps, {editSale, fetchProductsByWarehouse, fetchFrontSetting})(SalesForm)
 
