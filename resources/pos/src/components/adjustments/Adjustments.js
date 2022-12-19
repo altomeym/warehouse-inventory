@@ -73,7 +73,7 @@ const Adjustments = (props) => {
             sortField: 'reference_code',
             sortable: false,
             cell: row => {
-                return <span className='badge bg-light-danger'>
+                return <span>
                             <span>{row.reference_code}</span>
                         </span>
             }
@@ -89,7 +89,7 @@ const Adjustments = (props) => {
             sortField: 'total_products',
             sortable: false,
             cell: row => {
-                return <span className='badge bg-light-danger'>
+                return <span>
                             <span>{row.total_products}</span>
                         </span>
             }
@@ -101,7 +101,7 @@ const Adjustments = (props) => {
             sortable: true,
             cell: row => {
                 return (
-                    <span className='badge bg-light-info'>
+                    <span>
                         <div className='mb-1'>{row.time}</div>
                         <div>{row.date}</div>
                     </span>

@@ -3191,11 +3191,11 @@ textarea.form-control-lg {
   font-size: 0.875rem;
   font-weight: 400;
   line-height: 1.5;
-  color: #6C757D;
+  color: #fff;
   text-align: center;
   white-space: nowrap;
-  background-color: #E9ECEF;
-  border: 1px solid #CED4DA;
+  background-color: #2d2e2e;
+  border: 1px solid #2d2e2e;
   border-radius: 0.313rem;
 }
 
@@ -16512,9 +16512,9 @@ tbody tr:last-child td {
   height: 100px;
   background-repeat: no-repeat;
   background-size: 100%;
-  box-shadow: 0 5px 20px rgba(173, 181, 189, 0.2);
-  border-radius: 0.313rem;
-  border: 0.063rem solid #E9ECEF;
+  box-shadow: none;
+  border-radius: 50px;
+  border: 1px solid #ced4da;
   background-position: center;
 }
 .image-picker .picker-edit {
@@ -16522,14 +16522,18 @@ tbody tr:last-child td {
   height: 25px;
   background-color: #FFFFFF;
   box-shadow: 0 5px 20px rgba(173, 181, 189, 0.2);
-  border: 0.063rem solid #E9ECEF;
+  border: 0.063rem solid #ced4da;
   display: flex;
   text-align: center;
   align-items: center;
   justify-content: center;
   position: absolute;
-  top: -10px;
-  right: -10px;
+  top: 1px;
+  right: 3px;
+  cursor: pointer;
+}
+.image-picker .previewImage img.image.image-circle.image-mini.h-100 {
+  margin: 0;
 }
 .image-picker .picker-edit label {
   cursor: pointer;
@@ -17226,6 +17230,31 @@ ul {
 .widget .widget-icon {
   width: 60px;
   height: 60px;
+  border-radius: 50px;
+}
+
+.card_01 .widget-icon svg {
+  font-size: 24px;
+}
+
+.table-responsive {
+  border: 1px solid #ced4da;
+  border-radius: 15px;
+  height: 97%;
+  margin-bottom: 15px;
+}
+
+.table-responsive table.table {
+  margin-bottom: 0px;
+}
+
+.table > thead > tr > th {
+  text-transform: uppercase;
+  font-weight: 400;
+  background-color: #2b2358;
+  white-space: nowrap;
+  color: #fff;
+  padding: 15px 15px;
 }
 
 .pricing-card {

@@ -151,7 +151,7 @@ const Product = (props) => {
             cell: row => {
                 return row.reference_code === "Total" ?
                     <span className="fw-bold fs-4">{getFormattedMessage("pos-total.title")}</span> :
-                    <span className='badge bg-light-danger'>
+                    <span>
                             <span>{row.reference_code}</span>
                         </span>
             }
@@ -241,7 +241,7 @@ const Product = (props) => {
             sortable: true,
             cell: row => {
                 return (
-                    row.date && <span className='badge bg-light-info'>
+                    row.date && <span>
                         <div className='mb-1'>{row.time}</div>
                         <div>{row.date}</div>
                     </span>

@@ -176,7 +176,7 @@ const AsideMenu = (props) => {
                     </a>
                     <button type='button' onClick={(e) => menuIconClick(e)}
                             className='btn p-0 fs-1 aside-menu-container__aside-menubar d-lg-block d-none sidebar-btn border-0'>
-                        <FontAwesomeIcon icon={faBars} className="text-gray-600"/>
+                        <FontAwesomeIcon icon={faBars}/>
                     </button>
                 </SidebarHeader>
                 <SidebarContent className='sidebar-scrolling'>
