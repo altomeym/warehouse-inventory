@@ -150,6 +150,7 @@ class TransferAPIController extends AppBaseController
             $this->transferRepository->delete($id);
 
             DB::commit();
+            $shipping_has_values = \App\Models\Shipping_has_values::where('slug','transfer')->where('sale_purchases_id',$id)->delete();
 
             return $this->sendSuccess('Transfer delete successfully');
         } catch (Exception $e) {
