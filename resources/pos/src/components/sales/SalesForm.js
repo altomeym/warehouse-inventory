@@ -248,13 +248,14 @@ const SalesForm = (props) => {
     let calShippingTotal = (singleVal=0)=>{
         let totalShipTax = 0;
         if(singleVal)
-          totalShipTax =  parseFloat(purchaseValue.shipping) -   parseFloat(singleVal);
+          totalShipTax =  parseFloat(saleValue.shipping) -   parseFloat(singleVal);
         else
-        customDynamicFields.map((element)=>(
-          totalShipTax = parseFloat(totalShipTax) + parseFloat(element.shipping_value)
-        ));
-
-        setPurchaseValue(inputs => ({...inputs, ['shipping']: totalShipTax && totalShipTax}))
+        customDynamicFields.map((element)=>{
+            if(element.shipping_value && element.shipping_value != '' && element.shipping_value != NaN && element.shipping_value !=null ){
+               totalShipTax = parseFloat(totalShipTax) + parseFloat(element.shipping_value)
+            }
+       });
+       setSaleValue(inputs => ({...inputs, ['shipping']: totalShipTax && totalShipTax}))
     }
 
     const updatedQty = (qty) => {
@@ -314,13 +315,18 @@ const SalesForm = (props) => {
     })
 
     const shippingTypeValues = [];
-    const shippingTypeDefaultValue = allShipingTypes.length > 0 ? allShipingTypes.map((option) => {
+    const shippingTypeValue = allShipingTypes.length > 0 ? allShipingTypes.map((option) => {
         shippingTypeValues.push({
             id: option.id,
             name: option.attributes.name
         })
     }) : []
 
+
+    const shippingTypeDefaultValues = {
+            value: allShipingTypes[0]?.id,
+            label: allShipingTypes[0]?.attributes?.name
+        }
 
     const prepareFormData = (prepareData) => {
         const formValue = {
@@ -423,7 +429,7 @@ const SalesForm = (props) => {
                             />
                         </div>
                         <div className='col-12'>
-                            <ProductMainCalculation inputValues={saleValue} allConfigData={allConfigData} updateProducts={updateProducts} frontSetting={frontSetting}/>
+                            <ProductMainCalculation inputValues={saleValue} allConfigData={allConfigData} shippingInputValues={customDynamicFields} updateProducts={updateProducts} frontSetting={frontSetting}/>
                         </div>
                         <div className='col-md-4 mb-3'>
                             <label
@@ -481,8 +487,8 @@ const SalesForm = (props) => {
                         <div className='col-md-5'>
                              <ReactSelect multiLanguageOption={shippingTypeValues} onChange={e => onShippingTypeChange(index, e)} name='shipping_type_id'
                           title={'Shipping Type'}
-                          value={element.shipping_type_id || ""}  errors={errors['status_id']}
-                        //  defaultValue={shippingTypeValues}
+                          value={element.shipping_type_id || ""} 
+                         defaultValue={shippingTypeDefaultValues}
                          placeholder={'shipping type '}/>
                         </div>
                         {/* ... */}
@@ -496,7 +502,7 @@ const SalesForm = (props) => {
                                     <input aria-label='Dollar amount (with dot and two decimal places)'
                                                 className='form-control'  value={element.shipping_value || ""}
                                                 type='text' name='shipping_value'
-                                                onBlur={(event) => onBlurInput(index, event)}
+                                                // onBlur={(event) => onBlurInput(index, event)}
                                                 onFocus={(event) => onFocusInput(event)}
                                                 onKeyPress={(event) => decimalValidate(event)}
                                                 onChange={e => handleChange(index, e)}

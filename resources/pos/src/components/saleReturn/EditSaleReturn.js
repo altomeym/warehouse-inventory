@@ -7,13 +7,14 @@ import {fetchAllWarehouses} from '../../store/action/warehouseAction';
 import {fetchAllCustomer} from '../../store/action/customerAction';
 import {useParams} from 'react-router-dom';
 import {fetchSaleReturn} from '../../store/action/salesReturnAction';
+import {fetchShippingTypes} from '../../store/action/shippingAction'
 import saleReturnStatus from './saleReturnStatus.json';
 import {getFormattedMessage} from '../../shared/sharedMethod';
 import Spinner from "../../shared/components/loaders/Spinner";
 import TopProgressBar from "../../shared/components/loaders/TopProgressBar";
 
 const EditSaleReturn = (props) => {
-    const {fetchSaleReturn, salesReturn, customers, fetchAllCustomer, warehouses, fetchAllWarehouses, isLoading} = props;
+    const {fetchSaleReturn, salesReturn, customers, fetchAllCustomer, warehouses, fetchAllWarehouses, isLoading, shipingTypes, fetchShippingTypes} = props;
     const {id} = useParams();
     const isSaleReturnFromSale = true
 
@@ -22,6 +23,10 @@ const EditSaleReturn = (props) => {
         fetchAllWarehouses();
         fetchSaleReturn(id, false);
     }, [])
+
+    useEffect(() => {
+        fetchShippingTypes();
+    }, []);
 
     const selectedStatus = salesReturn.attributes && salesReturn.attributes.status && saleReturnStatus.filter((item) => item.value === salesReturn.attributes.status)
 
@@ -98,14 +103,14 @@ const EditSaleReturn = (props) => {
             <TopProgressBar/>
             <HeaderTitle title={getFormattedMessage('sale-return.edit.title')} to='/app/sale-return'/>
             {isLoading ? <Spinner /> :
-                salesReturn && <SaleReturnForm singleSale={itemsValue} id={id} customers={customers} warehouses={warehouses}/>}
+                salesReturn && <SaleReturnForm singleSale={itemsValue} id={id} customers={customers} warehouses={warehouses} allShipingTypes={shipingTypes} />}
         </MasterLayout>
     )
 }
 
 const mapStateToProps = (state) => {
-    const {salesReturn, customers, warehouses, isLoading} = state;
-    return {salesReturn, customers, warehouses, isLoading}
+    const {salesReturn, customers, warehouses, shipingTypes, isLoading} = state;
+    return {salesReturn, customers, warehouses, shipingTypes, isLoading}
 };
 
-export default connect(mapStateToProps, {fetchSaleReturn, fetchAllCustomer, fetchAllWarehouses})(EditSaleReturn);
+export default connect(mapStateToProps, {fetchSaleReturn, fetchAllCustomer, fetchAllWarehouses, fetchShippingTypes})(EditSaleReturn);

@@ -122,7 +122,6 @@ const SaleReturnForm = (props) => {
         if(singleSale)
           singleSale?.shipping_data ? setCustomDynamicFields(singleSale?.shipping_data) : '';
   },[])
-
     const handleValidation = () => {
         let error = {};
         let isValid = false;
@@ -237,13 +236,15 @@ const SaleReturnForm = (props) => {
     let calShippingTotal = (singleVal=0)=>{
         let totalShipTax = 0;
         if(singleVal)
-          totalShipTax =  parseFloat(purchaseValue.shipping) -   parseFloat(singleVal);
+          totalShipTax =  parseFloat(saleReturnValue.shipping) -   parseFloat(singleVal);
         else
-        customDynamicFields.map((element)=>(
-          totalShipTax = parseFloat(totalShipTax) + parseFloat(element.shipping_value)
-        ));
+        customDynamicFields.map((element)=>{
+            if(element.shipping_value && element.shipping_value != '' && element.shipping_value != NaN && element.shipping_value !=null ){
+               totalShipTax = parseFloat(totalShipTax) + parseFloat(element.shipping_value)
+            }
+       });
 
-        setPurchaseValue(inputs => ({...inputs, ['shipping']: totalShipTax && totalShipTax}))
+       setSaleReturnValue(inputs => ({...inputs, ['shipping']: totalShipTax && totalShipTax}))
     }
 
     const shippingTypeValues = [];
@@ -387,7 +388,7 @@ const SaleReturnForm = (props) => {
                             />
                         </div>
                         <div className='col-12'>
-                            <ProductMainCalculation inputValues={saleReturnValue} updateProducts={updateProducts}
+                            <ProductMainCalculation inputValues={saleReturnValue} shippingInputValues={customDynamicFields} updateProducts={updateProducts}
                                                     frontSetting={frontSetting} allConfigData={allConfigData}/>
                         </div>
                         <div className='col-md-4 mb-5'>

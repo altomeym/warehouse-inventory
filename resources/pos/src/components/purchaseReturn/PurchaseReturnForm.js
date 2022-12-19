@@ -119,7 +119,7 @@ const PurchaseReturnForm = (props) => {
         } else {
             isValid = true;
         }
-        setErrors(errorss);
+        setErrors(errorss); 
         return isValid;
     };
 
@@ -169,9 +169,11 @@ const PurchaseReturnForm = (props) => {
         if(singleVal)
           totalShipTax =  parseFloat(purchaseValue.shipping) -   parseFloat(singleVal);
         else
-        customDynamicFields.map((element)=>(
-          totalShipTax = parseFloat(totalShipTax) + parseFloat(element.shipping_value)
-        ));
+        customDynamicFields.map((element)=>{
+            if(element.shipping_value && element.shipping_value != '' && element.shipping_value != NaN && element.shipping_value !=null ){
+               totalShipTax = parseFloat(totalShipTax) + parseFloat(element.shipping_value)
+            }
+       });
 
         setPurchaseValue(inputs => ({...inputs, ['shipping']: totalShipTax && totalShipTax}))
     }
