@@ -30,6 +30,7 @@ use App\Http\Controllers\API\UnitAPIController;
 use App\Http\Controllers\API\UserAPIController;
 use App\Http\Controllers\API\WarehouseAPIController;
 use App\Http\Controllers\API\ShippingTypeAPIController;
+use App\Http\Controllers\API\TranStatusTypesAPIController;
 
 use App\Http\Controllers\MailTemplateAPIController;
 use Illuminate\Support\Facades\Route;
@@ -63,6 +64,11 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     });
     Route::resource('shipping_type', ShippingTypeAPIController::class);
     Route::get('shipping_type', [ShippingTypeAPIController::class, 'index']);
+
+    Route::group(['middleware' => ['permission:manage_status_types']], function () {
+    });
+    Route::resource('tran_status_types', TranStatusTypesAPIController::class);
+    Route::get('tran_status_types', [TranStatusTypesAPIController::class, 'index']);
     
 
     //Dashboard
