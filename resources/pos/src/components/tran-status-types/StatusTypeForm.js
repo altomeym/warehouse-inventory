@@ -57,6 +57,14 @@ const ShippingForm = (props) => {
 
     };
 
+    const shippingTypeValues = [];
+    const shippingTypeValue = allShipingTypes && allShipingTypes?.length > 0 ? allShipingTypes.map((option) => {
+        shippingTypeValues.push({
+            id: option.id,
+            name: option.attributes.name
+        })
+    }) : []
+
     const clearField = () => {
         setFormValue({
             name: ''

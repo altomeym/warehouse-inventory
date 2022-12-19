@@ -37,9 +37,9 @@ const StatusType = (props) => {
         id: item?.id
     }));
     let user_permissions = new Set(config);
-    const is_addedAble = user_permissions.has('manage_shipping_type-create') ? true : false
-    const is_editAdable = user_permissions.has('manage_shipping_type-edit') ? true : false
-    const is_deleteAdable = user_permissions.has('manage_shipping_type-delete') ? true: false
+    const is_addedAble = user_permissions.has('manage_status_types-create') ? true : false
+    const is_editAdable = user_permissions.has('manage_status_types-edit') ? true : false
+    const is_deleteAdable = user_permissions.has('manage_status_types-delete') ? true: false
      
     const columns = [
         {

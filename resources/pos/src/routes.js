@@ -516,7 +516,7 @@ export const route = [
     {
         path: "status-types",
         ele: <TranStatusTypes />,
-        permission: Permissions.MANAGE_EXPENSES
+        permission: Permissions.MANAGE_STATUS_TYPES
     }
     // MANAGE_STATUS_TYPES
 ]

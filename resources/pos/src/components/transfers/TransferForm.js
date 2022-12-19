@@ -20,6 +20,7 @@ import ReactDatePicker from '../../shared/datepicker/ReactDatePicker';
 import ProductMainCalculation from '../sales/ProductMainCalculation';
 import ReactSelect from '../../shared/select/reactSelect';
 import {fetchProductsByWarehouse} from "../../store/action/productAction";
+import {fetchStatusTypes} from '../../store/action/tranStatusTypesAction';
 
 const TransferForm = (props) => {
     const {
@@ -31,7 +32,7 @@ const TransferForm = (props) => {
         warehouses,
         fetchAllProducts,
         fetchProductsByWarehouse,
-        products, frontSetting, allConfigData, allShipingTypes
+        products, frontSetting, allConfigData, allShipingTypes, allStatusTypes, fetchStatusTypes 
     } = props;
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -53,6 +54,7 @@ const TransferForm = (props) => {
         tax_amount: singleTransfer ? singleTransfer.tax_amount.toFixed(2) : '0.00',
         discount: singleTransfer ? singleTransfer.discount.toFixed(2) : '0.00',
         shipping: singleTransfer ? singleTransfer.shipping.toFixed(2) : '0.00',
+        shipping_data: singleTransfer ? singleTransfer?.shipping_data: [],
         grand_total: singleTransfer ? singleTransfer.grand_total : '0.00',
         notes: singleTransfer ? singleTransfer.notes : '',
         status_id: singleTransfer ? singleTransfer.status_id : {
@@ -90,8 +92,6 @@ const TransferForm = (props) => {
     }, []);
 
 
-
-
     useEffect(() => {
         updateProducts.length >= 1 ? dispatch({type: 'DISABLE_OPTION', payload: true}) : dispatch({type: 'DISABLE_OPTION', payload: false})
     }, [singleTransfer])
@@ -101,6 +101,10 @@ const TransferForm = (props) => {
         transferValue.from_warehouse_id.value ? fetchProductsByWarehouse(transferValue.from_warehouse_id.value) : null
         transferValue.from_warehouse_id.value ? setTransferValue(inputs => ({...inputs, warehouse_id: transferValue.from_warehouse_id})): null
     },[transferValue.from_warehouse_id])
+
+    useEffect(()=>{
+        fetchStatusTypes();
+  },[])
 
     useEffect(()=>{
         if(singleTransfer)
@@ -184,13 +188,14 @@ const TransferForm = (props) => {
     let calShippingTotal = (singleVal=0)=>{
         let totalShipTax = 0;
         if(singleVal)
-          totalShipTax =  parseFloat(singleTransfer.shipping) -   parseFloat(singleVal);
+          totalShipTax =  parseFloat(transferValue.shipping) -   parseFloat(singleVal);
         else
         customDynamicFields.map((element)=>{
-            if(element.shipping_value && element.shipping_value != '' && element.shipping_value != NaN && element.shipping_value !=null ){
+            if(element.shipping_value && element.shipping_value != '' && !isNaN(element.shipping_value) && element.shipping_value !=null ){
                totalShipTax = parseFloat(totalShipTax) + parseFloat(element.shipping_value)
             }
        });
+      console.log('totalShipTax ', totalShipTax);
        setTransferValue(inputs => ({...inputs, ['shipping']: totalShipTax && totalShipTax}))
     }
 
@@ -266,6 +271,15 @@ const TransferForm = (props) => {
             value: allShipingTypes[0]?.id,
             label: allShipingTypes[0]?.attributes?.name
         }
+
+        const statusTypeValues = [];
+        const statusValue = allStatusTypes && allStatusTypes?.length > 0 ? allStatusTypes.map((option) => {
+            statusTypeValues.push({
+                id: option.id,
+                name: option.attributes.name
+            })
+        }) : []
+    
 
     const prepareData = (prepareData) => {
         const formValue = {
@@ -450,10 +464,10 @@ const TransferForm = (props) => {
                         <span className='text-danger d-block fw-400 fs-small mt-2'>{errors['shipping'] ? errors['shipping'] : null}</span>
                     </div> */}
                     <div className='col-md-4 mb-3'>
-                         <ReactSelect multiLanguageOption={transferStatusFilterOptions}
+                         <ReactSelect multiLanguageOption={statusTypeValues}
                                      name='status' onChange={onStatusChange}
                                      title={getFormattedMessage('purchase.select.status.label')}
-                                     defaultValue={transferValue.status_id} errors={errors['status_id']}
+                                    //  defaultValue={transferValue.status_id} errors={errors['status_id']}
                                      placeholder={placeholderText('purchase.select.status.placeholder.label')}/>
                     </div>
                      {/* .......... */}
@@ -517,8 +531,8 @@ const TransferForm = (props) => {
 };
 
 const mapStateToProps = (state) => {
-    const {products, frontSetting, allConfigData} = state;
-    return {customProducts: prepareTransferArray(products), products, frontSetting, allConfigData}
+    const {products, frontSetting, allConfigData, allStatusTypes } = state;
+    return {customProducts: prepareTransferArray(products), products, frontSetting, allConfigData, allStatusTypes}
 };
 
-export default connect(mapStateToProps, {editTransfer,fetchProductsByWarehouse, fetchAllProducts})(TransferForm);
+export default connect(mapStateToProps, {editTransfer,fetchProductsByWarehouse, fetchAllProducts, fetchStatusTypes})(TransferForm);
