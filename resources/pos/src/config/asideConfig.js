@@ -103,7 +103,7 @@ export default [
         fontIcon: <FontAwesomeIcon icon={faShippingFast}/>,
         to: '/app/shipping-types',
         class: 'd-flex',
-        permission: Permissions.MANAGE_ADJUSTMENTS,
+        permission: Permissions.MANAGE_SHIPPING_TYPES,
         items: [
             {
                 title: getFormattedMessage("shipping.title"),
