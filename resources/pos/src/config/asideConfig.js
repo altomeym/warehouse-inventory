@@ -202,6 +202,20 @@ export default [
         ],
     },
     {
+        title: "status-types.title",
+        name: "status-types.title",
+        fontIcon: <FontAwesomeIcon icon={faShippingFast}/>,
+        to: '/app/status-types-types',
+        class: 'd-flex',
+        permission: Permissions.MANAGE_SHIPPING_TYPES,
+        items: [
+            {
+                title: getFormattedMessage("status-types.title"),
+                to: '/app/status-types'
+            }
+        ],
+    },
+    {
         title: 'expenses.title',
         name: "expenses",
         fontIcon: <FontAwesomeIcon icon={faMoneyBills}/>,

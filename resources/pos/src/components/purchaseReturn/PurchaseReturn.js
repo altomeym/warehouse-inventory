@@ -101,7 +101,7 @@ const PurchaseReturn = (props) => {
             sortField: 'reference_code',
             sortable: true,
             cell: row => {
-                return <span className='badge bg-light-danger'>
+                return <span>
                             <span>{row.reference_code}</span>
                         </span>
             }
@@ -177,7 +177,7 @@ const PurchaseReturn = (props) => {
             sortable: true,
             cell: row => {
                 return (
-                    <span className='badge bg-light-info'>
+                    <span>
                         <div className='mb-1'>{row.time}</div>
                         <div>{row.date}</div>
                     </span>

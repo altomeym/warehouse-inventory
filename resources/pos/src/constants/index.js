@@ -92,6 +92,7 @@ export const apiBaseURL = {
     EDIT_SALE_FROM_SALE : "sales-return-edit",
     HOLDS_LIST:"holds",
     SHIPPING: '/shipping_type',
+    TRAN_STATUS_TYPE: '/tran_status_types',
 
 };
 
@@ -450,6 +451,14 @@ export const shippingTypeActionType = {
     DELETE_SHIPPINGTYPE: 'DELETE_SHIPPINGTYPE'
 };
 
+export const tranStatusTypeActionType = {
+    FETCH_TRAN_STATUSTYPES: 'FETCH_TRAN_STATUSTYPES',
+    FETCH_TRAN_STATUSTYPE: 'FETCH_TRAN_STATUSTYPE',
+    ADD_TRAN_STATUSTYPE: 'ADD_TRAN_STATUSTYPE',
+    EDIT_TRAN_STATUSTYPE: 'EDIT_TRAN_STATUSTYPE',
+    DELETE_TRAN_STATUSTYPE: 'DELETE_TRAN_STATUSTYPE'
+};
+
 
 export const Filters = {
     PAGE: 1,
@@ -561,7 +570,8 @@ export const Permissions = {
     MANAGE_QUOTATION : "manage_quotations",
     MANAGE_SMS_API: "manage_sms_apis",
     MANAGE_SMS_TEMPLATES: "manage_sms_templates",
-    MANAGE_SHIPPING_TYPES: "manage_shipping_type"
+    MANAGE_SHIPPING_TYPES: "manage_shipping_type",
+    MANAGE_STATUS_TYPES: "manage_status_types"
 };
 
 //POS Screen Constants

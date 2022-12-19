@@ -2,6 +2,8 @@ import React, {useState, useEffect} from 'react';
 import {connect, useDispatch} from 'react-redux';
 import {useNavigate} from 'react-router-dom';
 import moment from 'moment';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import { faTrash} from '@fortawesome/free-solid-svg-icons';
 import {InputGroup, Table} from 'react-bootstrap-v5';
 import {editTransfer} from '../../store/action/transfersAction';
 import TransferStatusType from '../../shared/option-lists/TransferStatusType.json'
@@ -29,7 +31,7 @@ const TransferForm = (props) => {
         warehouses,
         fetchAllProducts,
         fetchProductsByWarehouse,
-        products, frontSetting, allConfigData
+        products, frontSetting, allConfigData, allShipingTypes
     } = props;
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -71,6 +73,12 @@ const TransferForm = (props) => {
         status_id: ''
     });
 
+    const [customDynamicFields, setCustomDynamicFields] = useState([{
+        shipping_type_id:"", 
+        shipping_value:"",
+        shipping_type_name:"",
+    }]);
+
     useEffect(() => {
         setUpdateProducts(updateProducts);
     }, [updateProducts, quantity, newCost, newDiscount, newTax, subTotal, newPurchaseUnit]);
@@ -94,6 +102,10 @@ const TransferForm = (props) => {
         transferValue.from_warehouse_id.value ? setTransferValue(inputs => ({...inputs, warehouse_id: transferValue.from_warehouse_id})): null
     },[transferValue.from_warehouse_id])
 
+    useEffect(()=>{
+        if(singleTransfer)
+        setCustomDynamicFields(singleTransfer?.shipping_data);
+  },[])
 
     const handleValidation = () => {
         let errorss = {};
@@ -141,6 +153,46 @@ const TransferForm = (props) => {
     const onStatusChange = (obj) => {
         setTransferValue(inputs => ({...inputs, status_id: obj}))
     };
+
+    let  onShippingTypeChange = (i, e) => {
+        let newFormValues = [...customDynamicFields];  
+        newFormValues[i]['shipping_type_id'] = e;
+        newFormValues[i]['shipping_type_name'] = e.label;
+        setCustomDynamicFields(newFormValues);
+    };
+
+    let  addDynamicField = ()=>{
+        setCustomDynamicFields([...customDynamicFields, { shipping_type_id: "", shipping_value: "" }])
+
+    }
+
+    let handleChange = (i, e) => {
+        let newFormValues = [...customDynamicFields];
+        newFormValues[i][e.target.name] = e.target.value;
+        setCustomDynamicFields(newFormValues);
+        calShippingTotal();
+      }
+
+       let removeFormFields = (i) => {
+        let newFormValues = [...customDynamicFields];
+        newFormValues.splice(i, 1);
+        setCustomDynamicFields(newFormValues)
+       calShippingTotal(customDynamicFields[i]['shipping_value'])
+       
+    }
+
+    let calShippingTotal = (singleVal=0)=>{
+        let totalShipTax = 0;
+        if(singleVal)
+          totalShipTax =  parseFloat(singleTransfer.shipping) -   parseFloat(singleVal);
+        else
+        customDynamicFields.map((element)=>{
+            if(element.shipping_value && element.shipping_value != '' && element.shipping_value != NaN && element.shipping_value !=null ){
+               totalShipTax = parseFloat(totalShipTax) + parseFloat(element.shipping_value)
+            }
+       });
+       setTransferValue(inputs => ({...inputs, ['shipping']: totalShipTax && totalShipTax}))
+    }
 
     const updateCost = (item) => {
         setNewCost(item);
@@ -200,6 +252,21 @@ const TransferForm = (props) => {
             label: option.name
         }
     })
+
+    const shippingTypeValues = [];
+    const shippingTypeValue = allShipingTypes && allShipingTypes?.length > 0 ? allShipingTypes.map((option) => {
+        shippingTypeValues.push({
+            id: option.id,
+            name: option.attributes.name
+        })
+    }) : []
+
+
+    const shippingTypeDefaultValues = {
+            value: allShipingTypes[0]?.id,
+            label: allShipingTypes[0]?.attributes?.name
+        }
+
     const prepareData = (prepareData) => {
         const formValue = {
             from_warehouse_id: prepareData.from_warehouse_id.value ? prepareData.from_warehouse_id.value : prepareData.from_warehouse_id,
@@ -215,6 +282,8 @@ const TransferForm = (props) => {
             received_amount: 0,
             paid_amount: 0,
             status: prepareData.status_id.value ? prepareData.status_id.value : prepareData.status_id,
+            shipping_data:customDynamicFields ? customDynamicFields : [],
+
         }
         return formValue
     };
@@ -235,7 +304,7 @@ const TransferForm = (props) => {
     const onBlurInput = (el) => {
         if (el.target.value === '') {
             if (el.target.name === 'shipping') {
-                setTransferValue({...transferValue, shipping: '0.00'})
+                // setTransferValue({...transferValue, shipping: '0.00'})
             }
             if (el.target.name === 'discount') {
                 setTransferValue({...transferValue, discount: '0.00'})
@@ -324,7 +393,7 @@ const TransferForm = (props) => {
                         </Table>
                     </div>
                     <div className='col-12'>
-                        <ProductMainCalculation inputValues={transferValue} updateProducts={updateProducts}
+                        <ProductMainCalculation inputValues={transferValue} shippingInputValues={customDynamicFields} updateProducts={updateProducts}
                                                 frontSetting={frontSetting} allConfigData={allConfigData}/>
                     </div>
                     <div className='col-md-4 mb-5'>
@@ -362,7 +431,7 @@ const TransferForm = (props) => {
                         </InputGroup>
                         <span className='text-danger d-block fw-400 fs-small mt-2'>{errors['discount'] ? errors['discount'] : null}</span>
                     </div>
-                    <div className='col-md-4 mb-5'>
+                    {/* <div className='col-md-4 mb-5'>
                         <label
                             className='form-label'>
                             {getFormattedMessage('purchase.input.shipping.label')}:
@@ -379,7 +448,7 @@ const TransferForm = (props) => {
                             <InputGroup.Text>{frontSetting.value && frontSetting.value.currency_symbol}</InputGroup.Text>
                         </InputGroup>
                         <span className='text-danger d-block fw-400 fs-small mt-2'>{errors['shipping'] ? errors['shipping'] : null}</span>
-                    </div>
+                    </div> */}
                     <div className='col-md-4 mb-3'>
                          <ReactSelect multiLanguageOption={transferStatusFilterOptions}
                                      name='status' onChange={onStatusChange}
@@ -387,6 +456,47 @@ const TransferForm = (props) => {
                                      defaultValue={transferValue.status_id} errors={errors['status_id']}
                                      placeholder={placeholderText('purchase.select.status.placeholder.label')}/>
                     </div>
+                     {/* .......... */}
+                     {customDynamicFields.map((element, index) => (
+                        <React.Fragment key={index}>
+                        <div className='col-md-5'>
+                             <ReactSelect multiLanguageOption={shippingTypeValues} onChange={e => onShippingTypeChange(index, e)} name='shipping_type_id'
+                          title={'Shipping Type'}
+                          value={element.shipping_type_id || ""} 
+                         defaultValue={shippingTypeDefaultValues}
+                         placeholder={'shipping type '}/>
+                        </div>
+                       
+                        <div className='col-md-5 mb-5'>
+                            <div className='align_o'>
+                                <label
+                                    className='form-label'>
+                                Shipping value
+                                </label>
+                                <InputGroup>
+                                    <input aria-label='Dollar amount (with dot and two decimal places)'
+                                                className='form-control'  value={element.shipping_value || ""}
+                                                type='text' name='shipping_value'
+                                                onFocus={(event) => onFocusInput(event)}
+                                                onKeyPress={(event) => decimalValidate(event)}
+                                                onChange={e => handleChange(index, e)}
+                                    />
+                                    <InputGroup.Text>{frontSetting.value && frontSetting.value.currency_symbol}</InputGroup.Text>
+                                </InputGroup>
+                                <span className='text-danger d-block fw-400 fs-small mt-2'>{errors['shipping'] ? errors['shipping'] : null}</span>
+                                {
+                                index ? 
+                                   <button type="button"  className="btn btn-danger remove" onClick={() => removeFormFields(index)}><FontAwesomeIcon icon={faTrash}/></button> 
+                                : null
+                            }
+                            </div>
+                        </div>
+                        </React.Fragment>
+                        )) }
+                          <div  className='col-md-2 '>
+                             <button className='btn btn-primary me-2 float-lg-right float_plus' onClick={addDynamicField} type='submit' > + </button> 
+                           </div>
+                        {/* ................... */}
                     <div className='col-md-12 mb-5'>
                         <label className='form-label'>
                             {getFormattedMessage('globally.input.notes.label')}:

@@ -105,7 +105,7 @@ const User = (props) => {
             sortable: true,
             cell: row => {
                 return (
-                    <span className='badge bg-light-info'>
+                    <span>
                         <div className='mb-1'>{row.time}</div>
                         <div>{row.date}</div>
                     </span>
