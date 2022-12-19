@@ -2976,14 +2976,14 @@ img.image {
 }
 .pro-sidebar .pro-menu .pro-menu-item .pro-inner-item:hover {
   background-color: #ff4f000d;
-  border-left: 0.313rem solid #FF4F00 !important;
+  border-right: 0.313rem solid #FF4F00 !important;
 }
 .pro-sidebar .pro-menu .pro-menu-item .pro-inner-item:hover svg, .pro-sidebar .pro-menu .pro-menu-item .pro-inner-item:hover .pro-item-content a {
   color: #212529;
 }
 .pro-sidebar .pro-menu .pro-menu-item.active .pro-inner-item {
   background-color: #ff4f000d;
-  border-left: 0.313rem solid #FF4F00 !important;
+  border-right: 0.313rem solid #FF4F00 !important;
 }
 .pro-sidebar .pro-menu .pro-menu-item.active .pro-inner-item svg, .pro-sidebar .pro-menu .pro-menu-item.active .pro-inner-item .pro-item-content a {
   color: #212529;
@@ -3021,7 +3021,7 @@ img.image {
   color: #FF4F00 !important;
 }
 .pro-sidebar .pro-menu .pro-menu-item.pro-sub-menu.pro-active-sub > div.pro-inner-item {
-  border-left: 0.313rem solid #FF4F00 !important;
+  border-right: 0.313rem solid #FF4F00 !important;
 }
 .pro-sidebar .pro-menu .pro-menu-item.pro-sub-menu.pro-active-sub-search > div {
   background-color: #ff4f000d;

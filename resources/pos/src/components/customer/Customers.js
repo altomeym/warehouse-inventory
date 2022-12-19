@@ -73,7 +73,7 @@ const Customers = (props) => {
             sortable: true,
             cell: row => {
                 return (
-                    <span className='badge bg-light-info'>
+                    <span >
                         <div className='mb-1'>{row.time}</div>
                         {row.date}
                     </span>

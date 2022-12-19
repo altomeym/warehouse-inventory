@@ -63,7 +63,7 @@ const Units = (props) => {
             sortField: 'short_name',
             sortable: true,
             cell: row => {
-                return <span className='badge bg-light-info'>
+                return <span>
                             <span>{row.short_name}</span>
                         </span>
             }
@@ -96,7 +96,7 @@ const Units = (props) => {
             sortable: true,
             cell: row => {
                 return (
-                    <span className='badge bg-light-info'>
+                    <span>
                         <div className='mb-1'>{row.time}</div>
                         <div>{row.date}</div>
                     </span>
