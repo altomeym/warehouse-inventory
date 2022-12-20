@@ -78,6 +78,7 @@ class TransferAPIController extends AppBaseController
 
     public function show(Transfer $transfer)
     {
+      
         $transfer = $transfer->load('transferItems.product');
 
         return new TransferResource($transfer);

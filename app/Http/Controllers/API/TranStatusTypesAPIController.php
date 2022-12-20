@@ -92,7 +92,14 @@ class TranStatusTypesAPIController extends AppBaseController
      */
     public function destroy($id)
     {
-        $this->tranStatusTypesRepository->delete($id);
-        return $this->sendSuccess('Transfer Status Type deleted successfully');
+        
+        if ($id != 1 && $id != 2)
+        {
+            $this->tranStatusTypesRepository->delete($id);
+            return $this->sendSuccess('Transfer Status Type deleted successfully');
+        }else{
+           
+            return $this->sendSuccess('Transfer Status Type Not deleted');
+        }
     }
 }

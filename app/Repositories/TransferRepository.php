@@ -123,6 +123,8 @@ class TransferRepository extends BaseRepository
      */
     public function storeTransferItems($transfer, $input)
     {
+        /*echo "<pre>";
+    print_r($transfer['status']); exit;*/
 
         foreach ($input['transfer_items'] as $transferItem) {
             $product = ManageStock::whereWarehouseId($input['from_warehouse_id'])->whereProductId($transferItem['product_id'])->first();
@@ -131,9 +133,12 @@ class TransferRepository extends BaseRepository
                 if ($transferItem['quantity'] > $product->quantity) {
                     throw new UnprocessableEntityHttpException("Quantity should not be greater than available quantity.");
                 } else {
-                    manageStock($input['to_warehouse_id'], $transferItem['product_id'], $transferItem['quantity']);
-                    $exceptQuantity = $product->quantity - $transferItem['quantity'];
-                    $product->update(['quantity' => $exceptQuantity]);
+                    /*if($transfer['status'] == '2')
+                    {*/
+                        manageStock($input['to_warehouse_id'], $transferItem['product_id'], $transferItem['quantity']);
+                        $exceptQuantity = $product->quantity - $transferItem['quantity'];
+                        $product->update(['quantity' => $exceptQuantity]);
+                    /*}*/
                 }
             } else {
                 throw new UnprocessableEntityHttpException("Product stock is not available in selected warehouse.");

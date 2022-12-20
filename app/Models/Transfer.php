@@ -138,6 +138,7 @@ class Transfer extends BaseModel implements HasMedia, JsonResourceful
             'grand_total'       => $this->grand_total,
             'note'              => $this->note,
             'status'            => $this->status,
+            'toStatus'          => $this->toStatus,
             'reference_code'    => $this->reference_code,
             'transfer_items'    => $this->transferItems,
             'from_warehouse'    => $this->fromWarehouse,
@@ -164,6 +165,12 @@ class Transfer extends BaseModel implements HasMedia, JsonResourceful
     {
         return $this->belongsTo(Warehouse::class, 'to_warehouse_id', 'id');
     }
+
+    public function toStatus(): BelongsTo
+    {
+        return $this->belongsTo(TranStatusType::class, 'status', 'id');
+    }
+
 
 
     /**
