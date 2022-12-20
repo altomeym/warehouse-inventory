@@ -7,11 +7,12 @@ import {fetchAllWarehouses} from '../../store/action/warehouseAction';
 import {fetchAllSuppliers} from '../../store/action/supplierAction';
 import {addTransfer} from '../../store/action/transfersAction';
 import {fetchShippingTypes} from '../../store/action/shippingAction'
+import {fetchStatusTypes} from '../../store/action/tranStatusTypesAction';
 import {getFormattedMessage} from "../../shared/sharedMethod";
 import TransferForm from "./TransferForm";
 
 const CreateTransfer = (props) => {
-    const {addTransfer, warehouses, fetchAllWarehouses, fetchAllSuppliers, suppliers, shipingTypes, fetchShippingTypes} = props;
+    const {addTransfer, warehouses, fetchAllWarehouses, fetchAllSuppliers, suppliers, shipingTypes, fetchShippingTypes, allStatusTypes, fetchStatusTypes} = props;
     const navigate = useNavigate();
     useEffect(() => {
         fetchAllWarehouses();
@@ -20,6 +21,8 @@ const CreateTransfer = (props) => {
 
     useEffect(() => {
         fetchShippingTypes();
+        fetchStatusTypes();
+
     }, []);
 
     const addTtansferData = (formValue) => {
@@ -29,14 +32,14 @@ const CreateTransfer = (props) => {
     return (
         <MasterLayout>
             <HeaderTitle title={getFormattedMessage("transfer.create.title")} to='/app/transfers'/>
-            <TransferForm addTtansferData={addTtansferData} warehouses={warehouses}  allShipingTypes={shipingTypes} />
+            <TransferForm addTtansferData={addTtansferData} warehouses={warehouses}  allShipingTypes={shipingTypes} allStatusTypes={allStatusTypes} />
         </MasterLayout>
     );
 };
 
 const mapStateToProps = (state) => {
-    const {warehouses, suppliers, totalRecord, shipingTypes} = state;
-    return {warehouses, suppliers, totalRecord, shipingTypes}
+    const {warehouses, suppliers, totalRecord, shipingTypes, allStatusTypes} = state;
+    return {warehouses, suppliers, totalRecord, shipingTypes, allStatusTypes}
 };
 
-export default connect(mapStateToProps, {addTransfer, fetchAllWarehouses, fetchAllSuppliers, fetchShippingTypes})(CreateTransfer);
+export default connect(mapStateToProps, {addTransfer, fetchAllWarehouses, fetchAllSuppliers, fetchShippingTypes, fetchStatusTypes})(CreateTransfer);

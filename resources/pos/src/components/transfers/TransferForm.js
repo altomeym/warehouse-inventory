@@ -20,7 +20,7 @@ import ReactDatePicker from '../../shared/datepicker/ReactDatePicker';
 import ProductMainCalculation from '../sales/ProductMainCalculation';
 import ReactSelect from '../../shared/select/reactSelect';
 import {fetchProductsByWarehouse} from "../../store/action/productAction";
-import {fetchStatusTypes} from '../../store/action/tranStatusTypesAction';
+
 
 const TransferForm = (props) => {
     const {
@@ -32,7 +32,7 @@ const TransferForm = (props) => {
         warehouses,
         fetchAllProducts,
         fetchProductsByWarehouse,
-        products, frontSetting, allConfigData, allShipingTypes, allStatusTypes, fetchStatusTypes 
+        products, frontSetting, allConfigData, allShipingTypes, allStatusTypes 
     } = props;
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -102,9 +102,7 @@ const TransferForm = (props) => {
         transferValue.from_warehouse_id.value ? setTransferValue(inputs => ({...inputs, warehouse_id: transferValue.from_warehouse_id})): null
     },[transferValue.from_warehouse_id])
 
-    useEffect(()=>{
-        fetchStatusTypes();
-  },[])
+  
 
     useEffect(()=>{
         if(singleTransfer)
@@ -531,8 +529,8 @@ const TransferForm = (props) => {
 };
 
 const mapStateToProps = (state) => {
-    const {products, frontSetting, allConfigData, allStatusTypes } = state;
-    return {customProducts: prepareTransferArray(products), products, frontSetting, allConfigData, allStatusTypes}
+    const {products, frontSetting, allConfigData } = state;
+    return {customProducts: prepareTransferArray(products), products, frontSetting, allConfigData}
 };
 
-export default connect(mapStateToProps, {editTransfer,fetchProductsByWarehouse, fetchAllProducts, fetchStatusTypes})(TransferForm);
+export default connect(mapStateToProps, {editTransfer,fetchProductsByWarehouse, fetchAllProducts})(TransferForm);
