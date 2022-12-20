@@ -7,7 +7,7 @@ import {editStatusType} from '../../store/action/tranStatusTypesAction';
 import ModelFooter from '../../shared/components/modelFooter';
 
 const ShippingForm = (props) => {
-    const {addItemFormData, editStatusType, singleSatusType, handleClose, show, title} = props;
+    const {addItemFormData, editStatusType, singleSatusType, handleClose, show, title, allShipingTypes } = props;
     const innerRef = createRef();
     const [formValue, setFormValue] = useState({
         name: singleSatusType ? singleSatusType.name : '',

@@ -2,6 +2,7 @@ import React, {useEffect} from 'react';
 import {connect} from 'react-redux';
 import {fetchAllWarehouses} from '../../store/action/warehouseAction';
 import {fetchShippingTypes} from '../../store/action/shippingAction'
+import {fetchStatusTypes} from '../../store/action/tranStatusTypesAction';
 import {useParams} from 'react-router-dom'
 import HeaderTitle from '../header/HeaderTitle';
 import MasterLayout from '../MasterLayout';
@@ -12,7 +13,7 @@ import { fetchTransfer } from '../../store/action/transfersAction';
 import { transferCreatStatusOptions } from '../../constants';
 
 const EditTransfer = (props) => {
-    const {fetchTransfer, tansfers, warehouses, fetchAllWarehouses, shipingTypes,fetchShippingTypes, isLoading} = props;
+    const {fetchTransfer, tansfers, warehouses, fetchAllWarehouses, shipingTypes,fetchShippingTypes, allStatusTypes, fetchStatusTypes,  isLoading} = props;
     const {id} = useParams();
 
     useEffect(() => {
@@ -22,6 +23,8 @@ const EditTransfer = (props) => {
 
     useEffect(() => {
         fetchShippingTypes();
+        fetchStatusTypes();
+
     }, []);
 
     const selectedStatus = tansfers.attributes && tansfers.attributes.status && TransferStatusType.filter((item) => item.value === tansfers.attributes.status)
@@ -90,15 +93,15 @@ const EditTransfer = (props) => {
         <MasterLayout>
             <HeaderTitle title={getFormattedMessage('transfer.edit.title')} to='/app/transfers'/>
             {isLoading ? <div className='text-center custom-loading mx-auto fs-1 fw-bold'>Loading...</div> :
-                <TransferForm singleTransfer={itemsValue} id={id} warehouses={warehouses} allShipingTypes={shipingTypes} />}
+                <TransferForm singleTransfer={itemsValue} id={id} warehouses={warehouses} allShipingTypes={shipingTypes} allStatusTypes={allStatusTypes} />}
         </MasterLayout>
     )
 };
 
 const mapStateToProps = (state) => {
-    const { warehouses, isLoading, tansfers, shipingTypes} = state;
-    return { warehouses, isLoading, tansfers, shipingTypes}
+    const { warehouses, isLoading, tansfers, shipingTypes, allStatusTypes} = state;
+    return { warehouses, isLoading, tansfers, shipingTypes, allStatusTypes}
 };
 
-export default connect(mapStateToProps, {fetchAllWarehouses, fetchTransfer, fetchShippingTypes})(EditTransfer);
+export default connect(mapStateToProps, {fetchAllWarehouses, fetchTransfer, fetchShippingTypes, fetchStatusTypes})(EditTransfer);
 
