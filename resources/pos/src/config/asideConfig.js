@@ -4,7 +4,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {
     faPieChart, faUser, faTruck, faUserGroup, faHome, faBoxes, faPrint, faBookmark, faBoxOpen,
     faMoneyCheckDollar, faMoneyBills, faQuoteRight, faDollarSign, faReceipt, faArrowRight, faArrowLeft,
-    faEnvelope, faCartShopping, faChartColumn, faGear, faMapLocation, faBasketShopping, faSms, faCube, faFile,faShippingFast
+    faEnvelope, faCartShopping, faChartColumn, faGear, faMapLocation, faBasketShopping, faSms, faCube, faFile,faShippingFast, faMinusSquare
 } from '@fortawesome/free-solid-svg-icons';
 import {getFormattedMessage} from '../shared/sharedMethod';
 import {ShieldLock} from "react-bootstrap-icons";
@@ -204,10 +204,10 @@ export default [
     {
         title: "status-types.title",
         name: "status-types.title",
-        fontIcon: <FontAwesomeIcon icon={faShippingFast}/>,
-        to: '/app/status-types-types',
+        fontIcon: <FontAwesomeIcon icon={faMinusSquare}/>,
+        to: '/app/status-types',
         class: 'd-flex',
-        permission: Permissions.MANAGE_SHIPPING_TYPES,
+        permission: Permissions.MANAGE_STATUS_TYPES,
         items: [
             {
                 title: getFormattedMessage("status-types.title"),
