@@ -79,6 +79,7 @@ class Transfer extends BaseModel implements HasMedia, JsonResourceful
         'tax_rate',
         'tax_amount',
         'discount',
+        'shipping_data',
         'shipping',
         'grand_total',
         'note',
@@ -93,6 +94,7 @@ class Transfer extends BaseModel implements HasMedia, JsonResourceful
         'tax_rate'          => 'nullable|numeric',
         'tax_amount'        => 'nullable|numeric',
         'discount'          => 'nullable|numeric',
+        'shipping_data'     => 'nullable',
         'shipping'          => 'nullable|numeric',
         'grand_total'       => 'nullable|numeric',
         'notes'             => 'nullable',
@@ -132,9 +134,11 @@ class Transfer extends BaseModel implements HasMedia, JsonResourceful
             'tax_amount'        => $this->tax_amount,
             'discount'          => $this->discount,
             'shipping'          => $this->shipping,
+            'shipping_data'     => $this->shipping_data,
             'grand_total'       => $this->grand_total,
             'note'              => $this->note,
             'status'            => $this->status,
+            'toStatus'          => $this->toStatus,
             'reference_code'    => $this->reference_code,
             'transfer_items'    => $this->transferItems,
             'from_warehouse'    => $this->fromWarehouse,
@@ -161,6 +165,12 @@ class Transfer extends BaseModel implements HasMedia, JsonResourceful
     {
         return $this->belongsTo(Warehouse::class, 'to_warehouse_id', 'id');
     }
+
+    public function toStatus(): BelongsTo
+    {
+        return $this->belongsTo(TranStatusType::class, 'status', 'id');
+    }
+
 
 
     /**
