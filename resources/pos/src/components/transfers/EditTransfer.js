@@ -82,12 +82,11 @@ const EditTransfer = (props) => {
         id: tansfers.id,
         notes: tansfers.attributes.note,
         status_id: {
-            label: transferStatusDefaultValue[0] && transferStatusDefaultValue[0].name,
-            value: transferStatusDefaultValue[0] && transferStatusDefaultValue[0].id
+            label: tansfers.attributes.toStatus?.name && tansfers.attributes.toStatus?.name,
+            value: tansfers.attributes.toStatus?.id && tansfers.attributes.toStatus?.id
         },
 
     };
-
 
     return (
         <MasterLayout>
@@ -104,4 +103,4 @@ const mapStateToProps = (state) => {
 };
 
 export default connect(mapStateToProps, {fetchAllWarehouses, fetchTransfer, fetchShippingTypes, fetchStatusTypes})(EditTransfer);
-
+;

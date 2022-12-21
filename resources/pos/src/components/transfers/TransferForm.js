@@ -57,12 +57,8 @@ const TransferForm = (props) => {
         shipping_data: singleTransfer ? singleTransfer?.shipping_data: [],
         grand_total: singleTransfer ? singleTransfer.grand_total : '0.00',
         notes: singleTransfer ? singleTransfer.notes : '',
-        status_id: singleTransfer ? singleTransfer.status_id : {
-            label: getFormattedMessage("status.filter.complated.label"),
-            value: 1
-        },
+        status_id: singleTransfer ? singleTransfer?.status_id : '',
     });
-
     const [errors, setErrors] = useState({
         date: '',
         from_warehouse_id: '',
@@ -193,7 +189,6 @@ const TransferForm = (props) => {
                totalShipTax = parseFloat(totalShipTax) + parseFloat(element.shipping_value)
             }
        });
-      console.log('totalShipTax ', totalShipTax);
        setTransferValue(inputs => ({...inputs, ['shipping']: totalShipTax && totalShipTax}))
     }
 
@@ -465,7 +460,7 @@ const TransferForm = (props) => {
                          <ReactSelect multiLanguageOption={statusTypeValues}
                                      name='status' onChange={onStatusChange}
                                      title={getFormattedMessage('purchase.select.status.label')}
-                                    //  defaultValue={transferValue.status_id} errors={errors['status_id']}
+                                     defaultValue={transferValue.status_id} errors={errors['status_id']}
                                      placeholder={placeholderText('purchase.select.status.placeholder.label')}/>
                     </div>
                      {/* .......... */}

@@ -56,8 +56,8 @@ const StatusType = (props) => {
             allowOverflow: true,
             button: true,
             cell: row => {
-                return <ActionButton item={row} goToEditProduct={handleClose} isEditMode={is_editAdable}
-                                     onClickDeleteModel={onClickDeleteModel}  isDeleteMode={is_deleteAdable} />
+                return <ActionButton item={row} goToEditProduct={handleClose} isEditMode={row.id !=  1 && row.id !=  2 ? is_editAdable : false}
+                                     onClickDeleteModel={onClickDeleteModel}  isDeleteMode={row.id !=  1 && row.id !=  2 ? is_deleteAdable : false} />
             }
         }
     ];
