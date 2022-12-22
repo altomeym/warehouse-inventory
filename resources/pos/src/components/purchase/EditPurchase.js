@@ -28,8 +28,8 @@ const EditPurchase = (props) => {
     }, []);
 
     useEffect(() => {
-        fetchShippingTypes();
         fetchStatusTypes();
+        fetchShippingTypes();
     }, []);
 
     const supplierId = purchases && purchases.attributes && purchases.attributes.supplier_id

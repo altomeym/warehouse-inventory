@@ -51,6 +51,7 @@ import StockDetails from "./components/report/stockReport/StockDetails";
 import TopSellingProductsReport from "./components/report/topSellingReport/TopSellingProductsReport";
 import PurchaseReport from "./components/report/purchaseReport/PurchaseReport";
 import PrintBarcode from "./components/printBarcode/PrintBarcode";
+import PrintQRcode from "./components/printQRcode/PrintQRcode";
 import {Permissions} from "./constants";
 import Role from "./components/roles/Role";
 import CreateRole from "./components/roles/CreateRole";
@@ -432,11 +433,16 @@ export const route = [
         path: "report/suppliers/details/:id",
         ele: <SupplierReportDetails/>,
         permission: Permissions.MANAGE_REPORTS
-    },
+    }, 
     {
         path: "print/barcode",
         ele: <PrintBarcode/>,
         permission: Permissions.MANAGE_PRODUCTS
+    },
+    {
+        path: "print/qrcode",
+        ele: <PrintQRcode/>,
+        permission: Permissions.MANAGE_ROLES
     },
     {
         path: "roles",

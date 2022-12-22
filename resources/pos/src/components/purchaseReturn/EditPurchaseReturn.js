@@ -16,7 +16,7 @@ import TopProgressBar from "../../shared/components/loaders/TopProgressBar";
 import { saleStatusOptions } from '../../constants';
 
 const EditPurchaseReturn = (props) => {
-    const {fetchPurchaseReturn, purchaseReturn, warehouses, fetchAllSuppliers, suppliers, fetchAllWarehouses, shipingTypes, fetchShippingTypes, statusTypeValues, fetchStatusTypes} = props;
+    const {fetchPurchaseReturn, purchaseReturn, warehouses, fetchAllSuppliers, suppliers, fetchAllWarehouses, shipingTypes, fetchShippingTypes, allStatusTypes, fetchStatusTypes} = props;
     const {id} = useParams();
 
     useEffect(() => {
@@ -85,8 +85,8 @@ const EditPurchaseReturn = (props) => {
 };
 
 const mapStateToProps = (state) => {
-    const {purchaseReturn, warehouses, suppliers, shipingTypes, statusTypeValues} = state;
-    return {purchaseReturn, warehouses, suppliers, shipingTypes, statusTypeValues}
+    const {purchaseReturn, warehouses, suppliers, shipingTypes, allStatusTypes} = state;
+    return {purchaseReturn, warehouses, suppliers, shipingTypes, allStatusTypes}
 };
 
 export default connect(mapStateToProps, {fetchPurchaseReturn, fetchAllSuppliers, fetchAllWarehouses, fetchShippingTypes, fetchStatusTypes})(EditPurchaseReturn);

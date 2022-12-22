@@ -98,17 +98,11 @@ const PurchaseReturnDetails = (props) => {
                                     </div>
                                     <div className='pb-1'>
                                         <span className='me-2'>{getFormattedMessage('globally.detail.status')} :</span>
-                                        {purchaseReturnDetails && purchaseReturnDetails.status === 1 &&
-                                        <span className='badge bg-light-success'>
-                                                <span>Received</span>
-                                           </span> || purchaseReturnDetails.status === 2 &&
-                                        <span className='badge bg-light-primary'>
-                                                <span>Pending</span>
-                                        </span> || purchaseReturnDetails.status === 3 &&
-                                        <span className='badge bg-light-warning'>
-                                                <span>Ordered</span>
-                                        </span>
-                                        }
+                                        {purchaseReturnDetails && purchaseReturnDetails.sale?.attributes?.toStatus?.name ? 
+                                          <span className='badge bg-light-primary'>
+                                             <span> {purchaseReturnDetails.sale?.attributes?.toStatus?.name} </span>
+                                           </span> 
+                                         : '' }
                                     </div>
                                     <div className='pb-1'>
                                         <span
