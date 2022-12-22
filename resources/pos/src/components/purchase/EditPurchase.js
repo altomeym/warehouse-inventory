@@ -8,6 +8,7 @@ import PurchaseForm from './PurchaseForm';
 import {fetchAllSuppliers} from '../../store/action/supplierAction';
 import {fetchPurchase} from '../../store/action/purchaseAction';
 import {fetchShippingTypes} from '../../store/action/shippingAction';
+import {fetchStatusTypes} from '../../store/action/tranStatusTypesAction';
 import status from '../../shared/option-lists/status.json'
 import {editPrepareArray} from '../../shared/prepareArray/editPrepareArray';
 import {getFormattedMessage, getFormattedOptions} from '../../shared/sharedMethod';
@@ -16,7 +17,7 @@ import TopProgressBar from "../../shared/components/loaders/TopProgressBar";
 import { saleStatusOptions } from '../../constants';
 
 const EditPurchase = (props) => {
-    const {fetchPurchase, purchases, warehouses, fetchAllSuppliers, suppliers, fetchAllWarehouses, shipingTypes, fetchShippingTypes, isLoading} = props;
+    const {fetchPurchase, purchases, warehouses, fetchAllSuppliers, suppliers, fetchAllWarehouses, shipingTypes, fetchShippingTypes, allStatusTypes, fetchStatusTypes, isLoading} = props;
     const {id} = useParams();
 
     useEffect(() => {
@@ -28,6 +29,7 @@ const EditPurchase = (props) => {
 
     useEffect(() => {
         fetchShippingTypes();
+        fetchStatusTypes();
     }, []);
 
     const supplierId = purchases && purchases.attributes && purchases.attributes.supplier_id
@@ -71,8 +73,8 @@ const EditPurchase = (props) => {
         purchase_item_id: purchasesItemsId ? purchasesItemsId[0] : '',
         id: purchases.id,
         status_id: {
-            label: statusDefaultValue[0] && statusDefaultValue[0].name,
-            value: statusDefaultValue[0] && statusDefaultValue[0].id
+            label: purchases.attributes?.toStatus?.name && purchases.attributes?.toStatus?.name,
+            value: purchases.attributes?.toStatus?.id && purchases.attributes?.toStatus?.id
         },
         tax_amount: purchases.attributes.tax_amount,
     };
@@ -82,15 +84,15 @@ const EditPurchase = (props) => {
             <TopProgressBar/>
             <HeaderTitle title={getFormattedMessage('purchase.edit.title')} to='/app/purchases'/>
             {isLoading ? <Spinner /> :
-                <PurchaseForm singlePurchase={itemsValue} id={id} allShipingTypes={shipingTypes} warehouses={warehouses} suppliers={suppliers}/>}
+                <PurchaseForm singlePurchase={itemsValue} id={id} allShipingTypes={shipingTypes} warehouses={warehouses} suppliers={suppliers} allStatusTypes={allStatusTypes} />}
         </MasterLayout>
     )
 };
 
 const mapStateToProps = (state) => {
-    const {purchases, warehouses, suppliers, shipingTypes, isLoading} = state;
-    return {purchases, warehouses, suppliers, shipingTypes, isLoading}
+    const {purchases, warehouses, suppliers, shipingTypes, allStatusTypes, isLoading} = state;
+    return {purchases, warehouses, suppliers, shipingTypes, allStatusTypes, isLoading}
 };
 
-export default connect(mapStateToProps, {fetchPurchase, fetchAllSuppliers, fetchAllWarehouses, fetchShippingTypes})(EditPurchase);
+export default connect(mapStateToProps, {fetchPurchase, fetchAllSuppliers, fetchAllWarehouses, fetchShippingTypes, fetchStatusTypes})(EditPurchase);
 

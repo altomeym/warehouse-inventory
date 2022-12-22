@@ -37,7 +37,7 @@ const SalesForm = (props) => {
         fetchProductsByWarehouse,
         fetchFrontSetting,
         frontSetting,
-        isQuotation, allConfigData, allShipingTypes
+        isQuotation, allConfigData, allShipingTypes, allStatusTypes
     } = props;
 
     const navigate = useNavigate();
@@ -322,6 +322,15 @@ const SalesForm = (props) => {
         })
     }) : []
 
+    const statusTypeValues = [];
+    const statusValue = allStatusTypes && allStatusTypes?.length > 0 ? allStatusTypes.map((option) => {
+        statusTypeValues.push({
+            id: option.id,
+            name: option.attributes.name
+        })
+    }) : []
+
+
 
     const shippingTypeDefaultValues = {
             value: allShipingTypes[0]?.id,
@@ -475,7 +484,7 @@ const SalesForm = (props) => {
                             </InputGroup>
                         </div> */}
                         <div className='col-md-4'>
-                    <ReactSelect multiLanguageOption={statusFilterOptions} onChange={onStatusChange} name='status_id'
+                    <ReactSelect multiLanguageOption={statusTypeValues} onChange={onStatusChange} name='status_id'
                          title={getFormattedMessage('purchase.select.status.label')}
                          value={saleValue.status_id} errors={errors['status_id']}
                          defaultValue={statusDefaultValue[0]}
