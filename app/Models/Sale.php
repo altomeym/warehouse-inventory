@@ -206,6 +206,7 @@ class Sale extends BaseModel implements HasMedia, JsonResourceful
             'payment_type'    => $this->payment_type,
             'note'            => $this->note,
             'status'          => $this->status,
+            'toStatus'              => $this->toStatus,
             'payment_status'  => $this->payment_status,
             'reference_code'  => $this->reference_code,
             'sale_items'      => $this->saleItems,
@@ -223,6 +224,12 @@ class Sale extends BaseModel implements HasMedia, JsonResourceful
     {
         return $this->belongsTo(Customer::class, 'customer_id', 'id');
     }
+
+    public function toStatus(): BelongsTo
+    {
+        return $this->belongsTo(TranStatusType::class, 'status', 'id');
+    }
+
 
     /**
      * @return BelongsTo
