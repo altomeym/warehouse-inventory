@@ -26,7 +26,7 @@ class PrintButton extends React.PureComponent {
                     </div>
                     }
                     <Image
-                        src={product && product.barcode_url}
+                        src={product && product.qrcode_url}
                         alt={product && product.name}
                         className='w-100'/>
                     <div
