@@ -31,6 +31,7 @@ use App\Http\Controllers\API\UserAPIController;
 use App\Http\Controllers\API\WarehouseAPIController;
 use App\Http\Controllers\API\ShippingTypeAPIController;
 use App\Http\Controllers\API\TranStatusTypesAPIController;
+use App\Http\Controllers\API\CommonApiController;
 
 use App\Http\Controllers\MailTemplateAPIController;
 use Illuminate\Support\Facades\Route;
@@ -59,7 +60,11 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     });
     Route::get('/brands', [BrandAPIController::class, 'index']);
 /*New added*/
-
+    /*Country state city*/
+    Route::get('/country', [CommonApiController::class, 'country']);
+    Route::get('/state/{id}', [CommonApiController::class, 'state']);
+    Route::get('/city/{id}', [CommonApiController::class, 'city']);
+    
     Route::group(['middleware' => ['permission:manage_shipping_type']], function () {
     });
     Route::resource('shipping_type', ShippingTypeAPIController::class);
