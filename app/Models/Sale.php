@@ -206,7 +206,7 @@ class Sale extends BaseModel implements HasMedia, JsonResourceful
             'payment_type'    => $this->payment_type,
             'note'            => $this->note,
             'status'          => $this->status,
-            'toStatus'              => $this->toStatus,
+            'toStatus'        => $this->toStatus,
             'payment_status'  => $this->payment_status,
             'reference_code'  => $this->reference_code,
             'sale_items'      => $this->saleItems,
