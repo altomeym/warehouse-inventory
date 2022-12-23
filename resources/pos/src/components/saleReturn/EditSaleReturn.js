@@ -8,13 +8,14 @@ import {fetchAllCustomer} from '../../store/action/customerAction';
 import {useParams} from 'react-router-dom';
 import {fetchSaleReturn} from '../../store/action/salesReturnAction';
 import {fetchShippingTypes} from '../../store/action/shippingAction'
+import {fetchStatusTypes} from '../../store/action/tranStatusTypesAction';
 import saleReturnStatus from './saleReturnStatus.json';
 import {getFormattedMessage} from '../../shared/sharedMethod';
 import Spinner from "../../shared/components/loaders/Spinner";
 import TopProgressBar from "../../shared/components/loaders/TopProgressBar";
 
 const EditSaleReturn = (props) => {
-    const {fetchSaleReturn, salesReturn, customers, fetchAllCustomer, warehouses, fetchAllWarehouses, isLoading, shipingTypes, fetchShippingTypes} = props;
+    const {fetchSaleReturn, salesReturn, customers, fetchAllCustomer, warehouses, fetchAllWarehouses, isLoading, shipingTypes, fetchShippingTypes,allStatusTypes, fetchStatusTypes} = props;
     const {id} = useParams();
     const isSaleReturnFromSale = true
 
@@ -26,6 +27,7 @@ const EditSaleReturn = (props) => {
 
     useEffect(() => {
         fetchShippingTypes();
+        fetchStatusTypes();
     }, []);
 
     const selectedStatus = salesReturn.attributes && salesReturn.attributes.status && saleReturnStatus.filter((item) => item.value === salesReturn.attributes.status)
@@ -86,11 +88,11 @@ const EditSaleReturn = (props) => {
             isSaleReturnEdit: true,
         })),
         id: salesReturn.id,
-        status_id: salesReturn.attributes.status,
-        // status_id: {
-        //     label: selectedStatus[0] && selectedStatus[0].label,
-        //     value: selectedStatus[0] && selectedStatus[0].value
-        // },
+        // status_id: salesReturn.attributes.status,
+        status_id: {
+            label: salesReturn.attributes.toStatus?.name && salesReturn.attributes.toStatus?.name,
+            value: salesReturn.attributes.toStatus?.id && salesReturn.attributes.toStatus?.id
+        },
         note:salesReturn.attributes.note,
         // isCreateSaleReturn: true,
         isSaleReturnEdit: true,
@@ -103,14 +105,14 @@ const EditSaleReturn = (props) => {
             <TopProgressBar/>
             <HeaderTitle title={getFormattedMessage('sale-return.edit.title')} to='/app/sale-return'/>
             {isLoading ? <Spinner /> :
-                salesReturn && <SaleReturnForm singleSale={itemsValue} id={id} customers={customers} warehouses={warehouses} allShipingTypes={shipingTypes} />}
+                salesReturn && <SaleReturnForm singleSale={itemsValue} id={id} customers={customers} warehouses={warehouses} allShipingTypes={shipingTypes} allStatusTypes={allStatusTypes} />}
         </MasterLayout>
     )
 }
 
 const mapStateToProps = (state) => {
-    const {salesReturn, customers, warehouses, shipingTypes, isLoading} = state;
-    return {salesReturn, customers, warehouses, shipingTypes, isLoading}
+    const {salesReturn, customers, warehouses, shipingTypes, allStatusTypes, isLoading} = state;
+    return {salesReturn, customers, warehouses, shipingTypes, allStatusTypes, isLoading}
 };
 
-export default connect(mapStateToProps, {fetchSaleReturn, fetchAllCustomer, fetchAllWarehouses, fetchShippingTypes})(EditSaleReturn);
+export default connect(mapStateToProps, {fetchSaleReturn, fetchAllCustomer, fetchAllWarehouses, fetchShippingTypes, fetchStatusTypes})(EditSaleReturn);

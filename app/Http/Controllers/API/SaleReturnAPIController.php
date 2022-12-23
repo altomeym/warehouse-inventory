@@ -205,7 +205,7 @@ class SaleReturnAPIController extends AppBaseController
      */
     public function saleReturnInfo(SaleReturn $salesReturn)
     {
-        $salesReturn = $salesReturn->load('saleReturnItems.product', 'warehouse', 'customer');
+        $salesReturn = $salesReturn->load('saleReturnItems.product', 'warehouse', 'customer','toStatus');
         $keyName = [
             'email', 'company_name', 'phone', 'address',
         ];

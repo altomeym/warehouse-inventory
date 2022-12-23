@@ -67,7 +67,7 @@ const SaleReturn = (props) => {
         reference_code: sale.attributes.reference_code,
         customer_name: sale.attributes.customer_name,
         warehouse_name: sale.attributes.warehouse_name,
-        status: sale.attributes.status,
+        status: sale?.attributes?.toStatus?.name,
         payment_status: sale.attributes.payment_status,
         grand_total: sale.attributes.grand_total,
         paid_amount: sale.attributes.paid_amount ? sale.attributes.paid_amount : 0.00.toFixed(2),
@@ -108,20 +108,9 @@ const SaleReturn = (props) => {
             sortField: 'status',
             sortable: false,
             cell: row => {
-                return (
-                    row.status === 1 &&
-                    <span className='badge bg-light-success'>
-                        <span>{getFormattedMessage("status.filter.received.label")}</span>
-                    </span> ||
-                    row.status === 2 &&
-                    <span className='badge bg-light-primary'>
-                        <span>{getFormattedMessage("status.filter.pending.label")}</span>
-                    </span> ||
-                    row.status === 3 &&
-                    <span className='badge bg-light-warning'>
-                        <span>{getFormattedMessage("status.filter.ordered.label")}</span>
-                    </span>
-                )
+                return <span className='badge bg-light-primary'>
+                            <span>{row?.status}</span>
+                        </span>
             }
         },
         {

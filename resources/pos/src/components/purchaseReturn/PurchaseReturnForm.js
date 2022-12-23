@@ -24,7 +24,7 @@ import ReactSelect from '../../shared/select/reactSelect';
 
 const PurchaseReturnForm = (props) => {
     const { addPurchaseReturnData, id, editPurchaseReturn, customProducts, singlePurchase, warehouses, suppliers,
-        fetchProductsByWarehouse, products, frontSetting, allConfigData, fetchShippingTypes, shipingTypes
+        fetchProductsByWarehouse, products, frontSetting, allConfigData, fetchShippingTypes, shipingTypes, allStatusTypes
     } = props;
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -245,6 +245,13 @@ const PurchaseReturnForm = (props) => {
         })
     })
 
+    const statusTypeValues = [];
+    const statusValue = allStatusTypes && allStatusTypes?.length > 0 ? allStatusTypes.map((option) => {
+        statusTypeValues.push({
+            id: option.id,
+            name: option.attributes.name
+        })
+    }) : []
 
     const prepareData = (prepareData) => {
         const formValue = {
@@ -425,7 +432,7 @@ const PurchaseReturnForm = (props) => {
                             <span className='text-danger d-block fw-400 fs-small mt-2'>{errors['shipping'] ? errors['shipping'] : null}</span>
                         </div> */}
                         <div className='col-md-4'>
-                            <ReactSelect multiLanguageOption={statusFilterOptions} onChange={onStatusChange} name='status'
+                            <ReactSelect multiLanguageOption={statusTypeValues} onChange={onStatusChange} name='status'
                          title={getFormattedMessage('purchase.select.status.label')}
                          value={purchaseValue.status_id} errors={errors['status_id']}
                          defaultValue={statusDefaultValue[0]}

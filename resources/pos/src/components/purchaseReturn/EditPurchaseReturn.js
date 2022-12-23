@@ -8,6 +8,7 @@ import PurchaseReturnForm from './PurchaseReturnForm';
 import {fetchAllSuppliers} from '../../store/action/supplierAction';
 import {fetchPurchaseReturn} from '../../store/action/purchaseReturnAction';
 import {fetchShippingTypes} from '../../store/action/shippingAction';
+import {fetchStatusTypes} from '../../store/action/tranStatusTypesAction';
 import status from '../../shared/option-lists/status.json'
 import {getFormattedMessage, getFormattedOptions} from '../../shared/sharedMethod';
 import {editPurchaseReturnArray} from './editPurchaseReturnArray';
@@ -15,7 +16,7 @@ import TopProgressBar from "../../shared/components/loaders/TopProgressBar";
 import { saleStatusOptions } from '../../constants';
 
 const EditPurchaseReturn = (props) => {
-    const {fetchPurchaseReturn, purchaseReturn, warehouses, fetchAllSuppliers, suppliers, fetchAllWarehouses, shipingTypes, fetchShippingTypes} = props;
+    const {fetchPurchaseReturn, purchaseReturn, warehouses, fetchAllSuppliers, suppliers, fetchAllWarehouses, shipingTypes, fetchShippingTypes, allStatusTypes, fetchStatusTypes} = props;
     const {id} = useParams();
 
     useEffect(() => {
@@ -26,6 +27,7 @@ const EditPurchaseReturn = (props) => {
 
     useEffect(() => {
         fetchShippingTypes();
+        fetchStatusTypes();
     }, []);
 
     const supplierId = purchaseReturn && purchaseReturn.attributes && purchaseReturn.attributes.supplier_id
@@ -67,8 +69,8 @@ const EditPurchaseReturn = (props) => {
         newItem: '',
         id: purchaseReturn.id,
         status_id: {
-            label: statusDefaultValue[0] && statusDefaultValue[0].name,
-            value: statusDefaultValue[0] && statusDefaultValue[0].id
+            label: purchaseReturn.attributes?.toStatus?.name && purchaseReturn.attributes?.toStatus?.name,
+            value: purchaseReturn.attributes?.toStatus?.id && purchaseReturn.attributes?.toStatus?.id
         }
     };
     return (
@@ -76,16 +78,16 @@ const EditPurchaseReturn = (props) => {
             <TopProgressBar/>
             <HeaderTitle title={getFormattedMessage('purchase.return.edit.title')} to='/app/purchase-return'/>
             {purchaseReturn && supplierName && warehouseName &&
-            <PurchaseReturnForm singlePurchase={itemsValue} id={id} warehouses={warehouses} allShipingTypes={shipingTypes}
+            <PurchaseReturnForm singlePurchase={itemsValue} id={id} warehouses={warehouses} allShipingTypes={shipingTypes} allStatusTypes={allStatusTypes} 
                           suppliers={suppliers}/>}
         </MasterLayout>
     )
 };
 
 const mapStateToProps = (state) => {
-    const {purchaseReturn, warehouses, suppliers, shipingTypes} = state;
-    return {purchaseReturn, warehouses, suppliers, shipingTypes}
+    const {purchaseReturn, warehouses, suppliers, shipingTypes, allStatusTypes} = state;
+    return {purchaseReturn, warehouses, suppliers, shipingTypes, allStatusTypes}
 };
 
-export default connect(mapStateToProps, {fetchPurchaseReturn, fetchAllSuppliers, fetchAllWarehouses, fetchShippingTypes})(EditPurchaseReturn);
+export default connect(mapStateToProps, {fetchPurchaseReturn, fetchAllSuppliers, fetchAllWarehouses, fetchShippingTypes, fetchStatusTypes})(EditPurchaseReturn);
 

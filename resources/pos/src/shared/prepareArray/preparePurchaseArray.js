@@ -5,6 +5,7 @@ export const preparePurchaseProductArray = (products) => {
             name: product.attributes.name,
             code: product.attributes.code,
             barcode_url: product.attributes.barcode_url,
+            qrcode_url: product.attributes?.qrcode_url,
             stock: product.attributes.stock ? product.attributes.stock.quantity : "",
             short_name: product.attributes.purchase_unit_name.short_name,
             product_unit: product.attributes.product_unit,

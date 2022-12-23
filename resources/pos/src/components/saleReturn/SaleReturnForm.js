@@ -29,7 +29,7 @@ const SaleReturnForm = (props) => {
         singleSale,
         fetchProductsByWarehouse,
         fetchFrontSetting,
-        frontSetting, allConfigData, isEdit,  allShipingTypes
+        frontSetting, allConfigData, isEdit,  allShipingTypes, allStatusTypes
     } = props;
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -255,6 +255,15 @@ const SaleReturnForm = (props) => {
         })
     }) : []
 
+    const statusTypeValues = [];
+    const statusValue = allStatusTypes && allStatusTypes?.length > 0 ? allStatusTypes.map((option) => {
+        statusTypeValues.push({
+            id: option.id,
+            name: option.attributes.name
+        })
+    }) : []
+
+
     const prepareFormData = (prepareData) => {
         const formValue = {
             date: moment(prepareData.date).toDate(),
@@ -355,7 +364,7 @@ const SaleReturnForm = (props) => {
                                 className='form-label'>{getFormattedMessage('purchase.select.status.label')}: </label>
                             <span className='required'/>
                             <ReactSelect
-                            multiLanguageOption={saleReturnStatusFilterOptions}
+                            multiLanguageOption={statusTypeValues}
                             name='status'
                             value={saleReturnValue.status} isRequired
                             placeholder={placeholderText('purchase.select.status.placeholder.label')}

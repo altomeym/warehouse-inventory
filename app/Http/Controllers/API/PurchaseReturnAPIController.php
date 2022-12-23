@@ -173,7 +173,7 @@ class PurchaseReturnAPIController extends AppBaseController
      */
     public function purchaseReturnInfo(PurchaseReturn $purchaseReturn)
     {
-        $purchaseReturn = $purchaseReturn->load(['purchaseReturnItems.product', 'warehouse', 'supplier']);
+        $purchaseReturn = $purchaseReturn->load(['purchaseReturnItems.product', 'warehouse', 'supplier', 'toStatus']);
         $keyName = [
             'email', 'company_name', 'phone', 'address',
         ];

@@ -169,6 +169,7 @@ class PurchaseReturn extends BaseModel implements HasMedia, JsonResourceful
             'status'                => $this->status,
             'payment_status'        => $this->payment_status,
             'purchase_return_items' => $this->purchaseReturnItems,
+            'toStatus'              => $this->toStatus,
         ];
 
         return $fields;
@@ -181,6 +182,11 @@ class PurchaseReturn extends BaseModel implements HasMedia, JsonResourceful
     public function warehouse(): BelongsTo
     {
         return $this->belongsTo(Warehouse::class, 'warehouse_id', 'id');
+    }
+
+    public function toStatus(): BelongsTo
+    {
+        return $this->belongsTo(TranStatusType::class, 'status', 'id');
     }
 
     /**

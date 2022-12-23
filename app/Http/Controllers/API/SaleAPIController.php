@@ -210,7 +210,7 @@ use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
      */
     public function saleInfo(Sale $sale)
     {
-        $sale = $sale->load('saleItems.product', 'warehouse', 'customer');
+        $sale = $sale->load('saleItems.product', 'warehouse', 'customer' ,'toStatus');
         $keyName = [
             'email', 'company_name', 'phone', 'address',
         ];

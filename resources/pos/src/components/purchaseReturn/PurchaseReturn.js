@@ -78,7 +78,7 @@ const PurchaseReturn = (props) => {
             reference_code: purchase.attributes.reference_code,
             supplier: supplierName,
             warehouse: purchase.attributes.warehouse_name,
-            status: purchase.attributes.status,
+            status: purchase?.attributes?.toStatus?.name,
             paid: 0,
             due: 0,
             payment_type: purchase.attributes.payment_type,
@@ -123,20 +123,9 @@ const PurchaseReturn = (props) => {
             sortField: 'status',
             sortable: false,
             cell: row => {
-                return (
-                    row.status === 1 &&
-                    <span className='badge bg-light-success'>
-                        <span>{getFormattedMessage("status.filter.received.label")}</span>
-                    </span> ||
-                    row.status === 2 &&
-                    <span className='badge bg-light-primary'>
-                        <span>{getFormattedMessage("status.filter.pending.label")}</span>
-                    </span> ||
-                    row.status === 3 &&
-                    <span className='badge bg-light-warning'>
-                        <span>{getFormattedMessage("status.filter.ordered.label")}</span>
-                    </span>
-                )
+                return <span className='badge bg-light-primary'>
+                            <span>{row?.status}</span>
+                        </span>
             }
         },
         {

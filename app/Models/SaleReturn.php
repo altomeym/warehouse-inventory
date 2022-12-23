@@ -200,6 +200,10 @@ class SaleReturn extends BaseModel implements HasMedia, JsonResourceful
         return $this->belongsTo(Warehouse::class, 'warehouse_id', 'id');
     }
 
+    public function toStatus(): BelongsTo
+    {
+        return $this->belongsTo(TranStatusType::class, 'status', 'id');
+    }
 
     /**
      *

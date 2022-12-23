@@ -8,6 +8,7 @@ import {editSale, fetchSale} from '../../store/action/salesAction';
 import {fetchAllCustomer} from '../../store/action/customerAction';
 import {fetchAllWarehouses} from '../../store/action/warehouseAction';
 import {fetchShippingTypes} from '../../store/action/shippingAction'
+import {fetchStatusTypes} from '../../store/action/tranStatusTypesAction';
 import {getFormattedMessage, getFormattedOptions} from '../../shared/sharedMethod';
 import status from '../../shared/option-lists/status.json';
 import paymentStatus from '../../shared/option-lists/paymentStatus.json';
@@ -17,7 +18,7 @@ import TopProgressBar from "../../shared/components/loaders/TopProgressBar";
 import { saleStatusOptions } from '../../constants';
 
 const EditSale = (props) => {
-    const {fetchSale, sales, customers, fetchAllCustomer, warehouses, fetchAllWarehouses, shipingTypes, fetchShippingTypes, isLoading} = props;
+    const {fetchSale, sales, customers, fetchAllCustomer, warehouses, fetchAllWarehouses, shipingTypes, fetchShippingTypes, allStatusTypes, fetchStatusTypes, isLoading} = props;
     const {id} = useParams();
 
     useEffect(() => {
@@ -29,6 +30,7 @@ const EditSale = (props) => {
     
     useEffect(() => {
         fetchShippingTypes();
+        fetchStatusTypes();
     }, []);
 
     const statusFilterOptions = getFormattedOptions(saleStatusOptions)
@@ -90,8 +92,8 @@ const EditSale = (props) => {
             value: selectedPaymentType && selectedPaymentType[0] && selectedPaymentType[0].value
         },
         status_id: {
-            label: statusDefaultValue && statusDefaultValue[0] && statusDefaultValue[0].name,
-            value: statusDefaultValue && statusDefaultValue[0] && statusDefaultValue[0].id
+            label: sales.attributes.toStatus?.name && sales.attributes.toStatus?.name,
+            value: sales.attributes.toStatus?.id && sales.attributes.toStatus?.id
         }
     };
 
@@ -100,14 +102,14 @@ const EditSale = (props) => {
             <TopProgressBar/>
             <HeaderTitle title={getFormattedMessage('sale.edit.title')} to='/app/sales'/>
             {isLoading ? <Spinner /> :
-                <SalesForm singleSale={itemsValue} id={id} customers={customers} allShipingTypes={shipingTypes} warehouses={warehouses}/>}
+                <SalesForm singleSale={itemsValue} id={id} customers={customers} allShipingTypes={shipingTypes} warehouses={warehouses} allStatusTypes={allStatusTypes} />}
         </MasterLayout>
     )
 };
 
 const mapStateToProps = (state) => {
-    const {sales, customers, warehouses, shipingTypes, isLoading} = state;
-    return {sales, customers, warehouses, shipingTypes, isLoading}
+    const {sales, customers, warehouses, shipingTypes, allStatusTypes, isLoading} = state;
+    return {sales, customers, warehouses, shipingTypes, allStatusTypes, isLoading}
 };
 
-export default connect(mapStateToProps, {fetchSale, editSale, fetchAllCustomer, fetchAllWarehouses, fetchShippingTypes})(EditSale);
+export default connect(mapStateToProps, {fetchSale, editSale, fetchAllCustomer, fetchAllWarehouses, fetchShippingTypes, fetchStatusTypes})(EditSale);

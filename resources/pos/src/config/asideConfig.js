@@ -38,6 +38,7 @@ export default [
             brandsSubPath : "/app/brands",
             unitsSubPath : "/app/units",
             barcodeSubPath : "/app/print/barcode",
+            qrcodeSubPath : "/app/print/qrcode",
         },
         subMenu: [
             {
@@ -78,6 +79,14 @@ export default [
                 name: "print barcode",
                 fontIcon: <FontAwesomeIcon icon={faPrint}/>,
                 to: '/app/print/barcode',
+                class: 'd-flex',
+                permission: Permissions.MANAGE_PRODUCTS,
+            },
+            {
+                title: 'print.qrcode.title',
+                name: "print qrcode",
+                fontIcon: <FontAwesomeIcon icon={faPrint}/>,
+                to: '/app/print/qrcode',
                 class: 'd-flex',
                 permission: Permissions.MANAGE_PRODUCTS,
             },
