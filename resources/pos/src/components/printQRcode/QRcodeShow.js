@@ -9,7 +9,6 @@ const QRcodeShow = (props) => {
     const printBarcodeQuantity = useSelector((state) => state.printQuantity)
     const companyName = frontSetting?.value?.company_name
     const currencySymbol = frontSetting && frontSetting.value && frontSetting.value.currency_symbol
-
     const loopBarcode = () => {
         let indents = [];
         for (let i = 0; i < printBarcodeQuantity; i++) {
@@ -21,7 +20,7 @@ const QRcodeShow = (props) => {
                     <span className="fw-bolder">{getFormattedMessage("product.table.price.column.label")}:</span> {currencySymbolHendling(allConfigData, currencySymbol, product.product_price)}
                 </div>
                 }                <Image
-                    src={product && product.barcode_url}
+                    src={product && product?.qrcode_url}
                     alt={product && product.name}
                     className='w-100'/>
                 <div

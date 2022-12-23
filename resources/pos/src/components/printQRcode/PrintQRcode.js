@@ -166,7 +166,6 @@ const PrintQRcode = (props) => {
         productName: productName,
         price: price
     }
-
     return (
         <MasterLayout>
             <TopProgressBar />

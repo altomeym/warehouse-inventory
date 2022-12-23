@@ -750,5 +750,7 @@
     "status-types.modal.input.name.placeholder.label": "Enter Type Name",
     "status-types.success.create.message": "Status Types created successfully",
     "status-types.success.edit.message": "Status Types updated successfully",
-    "status-types.success.delete.message": "Status Types deleted successfully"
+    "status-types.success.delete.message": "Status Types deleted successfully",
+
+    "print.qrcode.title": "Print QRcode"
 }
