@@ -95,9 +95,9 @@ const SaleDetails = (props) => {
                                     </div>
                                     <div className='pb-1'>
                                      <span className='me-2'>{getFormattedMessage('globally.detail.status')} :</span>
-                                        {saleDetails && saleDetails?.toStatus?.name ? 
+                                        {saleDetails && saleDetails?.to_status?.name ? 
                                           <span className='badge bg-light-primary'>
-                                             <span> {saleDetails?.toStatus?.name} </span>
+                                             <span> {saleDetails?.to_status?.name} </span>
                                            </span> 
                                          : '' }
                                     </div>
