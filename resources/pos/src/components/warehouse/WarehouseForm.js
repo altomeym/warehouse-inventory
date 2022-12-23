@@ -1,14 +1,15 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {connect} from 'react-redux';
 import Form from 'react-bootstrap/Form';
 import * as EmailValidator from 'email-validator';
 import {getFormattedMessage, numValidate, placeholderText} from '../../shared/sharedMethod';
 import {editWarehouse, fetchWarehouse} from '../../store/action/warehouseAction';
+import {fetchCountries, fetchStates, fetchCities} from '../../store/action/allCountryStatesAction';
 import ModelFooter from '../../shared/components/modelFooter';
 
 const WarehouseForm = (props) => {
-    const {addWarehouseData, id, editWarehouse, singleWarehouse} = props;
+    const {addWarehouseData, id, editWarehouse, singleWarehouse, allCountryStates, fetchCountries, fetchStates, fetchCities} = props;
     const navigate = useNavigate();
 
     const [warehouseValue, setWarehouseValue] = useState({
@@ -17,7 +18,10 @@ const WarehouseForm = (props) => {
         phone: singleWarehouse ? singleWarehouse[0].phone : '',
         country: singleWarehouse ? singleWarehouse[0].country : '',
         city: singleWarehouse ? singleWarehouse[0].city : '',
-        zip_code: singleWarehouse ? singleWarehouse[0].zip_code : ''
+        zip_code: singleWarehouse ? singleWarehouse[0].zip_code : '',
+        latitude: singleWarehouse ? singleWarehouse[0]?.latitude : '',
+        longitude: singleWarehouse ? singleWarehouse[0]?.longitude : '',
+        address: singleWarehouse ? singleWarehouse[0]?.address : '',
     });
 
     const [errors, setErrors] = useState({
@@ -26,8 +30,15 @@ const WarehouseForm = (props) => {
         phone: '',
         country: '',
         city: '',
-        zip_code: ''
+        zip_code: '',
+        latitude: '',
+        longitude: '',
+        address: ''
     });
+
+    useEffect(() => {
+        fetchCountries();
+    }, []);
 
     const disabled = singleWarehouse && singleWarehouse[0].name === warehouseValue.name && singleWarehouse[0].phone === warehouseValue.phone && singleWarehouse[0].country === warehouseValue.country && singleWarehouse[0].city === warehouseValue.city && singleWarehouse[0].email === warehouseValue.email && singleWarehouse[0].zip_code === warehouseValue.zip_code
 
@@ -62,6 +73,16 @@ const WarehouseForm = (props) => {
     const onChangeInput = (e) => {
         e.preventDefault();
         setWarehouseValue(inputs => ({...inputs, [e.target.name]: e.target.value}))
+        setErrors('');
+    };
+
+    const onAddressChangeInput = (e) => {
+        e.preventDefault();
+        setWarehouseValue(inputs => ({...inputs, address : e.target.value}));
+    };
+
+    const onCountryChange = (obj) => {
+        setWarehouseValue(inputs => ({...inputs, role_id: obj}))
         setErrors('');
     };
 
@@ -127,10 +148,10 @@ const WarehouseForm = (props) => {
                                 {getFormattedMessage('globally.input.country.label')}:
                             </label>
                             <span className='required'/>
-                            <input type='text' name='country' className='form-control'
-                                   placeholder={placeholderText('globally.input.country.placeholder.label')}
-                                   onChange={(e) => onChangeInput(e)}
-                                   value={warehouseValue.country}/>
+                                     <ReactSelect title= {getFormattedMessage('globally.input.country.label')} placeholder={placeholderText('globally.input.country.placeholder.label')} 
+                                         data={allCountryStates} onChange={onCountryChange} 
+                                         value={warehouseValue.country}
+                                         errors={errors['country']}/>
                             <span className='text-danger'>{errors['country'] ? errors['country'] : null}</span>
                         </div>
                         <div className='col-md-6 mb-3'>
@@ -160,6 +181,42 @@ const WarehouseForm = (props) => {
                             <span
                                 className='text-danger d-block fw-400 fs-small mt-2'>{errors['zip_code'] ? errors['zip_code'] : null}</span>
                         </div>
+                        <div className='col-md-6 mb-3'>
+                            <label
+                                className='form-label'>
+                               Latitude :
+                            </label>
+                            {/* <span className='required'/> */}
+                            <input type='text' name='latitude' className='form-control'
+                                   pattern='[0-9]*' value={warehouseValue.latitude}
+                                   placeholder={'latitude '}
+                                   onChange={(e) => onChangeInput(e)}
+                                   onKeyPress={(event) => numValidate(event)}
+                            />
+                            {/* <span className='text-danger d-block fw-400 fs-small mt-2'>{errors['latitude'] ? errors['zip_code'] : null}</span> */}
+                        </div>
+                        <div className='col-md-6 mb-3'>
+                            <label
+                                className='form-label'>
+                                Longitude:
+                            </label>
+                            {/* <span className='required'/> */}
+                            <input type='text' name='longitude' className='form-control'
+                                   pattern='[0-9]*' value={warehouseValue.longitude}
+                                   placeholder={'longitude'}
+                                   onChange={(e) => onChangeInput(e)}
+                                   onKeyPress={(event) => numValidate(event)}
+                            />
+                            {/* <span className='text-danger d-block fw-400 fs-small mt-2'>{errors['longitude'] ? errors['longitude'] : null}</span> */}
+                        </div>
+                        <div className='mb-3'>
+                            <label className='form-label'>
+                                Address: </label>
+                            <textarea name='notes' className='form-control' value={warehouseValue.address}
+                                          placeholder={'address'}
+                                          onChange={(e) => onAddressChangeInput(e)}
+                            />
+                        </div>
                         <ModelFooter onEditRecord={singleWarehouse} onSubmit={onSubmit} editDisabled={disabled}
                                      link='/app/warehouse' addDisabled={!warehouseValue.name}/>
                     </div>
@@ -168,5 +225,8 @@ const WarehouseForm = (props) => {
         </div>
     )
 };
-
-export default connect(null, {fetchWarehouse, editWarehouse})(WarehouseForm);
+const mapStateToProps = (state) => {
+    const {allCountryStates} = state;
+    return {allCountryStates}
+};
+export default connect(mapStateToProps, {fetchWarehouse, editWarehouse, fetchCountries, fetchStates, fetchCities})(WarehouseForm);

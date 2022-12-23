@@ -553,7 +553,7 @@ const SalesForm = (props) => {
                         <ReactSelect multiLanguageOption={paymentStatusFilterOptions} onChange={onPaymentStatusChange} name='payment_status'
                          title={getFormattedMessage('dashboard.recentSales.paymentStatus.label')}
                          value={saleValue.payment_status} errors={errors['payment_status']}
-                         defaultValue={paymentStatusDefaultValue[0]}
+                        //  defaultValue={paymentStatusDefaultValue[0]}
                          placeholder={placeholderText('sale.select.payment-status.placeholder')}/>
                         </div>}
                         {isQuotation && isPaymentType &&  <div className='col-md-4'>

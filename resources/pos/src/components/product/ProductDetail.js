@@ -34,10 +34,20 @@ const ProductDetail = props => {
                 <div className='row'>
                     {isLoading ?
                         <Spinner /> : <>
-                            <div className='col-md-12'>
+                            <div className='col-md-6'>
                                 <div className='d-inline-block text-center'>
                                     <Image
                                         src={product && product.attributes && product.attributes.barcode_url}
+                                        alt={product && product.attributes && product.attributes.name}
+                                        className='product_brcode'/>
+                                    <div
+                                        className='mt-3'>{product && product.attributes && product.attributes.code}</div>
+                                </div>
+                            </div>
+                            <div className='col-md-6'>
+                                <div className='d-inline-block text-center'>
+                                    <Image
+                                        src={product && product.attributes && product.attributes.qrcode_url}
                                         alt={product && product.attributes && product.attributes.name}
                                         className='product_brcode'/>
                                     <div

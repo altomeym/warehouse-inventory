@@ -93,6 +93,7 @@ import HoldListReducer from './pos/HoldListReducer';
 import EditHoldList from './pos/EditHoldList'; 
 import ShippingTypeReducer from './ShippingTypeReducer';
 import tranStatusTypeReducer from './tranStatusTypeReducer';
+import allCountryStatesReducer from './allCountryStatesReducer';
 
 export default combineReducers({
     loginUser: loginReducers,
@@ -187,6 +188,7 @@ export default combineReducers({
     smsApiData: smsApiReducer,
     holdListData: HoldListReducer,
     editholdListData: EditHoldList, 
-    shipingTypes: ShippingTypeReducer,
-    allStatusTypes: tranStatusTypeReducer 
+    shipingTypes: ShippingTypeReducer, 
+    allStatusTypes: tranStatusTypeReducer, 
+    allCountryStates: allCountryStatesReducer, 
 });

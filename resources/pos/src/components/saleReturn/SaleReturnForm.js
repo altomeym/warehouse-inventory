@@ -368,7 +368,7 @@ const SaleReturnForm = (props) => {
                             name='status'
                             value={saleReturnValue.status} isRequired
                             placeholder={placeholderText('purchase.select.status.placeholder.label')}
-                            defaultValue={saleReturnStatusDefaultValue[0]}
+                            // defaultValue={saleReturnStatusDefaultValue[0]}
                             onChange={onStatusChange}/>
                             <span
                                 className='text-danger d-block fw-400 fs-small mt-2'>{errors['status'] ? errors['status'] : null}</span>

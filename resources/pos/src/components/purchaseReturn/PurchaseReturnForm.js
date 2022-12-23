@@ -435,7 +435,7 @@ const PurchaseReturnForm = (props) => {
                             <ReactSelect multiLanguageOption={statusTypeValues} onChange={onStatusChange} name='status'
                          title={getFormattedMessage('purchase.select.status.label')}
                          value={purchaseValue.status_id} errors={errors['status_id']}
-                         defaultValue={statusDefaultValue[0]}
+                        //  defaultValue={statusDefaultValue[0]}
                          placeholder={getFormattedMessage('purchase.select.status.label')}/>
                         </div>
 

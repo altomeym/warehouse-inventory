@@ -92,7 +92,9 @@ export const apiBaseURL = {
     EDIT_SALE_FROM_SALE : "sales-return-edit",
     HOLDS_LIST:"holds",
     SHIPPING: '/shipping_type',
-    TRAN_STATUS_TYPE: '/tran_status_types',
+    COUNTRY: '/country',
+    STATE: '/state',
+    CITY: '/city',
 
 };
 
@@ -457,6 +459,12 @@ export const tranStatusTypeActionType = {
     ADD_TRAN_STATUSTYPE: 'ADD_TRAN_STATUSTYPE',
     EDIT_TRAN_STATUSTYPE: 'EDIT_TRAN_STATUSTYPE',
     DELETE_TRAN_STATUSTYPE: 'DELETE_TRAN_STATUSTYPE'
+};
+
+export const countryStateActionType = {
+    FETCH_COUNTRIES: 'FETCH_COUNTRIES',
+    FETCH_STATES: 'FETCH_STATES',
+    FETCH_CITIES: 'FETCH_CITIES',
 };
 
 
