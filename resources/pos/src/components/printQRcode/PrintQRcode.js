@@ -14,7 +14,7 @@ import PrintTable from './PrintTable';
 import paperSize from '../../shared/option-lists/paperSize.json'
 import {toastType} from '../../constants';
 import {addToast} from '../../store/action/toastAction';
-import BarcodeShow from './BarcodeShow';
+import QRcodeShow from './QRcodeShow';
 import PrintButton from './PrintButton';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faMoneyBill, faWallet, faCreditCard} from '@fortawesome/free-solid-svg-icons';
@@ -296,7 +296,7 @@ const PrintQRcode = (props) => {
                     </div>
                 </div>
                 {updateProducts ? updateProducts.map((product, index) => {
-                        return <BarcodeShow product={product} index={index} barcodeOptions={barcodeOptions} frontSetting={frontSetting}
+                        return <QRcodeShow product={product} index={index} barcodeOptions={barcodeOptions} frontSetting={frontSetting}
                                             paperSize={printBarcodeValue.paperSizeValue} updated={updated} allConfigData={allConfigData}/>
                     }) : ''}
             </div>
