@@ -177,7 +177,7 @@ class ProductRepository extends BaseRepository
     }
     public function generateQrcode($input, $reference_code): bool
     {
-        QrCode::generate($reference_code, public_path('uploads/product_qrcode/qrcode-'.$reference_code.'.svg') );
+        QrCode::generate($input['code'], public_path('uploads/product_qrcode/qrcode-'.$reference_code.'.svg') );
         return true;
     }
 }

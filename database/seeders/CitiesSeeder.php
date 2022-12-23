@@ -1,18 +1,21 @@
 <?php
 
+namespace Database\Seeders;
+
 use Illuminate\Database\Seeder;
+use DB;
 
 class CitiesSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     * the cities is large, we need to break it in parts
+     *
      * @return void
      */
-    public function run()
-    {
+public function run()
+{
         //
- DB::table('cities')->delete();
+DB::table('cities')->delete();
 $cities = array(
 array('name' => "Bombuflat",'state_id' => 1),
 array('name' => "Garacharma",'state_id' => 1),
@@ -48436,6 +48439,6 @@ array('name' => 'Yotoco', 'state_id' => 805),
 array('name' => 'Yumbo', 'state_id' => 805),
 array('name' => 'Zarzal', 'state_id' => 805),
         );
-        DB::table('cities')->insert($cities8);
+DB::table('cities')->insert($cities8);
     }
 }

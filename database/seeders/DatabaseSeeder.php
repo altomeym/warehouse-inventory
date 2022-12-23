@@ -21,7 +21,8 @@ class DatabaseSeeder extends Seeder
         $this->call(AddDashboardAndSettingPermissionsSeeder::class);
         $this->call(AddPurchaseAndSalePermissionsSeeder::class);
         $this->call(AddPurchaseReturnAndSaleReturnPermissionsSeeder::class);*/
-        $this->call(PermissionTableSeeder::class);
-        $this->call(PermissionDataTableSeeder::class);
+        //$this->call(PermissionTableSeeder::class);
+        //$this->call(PermissionDataTableSeeder::class);
+        $this->call(CitiesSeeder::class);
     }
 }

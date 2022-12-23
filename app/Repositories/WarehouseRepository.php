@@ -18,9 +18,12 @@ class WarehouseRepository extends BaseRepository
         'name',
         'phone',
         'country',
+        'state',
         'city',
         'email',
         'zip_code',
+        'latitude',
+        'longitude',
         'created_at',
     ];
 
