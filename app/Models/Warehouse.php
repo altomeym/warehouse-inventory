@@ -48,7 +48,7 @@ class Warehouse extends BaseModel
         'state',
         'city',
         'email',
-        'adderss',
+        'address',
         'zip_code',
     ];
 
