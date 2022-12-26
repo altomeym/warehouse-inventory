@@ -117,7 +117,7 @@ const WarehouseForm = (props) => {
             name: prepareData ? prepareData.name : '',
             email: prepareData ? prepareData.email : '',
             phone: prepareData ? prepareData.phone : '',
-            zip_code: prepareData ? prepareData.zip_code?.value : '',
+            zip_code: prepareData ? prepareData.zip_code : '',
             country: prepareData ? prepareData.country?.value : '',
             state: prepareData ? prepareData.state?.value : '',
             city: prepareData ? prepareData.city?.value : '',
