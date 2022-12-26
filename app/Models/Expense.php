@@ -52,6 +52,7 @@ class Expense extends BaseModel
         'amount',
         'reference_code',
         'payment_status',
+        'payment_type',
         'details',
         'title',
     ];
@@ -89,6 +90,7 @@ class Expense extends BaseModel
             'warehouse_name'        => $this->warehouse->name,
             'expense_category_name' => $this->expenseCategory->name,
             'payment_status'        => $this->payment_status,
+            'payment_type'          => $this->payment_type,
             'title'                 => $this->title,
             'created_at'            => $this->created_at,
         ];
