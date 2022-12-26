@@ -74,8 +74,6 @@ const WarehouseForm = (props) => {
             errorss['city'] = getFormattedMessage('globally.input.city.validate.label');
         } else if (!warehouseValue['zip_code']) {
             errorss['zip_code'] = getFormattedMessage('warehouse.input.zip-code.validate.label');
-        } else if ((warehouseValue['zip_code'] && warehouseValue['zip_code'].length !== 6)) {
-            errorss['zip_code'] = getFormattedMessage('warehouse.input.zip-code.valid.validate.label');
         } else {
             isValid = true;
         }
