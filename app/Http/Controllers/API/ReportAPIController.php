@@ -635,7 +635,7 @@ class ReportAPIController extends AppBaseController
         }
         Excel::store(new ProfitLossReportExport, 'excel/total-profit-loss-report-excel.xlsx');
 
-        $data['total-profit-loss_excel_url'] = Storage::url('excel/total-profit-loss-report-excel.xlsx');
+        $data['total_profit_loss_excel_url'] = Storage::url('excel/total-profit-loss-report-excel.xlsx');
 
         return $this->sendResponse($data, 'Profit Loss Report retrieved successfully');
     }

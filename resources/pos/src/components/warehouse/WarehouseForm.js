@@ -259,10 +259,10 @@ const WarehouseForm = (props) => {
                         <div className='mb-3'>
                             <label className='form-label'>
                                 Address: </label>
-                            <textarea name='notes' className='form-control' value={warehouseValue.address}
-                                          placeholder={'address'}
+                            <textarea name='address' className='form-control'  
+                                          placeholder={'address'} value={warehouseValue.address}
                                           onChange={(e) => onAddressChangeInput(e)}
-                            />
+                            >  </textarea>
                         </div>
                         <ModelFooter onEditRecord={singleWarehouse} onSubmit={onSubmit} editDisabled={disabled}
                                      link='/app/warehouse' addDisabled={!warehouseValue.name}/>
