@@ -23,7 +23,19 @@ const EditSupplier = (props) => {
         country: supplier.attributes.country,
         city: supplier.attributes.city,
         address: supplier.attributes.address,
-        id: supplier.id
+        id: supplier.id,
+        city: {
+            label: supplier.attributes?.city_name?.name && supplier.attributes?.city_name?.name,
+            value: supplier.attributes?.city_name?.id && supplier.attributes?.city_name?.id
+        },
+        country: {
+            label: supplier.attributes?.country_name?.name && supplier.attributes?.country_name?.name,
+            value: supplier.attributes?.country_name?.id && supplier.attributes?.country_name?.id
+        },
+        state: {
+            label: supplier.attributes?.state_name?.name && supplier.attributes?.state_name?.name,
+            value: supplier.attributes?.state_name?.id && supplier.attributes?.state_name?.id
+        }
     }));
 
     return (

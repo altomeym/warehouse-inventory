@@ -28,8 +28,20 @@ const EditUser = (props) => {
             value: user.attributes.role.map((ro) => ro.id),
             label: user.attributes.role.map((ro) => ro.name)
         },
-        id: user.id
-    }));
+        id: user.id,
+        city: {
+            label: user.attributes?.city_name?.name && user.attributes?.city_name?.name,
+            value: user.attributes?.city_name?.id && user.attributes?.city_name?.id
+        },
+        country: {
+            label: user.attributes?.country_name?.name && user.attributes?.country_name?.name,
+            value: user.attributes?.country_name?.id && user.attributes?.country_name?.id
+        },
+        state: {
+            label: user.attributes?.state_name?.name && user.attributes?.state_name?.name,
+            value: user.attributes?.state_name?.id && user.attributes?.state_name?.id
+        }
+    }));    
 
     return (
         <MasterLayout>

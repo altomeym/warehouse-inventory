@@ -21,7 +21,8 @@ const SupplierForm = (props) => {
         country: singleSupplier ? singleSupplier[0]?.country : '',
         state: singleSupplier ? singleSupplier[0]?.state : '',
         city: singleSupplier ? singleSupplier[0]?.city : '',
-        address: singleSupplier ? singleSupplier[0].address : ''
+        address: singleSupplier ? singleSupplier[0].address : '',
+        
     });
 
     const [errors, setErrors] = useState({
@@ -38,7 +39,15 @@ const SupplierForm = (props) => {
         fetchCountries();
     }, []);
 
-    const disabled = singleSupplier && singleSupplier[0].name === supplierValue.name && singleSupplier[0].country === supplierValue.country && singleSupplier[0].city === supplierValue.city && singleSupplier[0].email === supplierValue.email && singleSupplier[0].address === supplierValue.address && singleSupplier[0].phone === supplierValue.phone
+    useEffect(() => {
+        if(singleSupplier && singleSupplier[0]?.country?.value)
+          fetchStates(singleSupplier[0]?.country?.value);
+
+        if(singleSupplier && singleSupplier[0]?.state?.value)
+          fetchCities(singleSupplier[0]?.state?.value);
+    }, []);
+
+    const disabled = singleSupplier && singleSupplier[0].name === supplierValue.name && singleSupplier[0].country === supplierValue.country && singleSupplier[0].city === supplierValue.city && singleSupplier[0].email === supplierValue.email && singleSupplier[0].address === supplierValue.address && singleSupplier[0].phone === supplierValue.phone 
 
     const handleValidation = () => {
         let errorss = {};
@@ -54,7 +63,7 @@ const SupplierForm = (props) => {
         } else if (!supplierValue['country']) {
             errorss['country'] = getFormattedMessage("globally.input.country.validate.label");
         } else if (!supplierValue['state']) {
-            errorss['state'] = getFormattedMessage("globally.input.state.validate.label");
+            errorss['state'] = getFormattedMessage("settings.system-settings.select.state.validate.label");
         } else if (!supplierValue['city']) {
             errorss['city'] = getFormattedMessage("globally.input.city.validate.label");
         } else if (!supplierValue['phone']) {
@@ -75,12 +84,15 @@ const SupplierForm = (props) => {
     };
     const onCountryChange = (obj) => {
         setSupplierValue(inputs => ({...inputs, country: obj}))
+        setSupplierValue(inputs => ({...inputs, state: ''}))
+        setSupplierValue(inputs => ({...inputs, city: ''}))
         fetchStates(obj?.value);
         setErrors('');
     };
 
     const onStateChange = (obj) => {
         setSupplierValue(inputs => ({...inputs, state: obj}))
+        setSupplierValue(inputs => ({...inputs, city: ''}))
         fetchCities(obj?.value);
         setErrors('');
     };
@@ -90,17 +102,31 @@ const SupplierForm = (props) => {
         setErrors('');
     };
 
+    const prepareFormData = (prepareData) => {
+        const formValue = {
+            name: prepareData ? prepareData.name : '',
+            email: prepareData ? prepareData.email : '',
+            phone: prepareData ? prepareData.phone : '',
+            country: prepareData ? prepareData.country?.value : '',
+            state: prepareData ? prepareData.state?.value : '',
+            city: prepareData ? prepareData.city?.value : '',
+            address: prepareData ? prepareData?.address : '',
+        }
+        return formValue
+    };
+   
     const onSubmit = (event) => {
         event.preventDefault();
         const valid = handleValidation();
+       
         if (singleSupplier && valid) {
             if (!disabled) {
-                editSupplier(id, supplierValue, navigate);
+                editSupplier(id, prepareFormData(supplierValue), navigate);
             }
         } else {
             if (valid) {
                 setSupplierValue(supplierValue);
-                addSupplierData(supplierValue);
+                addSupplierData(prepareFormData(supplierValue));
             }
         }
     };
@@ -135,8 +161,7 @@ const SupplierForm = (props) => {
                                        className='form-control'
                                        onChange={(e) => onChangeInput(e)}
                                        value={supplierValue.email}/>
-                                <span
-                                    className='text-danger d-block fw-400 fs-small mt-2'>{errors['email'] ? errors['email'] : null}</span>
+                                <span className='text-danger d-block fw-400 fs-small mt-2'>{errors['email'] ? errors['email'] : null}</span>
                         </div>
                         <div className='col-md-6 mb-3'>
                             <label
@@ -162,7 +187,7 @@ const SupplierForm = (props) => {
                                          multiLanguageOption={allCountryList} onChange={onCountryChange} 
                                          value={supplierValue.country}
                                          errors={errors['country']}/>
-                            <span className='text-danger'>{errors['country'] ? errors['country'] : null}</span>
+                            {/* <span className='text-danger'>{errors['country'] ? errors['country'] : null}</span> */}
                         </div>
                          : null}
                         {allStatesList && allStatesList.length>0 ? 
@@ -172,8 +197,7 @@ const SupplierForm = (props) => {
                                          multiLanguageOption={allStatesList} onChange={onStateChange} 
                                          value={supplierValue.state}
                                          errors={errors['state']}/>
-                            <span
-                                className='text-danger d-block fw-400 fs-small mt-2'>{errors['state'] ? errors['state'] : null}</span>
+                            {/* <span className='text-danger d-block fw-400 fs-small mt-2'>{errors['state'] ? errors['state'] : null}</span> */}
                         </div>
                         : null}
                          {allCitiesList && allCitiesList.length>0 ?
@@ -183,8 +207,7 @@ const SupplierForm = (props) => {
                                          multiLanguageOption={allCitiesList} onChange={onCityChange} 
                                          value={supplierValue.city}
                                          errors={errors['city']}/>
-                            <span
-                                className='text-danger d-block fw-400 fs-small mt-2'>{errors['city'] ? errors['city'] : null}</span>
+                            {/* <span className='text-danger d-block fw-400 fs-small mt-2'>{errors['city'] ? errors['city'] : null}</span> */}
                         </div>
                          : null}
                         <div className='col-md-6 mb-3'>

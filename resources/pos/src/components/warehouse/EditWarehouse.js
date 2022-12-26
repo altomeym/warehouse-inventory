@@ -24,7 +24,19 @@ const EditWarehouse = (props) => {
         city: warehouse.attributes.city,
         email: warehouse.attributes.email,
         zip_code: warehouse.attributes.zip_code,
-        id: warehouse.id
+        id: warehouse.id,
+        city: {
+            label: warehouse.attributes?.city_name?.name && warehouse.attributes?.city_name?.name,
+            value: warehouse.attributes?.city_name?.id && warehouse.attributes?.city_name?.id
+        },
+        country: {
+            label: warehouse.attributes?.country_name?.name && warehouse.attributes?.country_name?.name,
+            value: warehouse.attributes?.country_name?.id && warehouse.attributes?.country_name?.id
+        },
+        state: {
+            label: warehouse.attributes?.state_name?.name && warehouse.attributes?.state_name?.name,
+            value: warehouse.attributes?.state_name?.id && warehouse.attributes?.state_name?.id
+        }
     }));
 
     return (

@@ -43,7 +43,15 @@ const WarehouseForm = (props) => {
         fetchCountries();
     }, []);
 
-    const disabled = singleWarehouse && singleWarehouse[0].name === warehouseValue.name && singleWarehouse[0].phone === warehouseValue.phone && singleWarehouse[0].country === warehouseValue.country && singleWarehouse[0].city === warehouseValue.city && singleWarehouse[0].email === warehouseValue.email && singleWarehouse[0].zip_code === warehouseValue.zip_code
+    useEffect(() => {
+        if(singleWarehouse && singleWarehouse[0]?.country?.value)
+          fetchStates(singleWarehouse[0]?.country?.value);
+
+        if(singleWarehouse && singleWarehouse[0]?.state?.value)
+          fetchCities(singleWarehouse[0]?.state?.value);
+    }, []);
+
+    const disabled = singleWarehouse && singleWarehouse[0].name === warehouseValue.name && singleWarehouse[0].phone === warehouseValue.phone && singleWarehouse[0].country === warehouseValue.country && singleWarehouse[0].state === warehouseValue.state && singleWarehouse[0].city === warehouseValue.city && singleWarehouse[0].email === warehouseValue.email && singleWarehouse[0].zip_code === warehouseValue.zip_code
 
     const handleValidation = () => {
         let errorss = {};
@@ -61,7 +69,7 @@ const WarehouseForm = (props) => {
         } else if (!warehouseValue['country']) {
             errorss['country'] = getFormattedMessage('globally.input.country.validate.label');
         } else if (!warehouseValue['state']) {
-            errorss['state'] = getFormattedMessage('globally.input.state.validate.label');
+            errorss['state'] = getFormattedMessage("settings.system-settings.select.state.validate.label");
         } else if (!warehouseValue['city']) {
             errorss['city'] = getFormattedMessage('globally.input.city.validate.label');
         } else if (!warehouseValue['zip_code']) {
@@ -88,12 +96,15 @@ const WarehouseForm = (props) => {
 
     const onCountryChange = (obj) => {
         setWarehouseValue(inputs => ({...inputs, country: obj}))
+        setWarehouseValue(inputs => ({...inputs, state: ''}))
+        setWarehouseValue(inputs => ({...inputs, city: ''}))
         fetchStates(obj?.value);
         setErrors('');
     };
 
     const onStateChange = (obj) => {
         setWarehouseValue(inputs => ({...inputs, state: obj}))
+        setWarehouseValue(inputs => ({...inputs, city: ''}))
         fetchCities(obj?.value);
         setErrors('');
     };
@@ -103,17 +114,35 @@ const WarehouseForm = (props) => {
         setErrors('');
     };
 
+    const prepareFormData = (prepareData) => {
+        const formValue = {
+            name: prepareData ? prepareData.name : '',
+            email: prepareData ? prepareData.email : '',
+            phone: prepareData ? prepareData.phone : '',
+            zip_code: prepareData ? prepareData.zip_code?.value : '',
+            country: prepareData ? prepareData.country?.value : '',
+            state: prepareData ? prepareData.state?.value : '',
+            city: prepareData ? prepareData.city?.value : '',
+            address: prepareData ? prepareData?.address : '',
+            latitude: prepareData ? prepareData.latitude : '',
+            longitude: prepareData ? prepareData.longitude : ''
+        }
+        return formValue
+    };
+
+
     const onSubmit = (event) => {
         event.preventDefault();
         const valid = handleValidation();
+        
         if (singleWarehouse && valid) {
             if (!disabled) {
-                editWarehouse(id, warehouseValue, navigate);
+                editWarehouse(id, prepareFormData(warehouseValue), navigate);
             }
         } else {
             if (valid) {
                 setWarehouseValue(warehouseValue);
-                addWarehouseData(warehouseValue);
+                addWarehouseData(prepareFormData(warehouseValue));
             }
         }
     };
@@ -168,7 +197,7 @@ const WarehouseForm = (props) => {
                                          multiLanguageOption={allCountryList} onChange={onCountryChange} 
                                          value={warehouseValue.country}
                                          errors={errors['country']}/>
-                            <span className='text-danger'>{errors['country'] ? errors['country'] : null}</span>
+                            {/* <span className='text-danger'>{errors['country'] ? errors['country'] : null}</span> */}
                         </div>
                          : null}
                         {allStatesList && allStatesList.length>0 ? 
@@ -178,8 +207,7 @@ const WarehouseForm = (props) => {
                                          multiLanguageOption={allStatesList} onChange={onStateChange} 
                                          value={warehouseValue.state}
                                          errors={errors['state']}/>
-                            <span
-                                className='text-danger d-block fw-400 fs-small mt-2'>{errors['state'] ? errors['state'] : null}</span>
+                            {/* <span className='text-danger d-block fw-400 fs-small mt-2'>{errors['state'] ? errors['state'] : null}</span> */}
                         </div>
                         : null}
                          {allCitiesList && allCitiesList.length>0 ?
@@ -189,8 +217,7 @@ const WarehouseForm = (props) => {
                                          multiLanguageOption={allCitiesList} onChange={onCityChange} 
                                          value={warehouseValue.city}
                                          errors={errors['city']}/>
-                            <span
-                                className='text-danger d-block fw-400 fs-small mt-2'>{errors['city'] ? errors['city'] : null}</span>
+                            {/* <span  className='text-danger d-block fw-400 fs-small mt-2'>{errors['city'] ? errors['city'] : null}</span> */}
                         </div>
                          : null}
                         <div className='col-md-6 mb-3'>
@@ -205,8 +232,7 @@ const WarehouseForm = (props) => {
                                    onChange={(e) => onChangeInput(e)}
                                    onKeyPress={(event) => numValidate(event)}
                             />
-                            <span
-                                className='text-danger d-block fw-400 fs-small mt-2'>{errors['zip_code'] ? errors['zip_code'] : null}</span>
+                            <span className='text-danger d-block fw-400 fs-small mt-2'>{errors['zip_code'] ? errors['zip_code'] : null}</span>
                         </div>
                         {/* <div className='col-md-6 mb-3'>
                             <label

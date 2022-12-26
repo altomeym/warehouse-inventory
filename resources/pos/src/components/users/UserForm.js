@@ -51,7 +51,10 @@ const UserForm = (props) => {
         && singleUser[0].email === userValue.email
         && singleUser[0].phone === userValue.phone
         && singleUser[0].image === userValue.image
-    && singleUser[0].role_id.label[0] === userValue.role_id.label[0]
+    && singleUser[0].role_id.label[0] === userValue.role_id?.label[0]
+    && singleUser[0]?.country?.label === userValue?.country?.label
+    && singleUser[0]?.state?.label === userValue?.state?.label
+    && singleUser[0]?.city?.label === userValue?.city?.label
 
     const [selectedRole] = useState(singleUser && singleUser[0] ? ([{
         label: singleUser[0].role_id.label[0], value: singleUser[0].role_id.value[0]
@@ -69,6 +72,14 @@ const UserForm = (props) => {
 
     useEffect(() => {
         fetchCountries();
+    }, []);
+
+    useEffect(() => {
+        if(singleUser && singleUser[0]?.country?.value)
+          fetchStates(singleUser[0]?.country?.value);
+
+        if(singleUser && singleUser[0]?.state?.value)
+          fetchCities(singleUser[0]?.state?.value);
     }, []);
 
     const handleValidation = () => {
@@ -103,12 +114,15 @@ const UserForm = (props) => {
 
     const onCountryChange = (obj) => {
         setUserValue(inputs => ({...inputs, country: obj}))
+        setUserValue(inputs => ({...inputs, state: ''}))
+        setUserValue(inputs => ({...inputs, city: ''}))
         fetchStates(obj?.value);
         setErrors('');
     };
 
     const onStateChange = (obj) => {
         setUserValue(inputs => ({...inputs, state: obj}))
+        setUserValue(inputs => ({...inputs, city: ''}))
         fetchCities(obj?.value);
         setErrors('');
     };
@@ -148,6 +162,21 @@ const UserForm = (props) => {
             formData.append('role_id', data.role_id.value);
         } else {
             formData.append('role_id', data.role_id);
+        }
+        if (data?.country?.value) {
+            formData.append('country', data?.country?.value);
+        } else {
+            formData.append('country', data?.country);
+        }
+        if (data.state.value) {
+            formData.append('state', data?.state?.value);
+        } else {
+            formData.append('state', data?.state);
+        }
+        if (data?.city?.value) {
+            formData.append('city', data?.city?.value);
+        } else {
+            formData.append('city', data?.city);
         }
         if (selectImg) {
             formData.append('image', data.image);
