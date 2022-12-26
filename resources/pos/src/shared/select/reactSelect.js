@@ -13,15 +13,15 @@ const ReactSelect = (props) => {
     const option = data ? data.map((da) => {
         return {
             value: da.value ? da.value : da.id,
-            label: da.label ? da.label : da.attributes.symbol ? da.attributes.symbol : da.attributes.name
+            label: da.label ? da.label : da.attributes?.symbol ? da.attributes?.symbol : da.attributes?.name
         }
-    }) : multiLanguageOption.map((option) => {
+    }) :  multiLanguageOption.map((option) => {
         return {
-            value: option.id,
-            label: option.name
+            value: option?.id,
+            label: option?.name
         }
-    })
-
+      })
+     
 
     useEffect(() => {
         addSearchItems ? dispatch({type: 'DISABLE_OPTION', payload: true}) : dispatch({type: 'DISABLE_OPTION', payload: false})

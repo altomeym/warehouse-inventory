@@ -14,7 +14,7 @@ export const fetchCountries = ( isLoading = true) => async (dispatch) => {
     
     apiConfig.get(url)
         .then((response) => {
-            dispatch({type: countryStateActionType.FETCH_COUNTRIES, payload: response.data.data});
+            dispatch({type: countryStateActionType.FETCH_COUNTRIES, payload: response.data?.Country});
             if (isLoading) {
                 dispatch(setLoading(false))
             }
@@ -34,7 +34,7 @@ export const fetchStates= ( id, isLoading = true) => async (dispatch) => {
    
     apiConfig.get(url)
         .then((response) => {
-            dispatch({type: countryStateActionType.FETCH_STATES, payload: response.data.data});
+            dispatch({type: countryStateActionType.FETCH_STATES, payload: response.data?.State});
         })
         .catch(({response}) => {
             dispatch(addToast(
@@ -49,7 +49,7 @@ export const fetchCities= (id, isLoading = true) => async (dispatch) => {
     
     apiConfig.get(url)
         .then((response) => {
-            dispatch({type: countryStateActionType.FETCH_CITIES, payload: response.data.data});
+            dispatch({type: countryStateActionType.FETCH_CITIES, payload: response.data?.City});
         })
         .catch(({response}) => {
             dispatch(addToast(

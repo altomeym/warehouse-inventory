@@ -1,22 +1,26 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import Form from 'react-bootstrap/Form';
 import {connect} from 'react-redux';
 import {useNavigate} from 'react-router-dom';
 import * as EmailValidator from 'email-validator';
 import {editSupplier} from '../../store/action/supplierAction';
+import {fetchCountries, fetchStates, fetchCities} from '../../store/action/allCountryStatesAction';
 import {getFormattedMessage, placeholderText, numValidate} from '../../shared/sharedMethod';
 import ModelFooter from '../../shared/components/modelFooter';
+import ReactSelect from "../../shared/select/reactSelect";
+
 
 const SupplierForm = (props) => {
-    const {addSupplierData, id, editSupplier, singleSupplier} = props;
+    const {addSupplierData, id, editSupplier, singleSupplier, allCountryList, allStatesList, allCitiesList, fetchCountries, fetchStates, fetchCities} = props;
     const navigate = useNavigate();
 
     const [supplierValue, setSupplierValue] = useState({
         name: singleSupplier ? singleSupplier[0].name : '',
         email: singleSupplier ? singleSupplier[0].email : '',
         phone: singleSupplier ? singleSupplier[0].phone : '',
-        country: singleSupplier ? singleSupplier[0].country : '',
-        city: singleSupplier ? singleSupplier[0].city : '',
+        country: singleSupplier ? singleSupplier[0]?.country : '',
+        state: singleSupplier ? singleSupplier[0]?.state : '',
+        city: singleSupplier ? singleSupplier[0]?.city : '',
         address: singleSupplier ? singleSupplier[0].address : ''
     });
 
@@ -25,9 +29,14 @@ const SupplierForm = (props) => {
         email: '',
         phone: '',
         country: '',
+        state: '',
         city: '',
         address: ''
     });
+
+    useEffect(() => {
+        fetchCountries();
+    }, []);
 
     const disabled = singleSupplier && singleSupplier[0].name === supplierValue.name && singleSupplier[0].country === supplierValue.country && singleSupplier[0].city === supplierValue.city && singleSupplier[0].email === supplierValue.email && singleSupplier[0].address === supplierValue.address && singleSupplier[0].phone === supplierValue.phone
 
@@ -44,6 +53,8 @@ const SupplierForm = (props) => {
             }
         } else if (!supplierValue['country']) {
             errorss['country'] = getFormattedMessage("globally.input.country.validate.label");
+        } else if (!supplierValue['state']) {
+            errorss['state'] = getFormattedMessage("globally.input.state.validate.label");
         } else if (!supplierValue['city']) {
             errorss['city'] = getFormattedMessage("globally.input.city.validate.label");
         } else if (!supplierValue['phone']) {
@@ -60,6 +71,22 @@ const SupplierForm = (props) => {
     const onChangeInput = (e) => {
         e.preventDefault();
         setSupplierValue(inputs => ({...inputs, [e.target.name]: e.target.value}))
+        setErrors('');
+    };
+    const onCountryChange = (obj) => {
+        setSupplierValue(inputs => ({...inputs, country: obj}))
+        fetchStates(obj?.value);
+        setErrors('');
+    };
+
+    const onStateChange = (obj) => {
+        setSupplierValue(inputs => ({...inputs, state: obj}))
+        fetchCities(obj?.value);
+        setErrors('');
+    };
+
+    const onCityChange = (obj) => {
+        setSupplierValue(inputs => ({...inputs, city: obj}))
         setErrors('');
     };
 
@@ -127,32 +154,39 @@ const SupplierForm = (props) => {
                             <span
                                 className='text-danger d-block fw-400 fs-small mt-2'>{errors['phone'] ? errors['phone'] : null}</span>
                         </div>
+                        {allCountryList && allCountryList.length>0 ? 
                         <div className='col-md-6 mb-3'>
-                            <label className='form-label'>
-                                {getFormattedMessage("globally.input.country.label")}:
-                            </label>
-                            <span className='required'/>
-                            <input type='text' name='country'
-                                   placeholder={placeholderText("globally.input.country.placeholder.label")}
-                                   className='form-control'
-                                   onChange={(e) => onChangeInput(e)}
-                                   value={supplierValue.country}/>
+                           
+                            <span className=''/>
+                                     <ReactSelect title= {getFormattedMessage('globally.input.country.label')} placeholder={placeholderText('globally.input.country.placeholder.label')} 
+                                         multiLanguageOption={allCountryList} onChange={onCountryChange} 
+                                         value={supplierValue.country}
+                                         errors={errors['country']}/>
+                            <span className='text-danger'>{errors['country'] ? errors['country'] : null}</span>
+                        </div>
+                         : null}
+                        {allStatesList && allStatesList.length>0 ? 
+                        <div className='col-md-6 mb-3'>
+                            <span className=''/>
+                                   <ReactSelect title= {getFormattedMessage('setting.state.lable')} placeholder={placeholderText('settings.system-settings.select.state.validate.label')} 
+                                         multiLanguageOption={allStatesList} onChange={onStateChange} 
+                                         value={supplierValue.state}
+                                         errors={errors['state']}/>
                             <span
-                                className='text-danger d-block fw-400 fs-small mt-2'>{errors['country'] ? errors['country'] : null}</span>
+                                className='text-danger d-block fw-400 fs-small mt-2'>{errors['state'] ? errors['state'] : null}</span>
                         </div>
+                        : null}
+                         {allCitiesList && allCitiesList.length>0 ?
                         <div className='col-md-6 mb-3'>
-                                <label
-                                    className='form-label'>
-                                    {getFormattedMessage("globally.input.city.label")}:
-                                </label>
-                                <span className='required'/>
-                                <input type='text' name='city'
-                                              placeholder={placeholderText("globally.input.city.placeholder.label")}
-                                              className='form-control'
-                                              onChange={(e) => onChangeInput(e)}
-                                              value={supplierValue.city}/>
-                                <span className='text-danger d-block fw-400 fs-small mt-2'>{errors['city'] ? errors['city'] : null}</span>
+                            <span className=''/>
+                                   <ReactSelect title= {getFormattedMessage('globally.input.city.label')} placeholder={placeholderText('globally.input.city.placeholder.label')} 
+                                         multiLanguageOption={allCitiesList} onChange={onCityChange} 
+                                         value={supplierValue.city}
+                                         errors={errors['city']}/>
+                            <span
+                                className='text-danger d-block fw-400 fs-small mt-2'>{errors['city'] ? errors['city'] : null}</span>
                         </div>
+                         : null}
                         <div className='col-md-6 mb-3'>
                                 <label
                                     className='form-label'>
@@ -175,5 +209,9 @@ const SupplierForm = (props) => {
         </div>
     )
 };
+const mapStateToProps = (state) => {
+    const {allCountryList, allStatesList, allCitiesList} = state;
+    return {allCountryList, allStatesList, allCitiesList}
+}
 
-export default connect(null, {editSupplier})(SupplierForm);
+export default connect(mapStateToProps, {editSupplier,fetchCountries, fetchStates, fetchCities})(SupplierForm);

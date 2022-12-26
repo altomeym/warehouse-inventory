@@ -1,32 +1,40 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect } from 'react';
 import Form from 'react-bootstrap/Form';
 import {connect} from 'react-redux';
 import * as EmailValidator from 'email-validator';
 import {useNavigate} from 'react-router-dom';
 import {getFormattedMessage, placeholderText, numValidate} from '../../shared/sharedMethod';
 import {editCustomer} from '../../store/action/customerAction';
+import {fetchCountries, fetchStates, fetchCities} from '../../store/action/allCountryStatesAction';
 import ModelFooter from '../../shared/components/modelFooter';
+import ReactSelect from "../../shared/select/reactSelect";
 
 const CustomerForm = (props) => {
-    const {addCustomerData, id, editCustomer, singleCustomer} = props;
+    const {addCustomerData, id, editCustomer, singleCustomer, allCountryList, allStatesList, allCitiesList, fetchCountries, fetchStates, fetchCities} = props;
     const navigate = useNavigate();
 
     const [customerValue, setCustomerValue] = useState({
         name: singleCustomer ? singleCustomer[0].name : '',
         email: singleCustomer ? singleCustomer[0].email : '',
         phone: singleCustomer ? singleCustomer[0].phone : '',
-        country: singleCustomer ? singleCustomer[0].country : '',
-        city: singleCustomer ? singleCustomer[0].city : '',
-        address: singleCustomer ? singleCustomer[0].address : ''
+        country: singleCustomer ? singleCustomer[0]?.country : '',
+        state: singleCustomer ? singleCustomer[0]?.state : '',
+        city: singleCustomer ? singleCustomer[0]?.city : '',
+        address: singleCustomer ? singleCustomer[0]?.address : ''
     });
     const [errors, setErrors] = useState({
         name: '',
         email: '',
         phone: '',
         country: '',
+        state: '',
         city: '',
         address: ''
     });
+
+    useEffect(() => {
+        fetchCountries();
+    }, []);
 
     const disabled = singleCustomer && singleCustomer[0].phone === customerValue.phone && singleCustomer[0].name === customerValue.name && singleCustomer[0].country === customerValue.country && singleCustomer[0].city === customerValue.city && singleCustomer[0].email === customerValue.email && singleCustomer[0].address === customerValue.address
 
@@ -43,6 +51,8 @@ const CustomerForm = (props) => {
             }
         } else if (!customerValue['country']) {
             errorss['country'] = getFormattedMessage("globally.input.country.validate.label");
+        } else if (!customerValue['state']) {
+            errorss['state'] = getFormattedMessage("globally.input.state.validate.label");
         } else if (!customerValue['city']) {
             errorss['city'] = getFormattedMessage("globally.input.city.validate.label");
         } else if (!customerValue['address']) {
@@ -61,6 +71,24 @@ const CustomerForm = (props) => {
         setCustomerValue(inputs => ({...inputs, [e.target.name]: e.target.value}))
         setErrors('');
     };
+
+    const onCountryChange = (obj) => {
+        setCustomerValue(inputs => ({...inputs, country: obj}))
+        fetchStates(obj?.value);
+        setErrors('');
+    };
+
+    const onStateChange = (obj) => {
+        setCustomerValue(inputs => ({...inputs, state: obj}))
+        fetchCities(obj?.value);
+        setErrors('');
+    };
+
+    const onCityChange = (obj) => {
+        setCustomerValue(inputs => ({...inputs, city: obj}))
+        setErrors('');
+    };
+
 
     const onSubmit = (event) => {
         event.preventDefault();
@@ -121,7 +149,7 @@ const CustomerForm = (props) => {
                             <span
                                 className='text-danger d-block fw-400 fs-small mt-2'>{errors['phone'] ? errors['phone'] : null}</span>
                         </div>
-                        <div className='col-md-6 mb-3'>
+                        {/* <div className='col-md-6 mb-3'>
                             <label className='form-label'>
                                 {getFormattedMessage("globally.input.country.label")}:
                             </label>
@@ -132,8 +160,8 @@ const CustomerForm = (props) => {
                                    value={customerValue.country}/>
                             <span
                                 className='text-danger d-block fw-400 fs-small mt-2'>{errors['country'] ? errors['country'] : null}</span>
-                        </div>
-                        <div className='col-md-6 mb-3'>
+                        </div> */}
+                        {/* <div className='col-md-6 mb-3'>
                             <label
                                 className='form-label'>
                                 {getFormattedMessage("globally.input.city.label")}:
@@ -145,7 +173,40 @@ const CustomerForm = (props) => {
                                    value={customerValue.city}/>
                             <span
                                 className='text-danger d-block fw-400 fs-small mt-2'>{errors['city'] ? errors['city'] : null}</span>
+                        </div> */}
+                         {allCountryList && allCountryList.length>0 ? 
+                        <div className='col-md-6 mb-3'>
+                           
+                            <span className=''/>
+                                     <ReactSelect title= {getFormattedMessage('globally.input.country.label')} placeholder={placeholderText('globally.input.country.placeholder.label')} 
+                                         multiLanguageOption={allCountryList} onChange={onCountryChange} 
+                                         value={customerValue.country}
+                                         errors={errors['country']}/>
+                            <span className='text-danger'>{errors['country'] ? errors['country'] : null}</span>
                         </div>
+                         : null}
+                        {allStatesList && allStatesList.length>0 ? 
+                        <div className='col-md-6 mb-3'>
+                            <span className=''/>
+                                   <ReactSelect title= {getFormattedMessage('setting.state.lable')} placeholder={placeholderText('settings.system-settings.select.state.validate.label')} 
+                                         multiLanguageOption={allStatesList} onChange={onStateChange} 
+                                         value={customerValue.state}
+                                         errors={errors['state']}/>
+                            <span
+                                className='text-danger d-block fw-400 fs-small mt-2'>{errors['state'] ? errors['state'] : null}</span>
+                        </div>
+                        : null}
+                         {allCitiesList && allCitiesList.length>0 ?
+                        <div className='col-md-6 mb-3'>
+                            <span className=''/>
+                                   <ReactSelect title= {getFormattedMessage('globally.input.city.label')} placeholder={placeholderText('globally.input.city.placeholder.label')} 
+                                         multiLanguageOption={allCitiesList} onChange={onCityChange} 
+                                         value={customerValue.city}
+                                         errors={errors['city']}/>
+                            <span
+                                className='text-danger d-block fw-400 fs-small mt-2'>{errors['city'] ? errors['city'] : null}</span>
+                        </div>
+                         : null}
                         <div className='col-md-6 mb-3'>
                                 <label
                                     className='form-label'>
@@ -166,5 +227,9 @@ const CustomerForm = (props) => {
         </div>
     )
 };
+const mapStateToProps = (state) => {
+    const {allCountryList, allStatesList, allCitiesList} = state;
+    return {allCountryList, allStatesList, allCitiesList}
+};
 
-export default connect(null, {editCustomer})(CustomerForm);
+export default connect(mapStateToProps, {editCustomer, fetchCountries, fetchStates, fetchCities})(CustomerForm);

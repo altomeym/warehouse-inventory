@@ -10,10 +10,10 @@ import user from '../../assets/images/avatar.png';
 import ModelFooter from '../../shared/components/modelFooter';
 import ReactSelect from "../../shared/select/reactSelect";
 import {fetchAllRoles} from "../../store/action/roleAction";
-
+import {fetchCountries, fetchStates, fetchCities} from '../../store/action/allCountryStatesAction';
 
 const UserForm = (props) => {
-    const {addUserData, id, singleUser, isEdit, isCreate, fetchAllRoles, roles} = props;
+    const {addUserData, id, singleUser, isEdit, isCreate, fetchAllRoles, roles, allCountryList, allStatesList, allCitiesList, fetchCountries, fetchStates, fetchCities} = props;
     const Dispatch = useDispatch()
     const navigate = useNavigate();
 
@@ -24,6 +24,9 @@ const UserForm = (props) => {
         phone: singleUser ? singleUser[0].phone : '',
         password: '',
         confirm_password: '',
+        country: singleUser ? singleUser[0]?.country : '',
+        state: singleUser ? singleUser[0]?.state : '',
+        city: singleUser ? singleUser[0]?.city : '',
         role_id: singleUser ? singleUser[0].role_id : '',
         image: singleUser ? singleUser[0].image : '',
     });
@@ -34,6 +37,9 @@ const UserForm = (props) => {
         phone: '',
         password: '',
         confirm_password: '',
+        country: '',
+        state: '',
+        city: '',
         role_id: '',
     });
 
@@ -60,6 +66,10 @@ const UserForm = (props) => {
         setUserValue(productValue => ({...productValue, role_id: obj}))
         setErrors('');
     };
+
+    useEffect(() => {
+        fetchCountries();
+    }, []);
 
     const handleValidation = () => {
         let errorss = {};
@@ -88,6 +98,23 @@ const UserForm = (props) => {
     const onChangeInput = (e) => {
         e.preventDefault();
         setUserValue(inputs => ({...inputs, [e.target.name]: e.target.value}))
+        setErrors('');
+    };
+
+    const onCountryChange = (obj) => {
+        setUserValue(inputs => ({...inputs, country: obj}))
+        fetchStates(obj?.value);
+        setErrors('');
+    };
+
+    const onStateChange = (obj) => {
+        setUserValue(inputs => ({...inputs, state: obj}))
+        fetchCities(obj?.value);
+        setErrors('');
+    };
+
+    const onCityChange = (obj) => {
+        setUserValue(inputs => ({...inputs, city: obj}))
         setErrors('');
     };
 
@@ -232,6 +259,39 @@ const UserForm = (props) => {
                                     <span
                                         className='text-danger d-block fw-400 fs-small mt-2'>{errors['confirm_password'] ? errors['confirm_password'] : null}</span>
                             </div>}
+                            {allCountryList && allCountryList.length>0 ? 
+                        <div className='col-md-6 mb-3'>
+                           
+                            <span className=''/>
+                                     <ReactSelect title= {getFormattedMessage('globally.input.country.label')} placeholder={placeholderText('globally.input.country.placeholder.label')} 
+                                         multiLanguageOption={allCountryList} onChange={onCountryChange} 
+                                         value={userValue.country}
+                                         errors={errors['country']}/>
+                            <span className='text-danger'>{errors['country'] ? errors['country'] : null}</span>
+                        </div>
+                         : null}
+                          {allStatesList && allStatesList.length>0 ? 
+                        <div className='col-md-6 mb-3'>
+                            <span className=''/>
+                                   <ReactSelect title= {getFormattedMessage('setting.state.lable')} placeholder={placeholderText('settings.system-settings.select.state.validate.label')} 
+                                         multiLanguageOption={allStatesList} onChange={onStateChange} 
+                                         value={userValue.state}
+                                         errors={errors['state']}/>
+                            <span
+                                className='text-danger d-block fw-400 fs-small mt-2'>{errors['state'] ? errors['state'] : null}</span>
+                        </div>
+                        : null}
+                         {allCitiesList && allCitiesList.length>0 ?
+                        <div className='col-md-6 mb-3'>
+                            <span className=''/>
+                                   <ReactSelect title= {getFormattedMessage('globally.input.city.label')} placeholder={placeholderText('globally.input.city.placeholder.label')} 
+                                         multiLanguageOption={allCitiesList} onChange={onCityChange} 
+                                         value={userValue.city}
+                                         errors={errors['city']}/>
+                            <span
+                                className='text-danger d-block fw-400 fs-small mt-2'>{errors['city'] ? errors['city'] : null}</span>
+                        </div>
+                         : null}
                         <div className='col-md-6'>
                             <ReactSelect title={getFormattedMessage("user.input.role.label")} placeholder={placeholderText("user.input.role.placeholder.label")} defaultValue={selectedRole}
                                          data={roles} onChange={onRolesChange} errors={errors['role_id']}/>
@@ -246,9 +306,9 @@ const UserForm = (props) => {
 };
 
 const mapStateToProps = (state) => {
-    const {roles} = state;
-    return {roles}
+    const {roles, allCountryList, allStatesList, allCitiesList} = state;
+    return {roles, allCountryList, allStatesList, allCitiesList}
 };
 
-export default connect(mapStateToProps, {fetchAllRoles})(UserForm);
+export default connect(mapStateToProps, {fetchAllRoles, fetchCountries, fetchStates, fetchCities})(UserForm);
 

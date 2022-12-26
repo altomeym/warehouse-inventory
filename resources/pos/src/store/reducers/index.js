@@ -93,7 +93,9 @@ import HoldListReducer from './pos/HoldListReducer';
 import EditHoldList from './pos/EditHoldList'; 
 import ShippingTypeReducer from './ShippingTypeReducer';
 import tranStatusTypeReducer from './tranStatusTypeReducer';
-import allCountryStatesReducer from './allCountryStatesReducer';
+import allCountriesReducer from './allCountriesReducer';
+import allStatesReducer from './allStatesReducer';
+import allCitiesReducer from './allCitiesReducer';
 
 export default combineReducers({
     loginUser: loginReducers,
@@ -190,5 +192,7 @@ export default combineReducers({
     editholdListData: EditHoldList, 
     shipingTypes: ShippingTypeReducer, 
     allStatusTypes: tranStatusTypeReducer, 
-    allCountryStates: allCountryStatesReducer, 
+    allCountryList: allCountriesReducer, 
+    allStatesList: allStatesReducer, 
+    allCitiesList: allCitiesReducer, 
 });

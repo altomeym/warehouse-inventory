@@ -7,9 +7,10 @@ import {getFormattedMessage, numValidate, placeholderText} from '../../shared/sh
 import {editWarehouse, fetchWarehouse} from '../../store/action/warehouseAction';
 import {fetchCountries, fetchStates, fetchCities} from '../../store/action/allCountryStatesAction';
 import ModelFooter from '../../shared/components/modelFooter';
+import ReactSelect from "../../shared/select/reactSelect";
 
 const WarehouseForm = (props) => {
-    const {addWarehouseData, id, editWarehouse, singleWarehouse, allCountryStates, fetchCountries, fetchStates, fetchCities} = props;
+    const {addWarehouseData, id, editWarehouse, singleWarehouse, allCountryList, allStatesList, allCitiesList, fetchCountries, fetchStates, fetchCities} = props;
     const navigate = useNavigate();
 
     const [warehouseValue, setWarehouseValue] = useState({
@@ -17,6 +18,7 @@ const WarehouseForm = (props) => {
         email: singleWarehouse ? singleWarehouse[0].email : '',
         phone: singleWarehouse ? singleWarehouse[0].phone : '',
         country: singleWarehouse ? singleWarehouse[0].country : '',
+        state: singleWarehouse ? singleWarehouse[0].state : '',
         city: singleWarehouse ? singleWarehouse[0].city : '',
         zip_code: singleWarehouse ? singleWarehouse[0].zip_code : '',
         latitude: singleWarehouse ? singleWarehouse[0]?.latitude : '',
@@ -29,6 +31,7 @@ const WarehouseForm = (props) => {
         email: '',
         phone: '',
         country: '',
+        state: '',
         city: '',
         zip_code: '',
         latitude: '',
@@ -57,6 +60,8 @@ const WarehouseForm = (props) => {
             errorss['phone'] = getFormattedMessage('globally.input.phone-number.validate.label');
         } else if (!warehouseValue['country']) {
             errorss['country'] = getFormattedMessage('globally.input.country.validate.label');
+        } else if (!warehouseValue['state']) {
+            errorss['state'] = getFormattedMessage('globally.input.state.validate.label');
         } else if (!warehouseValue['city']) {
             errorss['city'] = getFormattedMessage('globally.input.city.validate.label');
         } else if (!warehouseValue['zip_code']) {
@@ -82,7 +87,19 @@ const WarehouseForm = (props) => {
     };
 
     const onCountryChange = (obj) => {
-        setWarehouseValue(inputs => ({...inputs, role_id: obj}))
+        setWarehouseValue(inputs => ({...inputs, country: obj}))
+        fetchStates(obj?.value);
+        setErrors('');
+    };
+
+    const onStateChange = (obj) => {
+        setWarehouseValue(inputs => ({...inputs, state: obj}))
+        fetchCities(obj?.value);
+        setErrors('');
+    };
+
+    const onCityChange = (obj) => {
+        setWarehouseValue(inputs => ({...inputs, city: obj}))
         setErrors('');
     };
 
@@ -143,29 +160,39 @@ const WarehouseForm = (props) => {
                             <span
                                 className='text-danger d-block fw-400 fs-small mt-2'>{errors['phone'] ? errors['phone'] : null}</span>
                         </div>
+                        {allCountryList && allCountryList.length>0 ? 
                         <div className='col-md-6 mb-3'>
-                            <label className='form-label'>
-                                {getFormattedMessage('globally.input.country.label')}:
-                            </label>
-                            <span className='required'/>
+                           
+                            <span className=''/>
                                      <ReactSelect title= {getFormattedMessage('globally.input.country.label')} placeholder={placeholderText('globally.input.country.placeholder.label')} 
-                                         data={allCountryStates} onChange={onCountryChange} 
+                                         multiLanguageOption={allCountryList} onChange={onCountryChange} 
                                          value={warehouseValue.country}
                                          errors={errors['country']}/>
                             <span className='text-danger'>{errors['country'] ? errors['country'] : null}</span>
                         </div>
+                         : null}
+                        {allStatesList && allStatesList.length>0 ? 
                         <div className='col-md-6 mb-3'>
-                            <label className='form-label'>
-                                {getFormattedMessage('globally.input.city.label')}:
-                            </label>
-                            <span className='required'/>
-                            <input type='text' name='city' className='form-control'
-                                   placeholder={placeholderText('globally.input.city.placeholder.label')}
-                                   onChange={(e) => onChangeInput(e)}
-                                   value={warehouseValue.city}/>
+                            <span className=''/>
+                                   <ReactSelect title= {getFormattedMessage('setting.state.lable')} placeholder={placeholderText('settings.system-settings.select.state.validate.label')} 
+                                         multiLanguageOption={allStatesList} onChange={onStateChange} 
+                                         value={warehouseValue.state}
+                                         errors={errors['state']}/>
+                            <span
+                                className='text-danger d-block fw-400 fs-small mt-2'>{errors['state'] ? errors['state'] : null}</span>
+                        </div>
+                        : null}
+                         {allCitiesList && allCitiesList.length>0 ?
+                        <div className='col-md-6 mb-3'>
+                            <span className=''/>
+                                   <ReactSelect title= {getFormattedMessage('globally.input.city.label')} placeholder={placeholderText('globally.input.city.placeholder.label')} 
+                                         multiLanguageOption={allCitiesList} onChange={onCityChange} 
+                                         value={warehouseValue.city}
+                                         errors={errors['city']}/>
                             <span
                                 className='text-danger d-block fw-400 fs-small mt-2'>{errors['city'] ? errors['city'] : null}</span>
                         </div>
+                         : null}
                         <div className='col-md-6 mb-3'>
                             <label
                                 className='form-label'>
@@ -181,34 +208,30 @@ const WarehouseForm = (props) => {
                             <span
                                 className='text-danger d-block fw-400 fs-small mt-2'>{errors['zip_code'] ? errors['zip_code'] : null}</span>
                         </div>
-                        <div className='col-md-6 mb-3'>
+                        {/* <div className='col-md-6 mb-3'>
                             <label
                                 className='form-label'>
                                Latitude :
                             </label>
-                            {/* <span className='required'/> */}
                             <input type='text' name='latitude' className='form-control'
                                    pattern='[0-9]*' value={warehouseValue.latitude}
                                    placeholder={'latitude '}
                                    onChange={(e) => onChangeInput(e)}
                                    onKeyPress={(event) => numValidate(event)}
                             />
-                            {/* <span className='text-danger d-block fw-400 fs-small mt-2'>{errors['latitude'] ? errors['zip_code'] : null}</span> */}
                         </div>
                         <div className='col-md-6 mb-3'>
                             <label
                                 className='form-label'>
                                 Longitude:
                             </label>
-                            {/* <span className='required'/> */}
                             <input type='text' name='longitude' className='form-control'
                                    pattern='[0-9]*' value={warehouseValue.longitude}
                                    placeholder={'longitude'}
                                    onChange={(e) => onChangeInput(e)}
                                    onKeyPress={(event) => numValidate(event)}
                             />
-                            {/* <span className='text-danger d-block fw-400 fs-small mt-2'>{errors['longitude'] ? errors['longitude'] : null}</span> */}
-                        </div>
+                        </div> */}
                         <div className='mb-3'>
                             <label className='form-label'>
                                 Address: </label>
@@ -226,7 +249,7 @@ const WarehouseForm = (props) => {
     )
 };
 const mapStateToProps = (state) => {
-    const {allCountryStates} = state;
-    return {allCountryStates}
+    const {allCountryList, allStatesList, allCitiesList} = state;
+    return {allCountryList, allStatesList, allCitiesList}
 };
 export default connect(mapStateToProps, {fetchWarehouse, editWarehouse, fetchCountries, fetchStates, fetchCities})(WarehouseForm);
