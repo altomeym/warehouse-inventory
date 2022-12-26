@@ -99,6 +99,7 @@ use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
      */
     public function store(CreateSaleRequest $request)
     {
+       
         if(isset($request->hold_ref_no)){
             $holdExist = Hold::whereReferenceCode($request->hold_ref_no)->first();
             if(!empty($holdExist)){

@@ -51,6 +51,7 @@ class Expense extends BaseModel
         'expense_category_id',
         'amount',
         'reference_code',
+        'payment_status',
         'details',
         'title',
     ];
@@ -60,6 +61,8 @@ class Expense extends BaseModel
         'warehouse_id'        => 'required|exists:warehouses,id',
         'expense_category_id' => 'required|exists:expense_categories,id',
         'amount'              => 'required|numeric',
+        'amount'              => 'required|numeric',
+        'payment_status'      => 'required',
         'title'               => 'required',
     ];
 
@@ -85,6 +88,7 @@ class Expense extends BaseModel
             'reference_code'        => $this->reference_code,
             'warehouse_name'        => $this->warehouse->name,
             'expense_category_name' => $this->expenseCategory->name,
+            'payment_status'        => $this->payment_status,
             'title'                 => $this->title,
             'created_at'            => $this->created_at,
         ];
