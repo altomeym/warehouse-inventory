@@ -14,6 +14,7 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * App\Models\User
@@ -79,6 +80,9 @@ class User extends Authenticatable implements HasMedia, JsonResourceful, CanRese
         'last_name',
         'email',
         'phone',
+        'country',
+        'state',
+        'city',
         'password',
         'language',
     ];
@@ -88,6 +92,9 @@ class User extends Authenticatable implements HasMedia, JsonResourceful, CanRese
         'last_name'        => 'required',
         'email'            => 'required|email|unique:users',
         'phone'            => 'required|numeric',
+        'country'          => 'required',
+        'state'            => 'required',
+        'city'             => 'required',
         'password'         => 'required|min:6',
         'confirm_password' => 'required|min:6|same:password',
     ];
@@ -147,10 +154,16 @@ class User extends Authenticatable implements HasMedia, JsonResourceful, CanRese
             'last_name'  => $this->last_name,
             'email'      => $this->email,
             'phone'      => $this->phone,
+            'country'    => $this->country,
+            'state'      => $this->state,
+            'city'       => $this->city,
             'image'      => $this->image_url,
             'role'       => $this->roles,
             'created_at' => $this->created_at,
             'language'   => $this->language,
+            'country_name' => $this->country_name,
+            'state_name' => $this->state_name,
+            'city_name' => $this->city_name,
         ];
 
         return $fields;
@@ -161,5 +174,20 @@ class User extends Authenticatable implements HasMedia, JsonResourceful, CanRese
         $url = url('/#/reset-password/'.$token);
 
         $this->notify(new ResetPasswordNotification($url));
+    }
+
+    public function country_name(): BelongsTo
+    {
+        return $this->belongsTo(Country::class, 'country', 'id');
+    }
+
+    public function state_name(): BelongsTo
+    {
+        return $this->belongsTo(State::class, 'state', 'id');
+    }
+
+    public function city_name(): BelongsTo
+    {
+        return $this->belongsTo(City::class, 'city', 'id');
     }
 }

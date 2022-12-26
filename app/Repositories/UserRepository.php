@@ -24,6 +24,9 @@ class UserRepository extends BaseRepository
         'last_name',
         'email',
         'phone',
+        'country',
+        'state',
+        'city',
         'created_at',
         //        'roles.name',
     ];
