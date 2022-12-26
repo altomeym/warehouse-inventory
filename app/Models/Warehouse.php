@@ -48,6 +48,7 @@ class Warehouse extends BaseModel
         'state',
         'city',
         'email',
+        'adderss',
         'zip_code',
     ];
 
@@ -83,6 +84,7 @@ class Warehouse extends BaseModel
             'state'      => $this->state,
             'city'       => $this->city,
             'email'      => $this->email,
+            'address'   => $this->address,
             'zip_code'   => $this->zip_code,
             'created_at' => $this->created_at,
             'country_name' => $this->country_name,
