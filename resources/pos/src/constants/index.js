@@ -92,6 +92,7 @@ export const apiBaseURL = {
     EDIT_SALE_FROM_SALE : "sales-return-edit",
     HOLDS_LIST:"holds",
     SHIPPING: '/shipping_type',
+    TRAN_STATUS_TYPE: '/tran_status_types',
     COUNTRY: '/country',
     STATE: '/state',
     CITY: '/city',
