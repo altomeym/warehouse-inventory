@@ -13,16 +13,16 @@
 <table width="100%" cellspacing="0" cellpadding="10" style="margin-top: 40px;">
     <thead>
     <tr style="background-color: dodgerblue;">
-        <th style="width: 200%">{{ __('messages.pdf.sales') }}</th>
-        <th style="width: 300%">{{ __('messages.pdf.purchases') }}</th>
-        <th style="width: 200%">{{ __('messages.pdf.sale_returns') }}</th>
-        <th style="width: 200%">{{ __('messages.pdf.purchase_returns') }}</th>
-        <th style="width: 200%">{{ __('messages.pdf.expenses') }}</th>
-        <th style="width: 300%">{{ __('messages.pdf.sales_payment_amount') }}</th>
-        <th style="width: 300%">{{ __('messages.pdf.Revenue') }}</th>
-        <th style="width: 300%">{{ __('messages.pdf.payments_received') }}</th>
-        <th style="width: 300%">{{ __('messages.pdf.product_cost') }}</th>
-        <th style="width: 300%">{{ __('messages.pdf.gross_profit') }}</th>
+        <th style="width: 200%">Sales</th>
+        <th style="width: 300%">Purchases</th>
+        <th style="width: 200%">Sale returns</th>
+        <th style="width: 200%">Purchase Returns</th>
+        <th style="width: 200%">Expenses</th>
+        <th style="width: 300%">Sales payment amount</th>
+        <th style="width: 300%">Revenue</th>
+        <th style="width: 300%">Payments Received</th>
+        <th style="width: 300%">Product cost</th>
+        <th style="width: 300%">Gross profit</th>
     </tr>
     </thead>
     <tbody>

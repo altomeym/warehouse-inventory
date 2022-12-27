@@ -323,6 +323,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('get-purchase-return-product-report', [
         PurchaseReturnAPIController::class, 'getPurchaseReturnProductReport',
     ]);
+    Route::get('stock-get', [ManageStockAPIController::class, 'stockGet'])->name('stockGet');
 
     // Today sale overall report
 

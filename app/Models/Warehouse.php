@@ -72,9 +72,11 @@ class Warehouse extends BaseModel
         ];
     }
 
+
     /**
      * @return array
      */
+
     function prepareAttributes(): array
     {
         $fields = [
@@ -90,6 +92,7 @@ class Warehouse extends BaseModel
             'country_name' => $this->country_name,
             'state_name' => $this->state_name,
             'city_name' => $this->city_name,
+            'totalstock' => $this->totalstock,
             
         ];
 
@@ -129,6 +132,13 @@ class Warehouse extends BaseModel
         return $this->hasMany(Purchase::class, 'warehouse_id', 'id');
     }
 
+    
+    public function totalstock(): HasMany
+    {
+        return $this->hasMany(ManageStock::class, 'warehouse_id', 'id');
+    }
+
+    
     public function country_name(): BelongsTo
     {
         return $this->belongsTo(Country::class, 'country', 'id');
