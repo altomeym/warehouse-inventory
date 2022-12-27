@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {useNavigate} from 'react-router-dom';
-import {connect, Dispatch} from 'react-redux';
+import {connect, useDispatch} from 'react-redux';
 import Form from 'react-bootstrap/Form';
 import * as EmailValidator from 'email-validator';
 import {getFormattedMessage, numValidate, placeholderText} from '../../shared/sharedMethod';
