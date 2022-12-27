@@ -92,7 +92,7 @@ class Warehouse extends BaseModel
             'country_name' => $this->country_name,
             'state_name' => $this->state_name,
             'city_name' => $this->city_name,
-            'totalstock' => $this->totalstock,
+            'totalstock' => $this->totalstock[0]['total'] ?? '',
             
         ];
 
