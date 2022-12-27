@@ -11,6 +11,7 @@ import ModelFooter from '../../shared/components/modelFooter';
 import ReactSelect from "../../shared/select/reactSelect";
 import {fetchAllRoles} from "../../store/action/roleAction";
 import {fetchCountries, fetchStates, fetchCities} from '../../store/action/allCountryStatesAction';
+import {countryStateActionType} from '../../constants';
 
 const UserForm = (props) => {
     const {addUserData, id, singleUser, isEdit, isCreate, fetchAllRoles, roles, allCountryList, allStatesList, allCitiesList, fetchCountries, fetchStates, fetchCities} = props;
@@ -77,9 +78,14 @@ const UserForm = (props) => {
     useEffect(() => {
         if(singleUser && singleUser[0]?.country?.value)
           fetchStates(singleUser[0]?.country?.value);
+        else
+          Dispatch({type: countryStateActionType.FETCH_STATES, payload: []});
 
         if(singleUser && singleUser[0]?.state?.value)
           fetchCities(singleUser[0]?.state?.value);
+        else
+          Dispatch({type: countryStateActionType.FETCH_CITIES, payload: []});
+
     }, []);
 
     const handleValidation = () => {

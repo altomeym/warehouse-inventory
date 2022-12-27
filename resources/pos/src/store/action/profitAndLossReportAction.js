@@ -25,11 +25,15 @@ export const fetchProfitAndLossReports = (filter = {}, isLoading = true) => asyn
         });
 };
 
-export const productExcelAction = (setIsWarehouseValue, isLoading = true, id) => async (dispatch) => {
+export const productExcelAction = (filter = {}, isLoading = true) => async (dispatch) => {
     if (isLoading) {
         dispatch(setLoading(true))
     }
-    await apiConfig.get(`total-profit-loss-sale-report-excel` )
+    let url =`total-profit-loss-sale-report-excel`;
+    if (!_.isEmpty(filter) && (filter.page || filter.pageSize || filter.search || filter.order_By || filter.created_at)) {
+        url += requestParam(filter);
+    }
+    await apiConfig.get(url)
         .then((response) => {
             window.open(response.data.data.total_profit_loss_excel_url, '_blank');
             // setIsWarehouseValue(false);

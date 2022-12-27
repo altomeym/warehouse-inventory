@@ -56,7 +56,13 @@ const ProfitLossReport = (props) => {
     };
 
     const onExcelClick = (e)=>{
-       productExcelAction();
+        const filters = {
+            created_at: created_at,
+            search: '',
+            start_date: selectDate ? selectDate.start_date : startMonth,
+            end_date: selectDate ? selectDate.end_date : today,
+        };
+       productExcelAction(filters);
     }
 
     return (
