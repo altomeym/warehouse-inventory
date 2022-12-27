@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Contracts\JsonResourceful;
 use App\Traits\HasJsonResourcefulData;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Log;
 
 
@@ -108,6 +109,7 @@ class ManageStock extends BaseModel implements JsonResourceful
             'product_unit'  => $this->product->product_unit,
             'product_name'  => $this->product->name,
             'product_image' => $this->product->image_url,
+            //'grand_total ' =>  $this->total,
         ];
 
         return $fields;
@@ -122,5 +124,11 @@ class ManageStock extends BaseModel implements JsonResourceful
     {
         return $this->belongsTo(Warehouse::class, 'warehouse_id', 'id');
     }
+    public function totalstock(): HasMany
+    {
+        return $this->hasMany(ManageStock::class, 'warehouse_id', 'id')->selectRaw('SUM(quantity) as total')
+         ->groupBy('warehouse_id');
+    }
+    
 
 }

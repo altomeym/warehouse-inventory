@@ -45,6 +45,8 @@ class SaleRepository extends BaseRepository
         'note',
         'created_at',
         'reference_code',
+        'shipping_data',
+        'tax_data',
     ];
 
     /**
@@ -59,6 +61,8 @@ class SaleRepository extends BaseRepository
         'grand_total',
         'received_amount',
         'note',
+        'shipping_data',
+        'tax_data',
     ];
 
     /**
@@ -94,11 +98,12 @@ class SaleRepository extends BaseRepository
             $QuotationId = $input['quotation_id'] ?? false;
             $saleInputArray = Arr::only($input, [
                 'customer_id', 'warehouse_id', 'tax_rate', 'tax_amount', 'discount', 'shipping', 'grand_total',
-                'received_amount', 'paid_amount', 'payment_type', 'note', 'date', 'status', 'payment_status',
+                'received_amount', 'paid_amount', 'payment_type', 'note', 'date', 'status', 'payment_status','shipping_data','tax_data',
             ]);
 
             /** @var Sale $sale */
             $saleInputArray['shipping_data'] = json_encode($input['shipping_data']);
+            $saleInputArray['tax_data'] = json_encode($input['tax_data']);
             $sale = Sale::create($saleInputArray);
             if ($input['is_sale_created'] && $QuotationId) {
                 $quotation =Quotation::find($QuotationId);
@@ -504,9 +509,10 @@ class SaleRepository extends BaseRepository
 
         $saleInputArray = Arr::only($input, [
             'customer_id', 'warehouse_id', 'tax_rate', 'tax_amount', 'discount', 'shipping', 'grand_total',
-            'received_amount', 'paid_amount', 'payment_type', 'note', 'date', 'status', 'payment_status','shipping_data',
+            'received_amount', 'paid_amount', 'payment_type', 'note', 'date', 'status', 'payment_status','shipping_data','tax_data',
         ]);
         $saleInputArray['shipping_data'] = json_encode($input['shipping_data']);
+        $saleInputArray['tax_data'] = json_encode($input['tax_data']);
         $sale->update($saleInputArray);
         /*new code*/
             if(!empty($input['shipping_data']))

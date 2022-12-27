@@ -133,6 +133,7 @@ class TransferRepository extends BaseRepository
                 } else {
                         if($transfer['status'] == '2')
                         {
+
                             manageStock($input['to_warehouse_id'], $transferItem['product_id'], $transferItem['quantity']);
                         }
                         $exceptQuantity = $product->quantity - $transferItem['quantity'];

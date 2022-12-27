@@ -34,7 +34,7 @@ class ShippingType extends BaseModel
     const JSON_API_TYPE = 'shipping_type';
 
     protected $fillable = [
-        'name',
+        'name','slug'
     ];
 
     public static $rules = [
@@ -58,6 +58,7 @@ class ShippingType extends BaseModel
     {
         $fields = [
             'name'   => $this->name,
+            'slug'   => $this->slug,
         ];
 
         return $fields;

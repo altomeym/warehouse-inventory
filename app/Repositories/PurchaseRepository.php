@@ -32,6 +32,7 @@ class PurchaseRepository extends BaseRepository
         'payment_type',
         'notes',
         'shipping_data',
+        'tax_data',
         'created_at',
     ];
 
@@ -48,6 +49,7 @@ class PurchaseRepository extends BaseRepository
         'received_amount',
         'notes',
         'shipping_data',
+        'tax_data',
     ];
 
     /**
@@ -81,12 +83,13 @@ class PurchaseRepository extends BaseRepository
 
             $purchaseInputArray = Arr::only($input, [
                 'supplier_id', 'warehouse_id', 'date', 'tax_rate', 'tax_amount', 'discount', 'shipping', 'grand_total',
-                'received_amount', 'paid_amount', 'payment_type', 'notes', 'status','shipping_data',
+                'received_amount', 'paid_amount', 'payment_type', 'notes', 'status','shipping_data','tax_data',
             ]);
 
            
              /** @var Purchase $purchase */
             $purchaseInputArray['shipping_data'] = json_encode($input['shipping_data']);
+            $purchaseInputArray['tax_data'] = json_encode($input['tax_data']);
             $purchase = Purchase::create($purchaseInputArray);
 
             $purchase = $this->storePurchaseItems($purchase, $input);
@@ -311,9 +314,10 @@ class PurchaseRepository extends BaseRepository
 
         $purchaseInputArray = Arr::only($input, [
             'supplier_id', 'warehouse_id', 'date', 'tax_rate', 'tax_amount', 'discount', 'shipping', 'grand_total',
-            'received_amount', 'paid_amount', 'payment_type', 'notes', 'status', 'shipping_data'
+            'received_amount', 'paid_amount', 'payment_type', 'notes', 'status', 'shipping_data','tax_data'
         ]);
         $purchaseItemArr['shipping_data'] = json_encode($input['shipping_data']);
+        $purchaseItemArr['tax_data'] = json_encode($input['tax_data']);
         $purchase->update($purchaseInputArray);
 
         /*new code*/

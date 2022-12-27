@@ -29,6 +29,7 @@ class PurchaseReturnRepository extends BaseRepository
         'discount',
         'discount',
         'shipping_data',
+        'tax_data',
         'shipping',
         'grand_total',
         'received_amount',
@@ -47,6 +48,7 @@ class PurchaseReturnRepository extends BaseRepository
         'tax_amount',
         'discount',
         'shipping_data',
+        'tax_data',
         'shipping',
         'grand_total',
         'received_amount',
@@ -88,11 +90,12 @@ class PurchaseReturnRepository extends BaseRepository
             }
 
             $purchaseReturnInputArray = Arr::only($input, [
-                'supplier_id', 'warehouse_id', 'date', 'tax_rate', 'tax_amount', 'discount', 'shipping_data','shipping', 'grand_total',
+                'supplier_id', 'warehouse_id', 'date', 'tax_rate', 'tax_amount', 'discount', 'shipping_data','tax_data','shipping', 'grand_total',
                 'received_amount', 'paid_amount', 'payment_type', 'notes', 'status', 'payment_status',
             ]);
 
             $purchaseReturnInputArray['shipping_data'] = json_encode($input['shipping_data']);
+            $purchaseReturnInputArray['tax_data'] = json_encode($input['tax_data']);
             $purchaseReturn = PurchaseReturn::create($purchaseReturnInputArray);
 
             $purchaseReturn = $this->storePurchaseReturnItems($purchaseReturn, $input);
@@ -271,10 +274,11 @@ class PurchaseReturnRepository extends BaseRepository
                     $purchaseReturnItemArr = Arr::only($purchaseReturnItem, [
                         'purchase_return_item_id', 'product_id', 'product_cost', 'net_unit_cost', 'tax_type',
                         'tax_value',
-                        'tax_amount', 'discount_type', 'discount_value', 'discount_amount', 'purchase_unit', 'quantity',
+                        'tax_amount', 'discount_type', 'discount_value', 'discount_amount', 'purchase_unit', 'quantity','shipping_data','tax_data',
                         'sub_total',
                     ]);
                     $purchaseReturnItemArr['shipping_data'] = json_encode($input['shipping_data']);
+                    $purchaseReturnItemArr['tax_data'] = json_encode($input['tax_data']);
                     $purchaseReturn->purchaseReturnItems()->create($purchaseReturnItemArr);
                     $product = ManageStock::whereWarehouseId($input['warehouse_id'])->whereProductId($purchaseReturnItem['product_id'])->first();
                     $purchaseExist = PurchaseItem::where('product_id',
@@ -416,9 +420,10 @@ class PurchaseReturnRepository extends BaseRepository
 
         $purchaseReturnInputArray = Arr::only($input, [
             'supplier_id', 'warehouse_id', 'date', 'tax_rate', 'tax_amount', 'discount', 'shipping', 'grand_total',
-            'received_amount', 'paid_amount', 'payment_type', 'notes', 'status', 'payment_status', 'shipping_data'
+            'received_amount', 'paid_amount', 'payment_type', 'notes', 'status', 'payment_status', 'shipping_data','tax_data',
         ]);
         $purchaseReturnInputArray['shipping_data'] = json_encode($input['shipping_data']);
+        $purchaseReturnInputArray['tax_data'] = json_encode($input['tax_data']);
         $purchaseReturn->update($purchaseReturnInputArray);
         /*new code*/
             if(!empty($input['shipping_data']))

@@ -33,8 +33,10 @@ class ShippingTypeAPIController extends AppBaseController
      */
     public function index(Request $request)
     {
+        $slug = request()->get('slug'); 
+        
         $perPage = getPageSize($request);
-        $shippingType = $this->shippingTypeRepository->paginate($perPage);
+        $shippingType = $this->shippingTypeRepository->where('slug',$slug)->paginate($perPage);
        
         ShippingTypeResource::usingWithCollection();
 

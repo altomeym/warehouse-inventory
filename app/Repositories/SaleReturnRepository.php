@@ -35,6 +35,7 @@ class SaleReturnRepository extends BaseRepository
         'discount',
         'shipping',
         'shipping_data',
+        'tax_data',
         'grand_total',
         'paid_amount',
         'payment_type',
@@ -52,6 +53,7 @@ class SaleReturnRepository extends BaseRepository
         'tax_amount',
         'discount',
         'shipping_data',
+        'tax_data',
         'shipping',
         'grand_total',
         'note',
@@ -98,11 +100,12 @@ class SaleReturnRepository extends BaseRepository
             $input['date'] = $input['date'] ?? date("Y/m/d");
             $saleReturnInputArray = Arr::only($input, [
                 'customer_id', 'warehouse_id', 'tax_rate', 'tax_amount', 'discount', 'shipping', 'grand_total',
-                'paid_amount', 'payment_type', 'note', 'date', 'status', 'sale_id',
+                'paid_amount', 'payment_type', 'note', 'date', 'status', 'sale_id','shipping_data','tax_data',
             ]);
 
             /** @var Sale $sale */
             $saleReturnInputArray['shipping_data'] = json_encode($input['shipping_data']);
+            $saleReturnInputArray['tax_data'] = json_encode($input['tax_data']);
             $saleReturn = SaleReturn::create($saleReturnInputArray);
             $saleUpdate = $sale->update(['is_return' => 1]);
             $saleReturn = $this->storeSaleReturnItems($saleReturn, $input);
@@ -595,9 +598,10 @@ class SaleReturnRepository extends BaseRepository
 
         $saleReturnInputArray = Arr::only($input, [
             'customer_id', 'warehouse_id', 'tax_rate', 'tax_amount', 'discount', 'shipping', 'grand_total',
-            'received_amount', 'paid_amount', 'payment_type', 'note', 'date', 'status', 'payment_status','shipping_data'
+            'received_amount', 'paid_amount', 'payment_type', 'note', 'date', 'status', 'payment_status','shipping_data','tax_data',
         ]);
         $saleReturnInputArray['shipping_data'] = json_encode($input['shipping_data']);
+        $saleReturnInputArray['tax_data'] = json_encode($input['tax_data']);
         $saleReturn->update($saleReturnInputArray);
         /*new code*/
             if(!empty($input['shipping_data']))

@@ -79,6 +79,7 @@ class Purchase extends BaseModel implements HasMedia, JsonResourceful
         'status',
         'reference_code',
         'shipping_data',
+        'tax_data',
     ];
 
     public static $rules = [
@@ -167,6 +168,7 @@ class Purchase extends BaseModel implements HasMedia, JsonResourceful
             'status'          => $this->status,
             'purchase_items'  => $this->purchaseItems,
             'shipping_data'   => $this->shipping_data,
+            'tax_data'   => $this->tax_data,
             'toStatus'          => $this->toStatus,
         ];
 
