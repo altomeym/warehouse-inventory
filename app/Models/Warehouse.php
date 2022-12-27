@@ -135,7 +135,8 @@ class Warehouse extends BaseModel
     
     public function totalstock(): HasMany
     {
-        return $this->hasMany(ManageStock::class, 'warehouse_id', 'id');
+        return $this->hasMany(ManageStock::class, 'warehouse_id', 'id')->selectRaw('SUM(quantity) as total')
+         ->groupBy('warehouse_id');
     }
 
     
