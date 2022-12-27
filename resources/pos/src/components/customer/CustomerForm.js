@@ -1,6 +1,6 @@
 import React, {useState, useEffect } from 'react';
 import Form from 'react-bootstrap/Form';
-import {connect} from 'react-redux';
+import {connect, useDispatch} from 'react-redux';
 import * as EmailValidator from 'email-validator';
 import {useNavigate} from 'react-router-dom';
 import {getFormattedMessage, placeholderText, numValidate} from '../../shared/sharedMethod';
@@ -8,10 +8,12 @@ import {editCustomer} from '../../store/action/customerAction';
 import {fetchCountries, fetchStates, fetchCities} from '../../store/action/allCountryStatesAction';
 import ModelFooter from '../../shared/components/modelFooter';
 import ReactSelect from "../../shared/select/reactSelect";
+import {countryStateActionType} from '../../constants';
 
 const CustomerForm = (props) => {
     const {addCustomerData, id, editCustomer, singleCustomer, allCountryList, allStatesList, allCitiesList, fetchCountries, fetchStates, fetchCities} = props;
     const navigate = useNavigate();
+    const Dispatch = useDispatch();
 
     const [customerValue, setCustomerValue] = useState({
         name: singleCustomer ? singleCustomer[0].name : '',
@@ -39,9 +41,13 @@ const CustomerForm = (props) => {
     useEffect(() => {
         if(singleCustomer && singleCustomer[0]?.country?.value)
           fetchStates(singleCustomer[0]?.country?.value);
+          else
+          Dispatch({type: countryStateActionType.FETCH_STATES, payload: []});
 
         if(singleCustomer && singleCustomer[0]?.state?.value)
           fetchCities(singleCustomer[0]?.state?.value);
+        else
+          Dispatch({type: countryStateActionType.FETCH_CITIES, payload: []});
     }, []);
 
 

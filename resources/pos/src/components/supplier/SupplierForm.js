@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import Form from 'react-bootstrap/Form';
-import {connect} from 'react-redux';
+import {connect, useDispatch} from 'react-redux';   
 import {useNavigate} from 'react-router-dom';
 import * as EmailValidator from 'email-validator';
 import {editSupplier} from '../../store/action/supplierAction';
@@ -8,11 +8,12 @@ import {fetchCountries, fetchStates, fetchCities} from '../../store/action/allCo
 import {getFormattedMessage, placeholderText, numValidate} from '../../shared/sharedMethod';
 import ModelFooter from '../../shared/components/modelFooter';
 import ReactSelect from "../../shared/select/reactSelect";
-
+import {countryStateActionType} from '../../constants';
 
 const SupplierForm = (props) => {
     const {addSupplierData, id, editSupplier, singleSupplier, allCountryList, allStatesList, allCitiesList, fetchCountries, fetchStates, fetchCities} = props;
     const navigate = useNavigate();
+    const Dispatch = useDispatch()
 
     const [supplierValue, setSupplierValue] = useState({
         name: singleSupplier ? singleSupplier[0].name : '',
@@ -42,9 +43,13 @@ const SupplierForm = (props) => {
     useEffect(() => {
         if(singleSupplier && singleSupplier[0]?.country?.value)
           fetchStates(singleSupplier[0]?.country?.value);
+        else
+          Dispatch({type: countryStateActionType.FETCH_STATES, payload: []});
 
         if(singleSupplier && singleSupplier[0]?.state?.value)
           fetchCities(singleSupplier[0]?.state?.value);
+        else
+          Dispatch({type: countryStateActionType.FETCH_CITIES, payload: []});
     }, []);
 
     const disabled = singleSupplier && singleSupplier[0].name === supplierValue.name && singleSupplier[0].country === supplierValue.country && singleSupplier[0].city === supplierValue.city && singleSupplier[0].email === supplierValue.email && singleSupplier[0].address === supplierValue.address && singleSupplier[0].phone === supplierValue.phone 

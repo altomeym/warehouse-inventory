@@ -41,7 +41,10 @@ class WarehouseAPIController extends AppBaseController
     public function index(Request $request)
     {
         $perPage = getPageSize($request);
+/*        $total_stock = \App\Models\ManageStock::groupBy('warehouse_id')->sum('quantity');
+        echo $total_stock; exit;*/
         $warehouses = $this->warehouseRepository->paginate($perPage);
+
         WarehouseResource::usingWithCollection();
 
         return new WarehouseCollection($warehouses);

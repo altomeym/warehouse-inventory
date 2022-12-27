@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {useNavigate} from 'react-router-dom';
-import {connect} from 'react-redux';
+import {connect, Dispatch} from 'react-redux';
 import Form from 'react-bootstrap/Form';
 import * as EmailValidator from 'email-validator';
 import {getFormattedMessage, numValidate, placeholderText} from '../../shared/sharedMethod';
@@ -8,10 +8,12 @@ import {editWarehouse, fetchWarehouse} from '../../store/action/warehouseAction'
 import {fetchCountries, fetchStates, fetchCities} from '../../store/action/allCountryStatesAction';
 import ModelFooter from '../../shared/components/modelFooter';
 import ReactSelect from "../../shared/select/reactSelect";
+import {countryStateActionType} from '../../constants';
 
 const WarehouseForm = (props) => {
     const {addWarehouseData, id, editWarehouse, singleWarehouse, allCountryList, allStatesList, allCitiesList, fetchCountries, fetchStates, fetchCities} = props;
     const navigate = useNavigate();
+    const Dispatch = useDispatch();
 
     const [warehouseValue, setWarehouseValue] = useState({
         name: singleWarehouse ? singleWarehouse[0].name : '',
@@ -46,9 +48,13 @@ const WarehouseForm = (props) => {
     useEffect(() => {
         if(singleWarehouse && singleWarehouse[0]?.country?.value)
           fetchStates(singleWarehouse[0]?.country?.value);
+        else
+          Dispatch({type: countryStateActionType.FETCH_STATES, payload: []});
 
         if(singleWarehouse && singleWarehouse[0]?.state?.value)
           fetchCities(singleWarehouse[0]?.state?.value);
+        else
+          Dispatch({type: countryStateActionType.FETCH_CITIES, payload: []});
     }, []);
 
     const disabled = singleWarehouse && singleWarehouse[0].name === warehouseValue.name && singleWarehouse[0].phone === warehouseValue.phone && singleWarehouse[0].country === warehouseValue.country && singleWarehouse[0].state === warehouseValue.state && singleWarehouse[0].city === warehouseValue.city && singleWarehouse[0].email === warehouseValue.email && singleWarehouse[0].zip_code === warehouseValue.zip_code
@@ -259,10 +265,10 @@ const WarehouseForm = (props) => {
                         <div className='mb-3'>
                             <label className='form-label'>
                                 Address: </label>
-                            <textarea name='notes' className='form-control' value={warehouseValue.address}
-                                          placeholder={'address'}
+                            <textarea name='address' className='form-control'  
+                                          placeholder={'address'} value={warehouseValue.address}
                                           onChange={(e) => onAddressChangeInput(e)}
-                            />
+                            >  </textarea>
                         </div>
                         <ModelFooter onEditRecord={singleWarehouse} onSubmit={onSubmit} editDisabled={disabled}
                                      link='/app/warehouse' addDisabled={!warehouseValue.name}/>

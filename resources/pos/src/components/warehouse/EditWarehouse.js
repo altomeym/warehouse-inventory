@@ -24,6 +24,7 @@ const EditWarehouse = (props) => {
         city: warehouse.attributes.city,
         email: warehouse.attributes.email,
         zip_code: warehouse.attributes.zip_code,
+        address: warehouse.attributes.address,
         id: warehouse.id,
         city: {
             label: warehouse.attributes?.city_name?.name && warehouse.attributes?.city_name?.name,

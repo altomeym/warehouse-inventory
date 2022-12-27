@@ -45,6 +45,7 @@ const Warehouses = (props) => {
         city: warehouse.attributes?.city_name?.name,
         email: warehouse.attributes.email,
         zip_code: warehouse.attributes.zip_code,
+        totalstock: warehouse.attributes.totalstock ? warehouse.attributes.totalstock : 0,
         id: warehouse.id
     }));
 
@@ -94,6 +95,12 @@ const Warehouses = (props) => {
             name: getFormattedMessage('warehouse.input.zip-code.label'),
             selector: row => row.zip_code,
             sortField: 'pin_code',
+            sortable: true,
+        },
+        {
+            name: 'Total Stock',
+            selector: row => row.totalstock,
+            sortField: 'total_stock',
             sortable: true,
         },
         {
