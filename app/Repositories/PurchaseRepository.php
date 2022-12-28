@@ -96,8 +96,11 @@ class PurchaseRepository extends BaseRepository
 
 
             // manage stock 
-            foreach ($input['purchase_items'] as $purchaseItem) {
-                manageStock($input['warehouse_id'], $purchaseItem['product_id'], $purchaseItem['quantity']);
+            if($input['status'] == 2)
+            {
+                foreach ($input['purchase_items'] as $purchaseItem) {
+                    manageStock($input['warehouse_id'], $purchaseItem['product_id'], $purchaseItem['quantity']);
+                }
             }          
             DB::commit();
              /*new code*/
@@ -251,7 +254,10 @@ class PurchaseRepository extends BaseRepository
                     ]);
                     $purchase->purchaseItems()->create($purchaseItemArr);
                     // manage new product
-                    manageStock($input['warehouse_id'], $purchaseItem['product_id'], $purchaseItem['quantity']);
+                    if($input['status'] == 2)
+                    {
+                        manageStock($input['warehouse_id'], $purchaseItem['product_id'], $purchaseItem['quantity']);
+                    }
                 }
             }
             $removeItemIds = array_diff($purchaseItemIds, $purchaseItmOldIds);

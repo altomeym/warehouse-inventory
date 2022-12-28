@@ -90,6 +90,7 @@ class SaleRepository extends BaseRepository
      */
     public function storeSale($input): Sale
     {
+
         try {
             DB::beginTransaction();
 
@@ -116,16 +117,18 @@ class SaleRepository extends BaseRepository
             $reference_code = getSettingValue('sale_code').'_111'.$sale->id;
             $this->generateBarcode($reference_code);
             $sale['barcode_image_url'] = Storage::url('sales/barcode-'.$reference_code.'.png');
-
-            foreach ($input['sale_items'] as $saleItem) {
-                $product = ManageStock::whereWarehouseId($input['warehouse_id'])->whereProductId($saleItem['product_id'])->first();
-                if ($product && $product->quantity >= $saleItem['quantity']) {
-                    $totalQuantity = $product->quantity - $saleItem['quantity'];
-                    $product->update([
-                        'quantity' => $totalQuantity,
-                    ]);
-                } else {
-                    throw new UnprocessableEntityHttpException("Quantity must be less than Available quantity.");
+            if($input['status'] == '1')
+            {
+                foreach ($input['sale_items'] as $saleItem) {
+                    $product = ManageStock::whereWarehouseId($input['warehouse_id'])->whereProductId($saleItem['product_id'])->first();
+                    if ($product && $product->quantity >= $saleItem['quantity']) {
+                        $totalQuantity = $product->quantity - $saleItem['quantity'];
+                        $product->update([
+                            'quantity' => $totalQuantity,
+                        ]);
+                    } else {
+                        throw new UnprocessableEntityHttpException("Quantity must be less than Available quantity.");
+                    }
                 }
             }
 
@@ -376,40 +379,46 @@ class SaleRepository extends BaseRepository
                         'discount_type', 'discount_value', 'discount_amount', 'sale_unit', 'quantity', 'sub_total',
                     ]);
                     $sale->saleItems()->create($saleItemArray);
-                    $product = ManageStock::whereWarehouseId($input['warehouse_id'])->whereProductId($saleItem['product_id'])->first();
-                    if ($product) {
-                        if ($product->quantity >= $saleItem['quantity']) {
-                            $product->update([
-                                'quantity' => $product->quantity - $saleItem['quantity'],
-                            ]);
-                        } else {
-                            throw new UnprocessableEntityHttpException("Quantity must be less than Available quantity.");
+                    if($input['status'] == '1')
+                    {
+                        $product = ManageStock::whereWarehouseId($input['warehouse_id'])->whereProductId($saleItem['product_id'])->first();
+                        if ($product) {
+                            if ($product->quantity >= $saleItem['quantity']) {
+                                $product->update([
+                                    'quantity' => $product->quantity - $saleItem['quantity'],
+                                ]);
+                            } else {
+                                throw new UnprocessableEntityHttpException("Quantity must be less than Available quantity.");
+                            }
                         }
                     }
                 }
             }
             $removeItemIds = array_diff($saleItemIds, $saleItmOldIds);
             //delete remove product
-            if (!empty(array_values($removeItemIds))) {
-                foreach ($removeItemIds as $removeItemId) {
-                    // remove quantity manage storage
-                    $oldProduct = SaleItem::whereId($removeItemId)->first();
-                    $productQuantity = ManageStock::whereWarehouseId($input['warehouse_id'])->whereProductId($oldProduct->product_id)->first();
-                    if ($productQuantity) {
-                        if ($oldProduct) {
-                            $productQuantity->update([
-                                'quantity' => $productQuantity->quantity + $oldProduct->quantity,
+            if($input['status'] == '1')
+            {
+                if (!empty(array_values($removeItemIds))) {
+                    foreach ($removeItemIds as $removeItemId) {
+                        // remove quantity manage storage
+                        $oldProduct = SaleItem::whereId($removeItemId)->first();
+                        $productQuantity = ManageStock::whereWarehouseId($input['warehouse_id'])->whereProductId($oldProduct->product_id)->first();
+                        if ($productQuantity) {
+                            if ($oldProduct) {
+                                $productQuantity->update([
+                                    'quantity' => $productQuantity->quantity + $oldProduct->quantity,
+                                ]);
+                            }
+                        } else {
+                            ManageStock::create([
+                                'warehouse_id' => $input['warehouse_id'],
+                                'product_id'   => $oldProduct->product_id,
+                                'quantity'     => $oldProduct->quantity,
                             ]);
                         }
-                    } else {
-                        ManageStock::create([
-                            'warehouse_id' => $input['warehouse_id'],
-                            'product_id'   => $oldProduct->product_id,
-                            'quantity'     => $oldProduct->quantity,
-                        ]);
                     }
+                    SaleItem::whereIn('id', array_values($removeItemIds))->delete();
                 }
-                SaleItem::whereIn('id', array_values($removeItemIds))->delete();
             }
             $this->generateBarcode($sale->reference_code);
             $sale['barcode_image_url'] = Storage::url('sales/barcode-'.$sale->reference_code.'.png');
