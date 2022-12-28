@@ -47,7 +47,7 @@ const PurchaseReturnForm = (props) => {
         grand_total: singlePurchase ? singlePurchase.grand_total : '0.00',
         notes: singlePurchase ? singlePurchase.notes : '',
         shipping_data: singlePurchase ? singlePurchase.shipping_data : '',
-        status_id: singlePurchase ? singlePurchase.status_id : {label: getFormattedMessage("status.filter.received.label"), value: 1},
+        status_id: singlePurchase ? singlePurchase.status_id : '',
     });
 
     const [errors, setErrors] = useState({
@@ -435,7 +435,6 @@ const PurchaseReturnForm = (props) => {
                             <ReactSelect multiLanguageOption={statusTypeValues} onChange={onStatusChange} name='status'
                          title={getFormattedMessage('purchase.select.status.label')}
                          value={purchaseValue.status_id} errors={errors['status_id']}
-                        //  defaultValue={statusDefaultValue[0]}
                          placeholder={getFormattedMessage('purchase.select.status.label')}/>
                         </div>
 

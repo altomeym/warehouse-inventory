@@ -1,4 +1,5 @@
 import React,  {useEffect, useState} from 'react';
+import { useSearchParams } from "react-router-dom";
 import {connect} from 'react-redux';
 import MasterLayout from '../MasterLayout';
 import {fetchShippingTypes} from '../../store/action/shippingAction';
@@ -17,6 +18,8 @@ const Shipping = (props) => {
     const [isDelete, setIsDelete] = useState(null);
     const [toggle, setToggle] = useState(false);
     const [shippingType, setShippingType] = useState();
+    const [searchParams, setSearchParams] = useSearchParams();
+     
 
     const handleClose = (item = null) => {
         setToggle(!toggle);
@@ -29,7 +32,7 @@ const Shipping = (props) => {
     };
 
     const onChange = (filter) => {
-        fetchShippingTypes(filter, true);
+        fetchShippingTypes(filter, true, searchParams.get("slug"));
     };
    
     const itemsValue = shipingTypes?.length >= 0 && shipingTypes.map(item => ({

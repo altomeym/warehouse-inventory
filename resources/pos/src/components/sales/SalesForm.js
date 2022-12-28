@@ -63,7 +63,7 @@ const SalesForm = (props) => {
         notes: singleSale ? singleSale.notes : '',
         received_amount: 0,
         paid_amount: 0,
-        status_id: {label: getFormattedMessage("status.filter.received.label"), value: 1},
+        status_id:'',
         payment_status: {label: getFormattedMessage("payment-status.filter.unpaid.label"), value: 2},
         payment_type: {label: getFormattedMessage("payment-type.filter.cash.label"), value: 1}
     });
@@ -487,7 +487,6 @@ const SalesForm = (props) => {
                     <ReactSelect multiLanguageOption={statusTypeValues} onChange={onStatusChange} name='status_id'
                          title={getFormattedMessage('purchase.select.status.label')}
                          value={saleValue.status_id} errors={errors['status_id']}
-                         defaultValue={statusDefaultValue[0]}
                          placeholder={getFormattedMessage('purchase.select.status.label')}/>
                         </div>
                          {/* .......... */}

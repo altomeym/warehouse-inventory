@@ -110,13 +110,27 @@ export default [
         title: "shipping.title",
         name: "shipping.title",
         fontIcon: <FontAwesomeIcon icon={faShippingFast}/>,
-        to: '/app/shipping-types',
+        to: '/app/charges-types?slug=shipping',
         class: 'd-flex',
         permission: Permissions.MANAGE_SHIPPING_TYPES,
         items: [
             {
                 title: getFormattedMessage("shipping.title"),
-                to: '/app/shipping-types'
+                to: '/app/charges-types'
+            }
+        ],
+    },
+    {
+        title: "tax.title",
+        name: "tax.title",
+        fontIcon: <FontAwesomeIcon icon={faShippingFast}/>,
+        to: '/app/charges-types?slug=tax',
+        class: 'd-flex',
+        permission: Permissions.MANAGE_SHIPPING_TYPES,
+        items: [
+            {
+                title: getFormattedMessage("tax.title"),
+                to: '/app/charges-types'
             }
         ],
     },

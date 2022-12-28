@@ -7,7 +7,8 @@ import {currencySymbolHendling, getFormattedMessage} from '../../shared/sharedMe
 
 const ProductMainCalculation = (props) => {
     const {inputValues, updateProducts, frontSetting, allConfigData, shippingInputValues} = props;
-    let totalAmountAfterDiscount = calculateSubTotal(updateProducts) - inputValues.discount
+    let totalAmountDiscount = calculateSubTotal(updateProducts);
+    let totalAmountAfterDiscount = (totalAmountDiscount * inputValues.discount / 100).toFixed(2)
     let taxCal = (totalAmountAfterDiscount * inputValues.tax_rate / 100).toFixed(2)
 
     return (

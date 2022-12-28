@@ -90,9 +90,7 @@ const SaleReturnForm = (props) => {
                 discount: singleSale ? singleSale.discount.toFixed(2) : '0.00',
                 shipping: singleSale ? singleSale.shipping.toFixed(2) : '0.00',
                 grand_total: Number(singleSale ? singleSale.grand_total : '0.00'),
-                status: singleSale ? singleSale.status_id === 1 ?
-                {label: getFormattedMessage("status.filter.received.label"), value: 1} :
-                {label: getFormattedMessage("status.filter.pending.label"), value: 2} : '',
+                status: singleSale ? singleSale.status_id :'',
                 notes: singleSale ? singleSale.note : '',
                 sale_id: singleSale ? singleSale.sale_id : '',
                 sale_reference: singleSale ? singleSale.sale_reference : '',
@@ -368,7 +366,6 @@ const SaleReturnForm = (props) => {
                             name='status'
                             value={saleReturnValue.status} isRequired
                             placeholder={placeholderText('purchase.select.status.placeholder.label')}
-                            // defaultValue={saleReturnStatusDefaultValue[0]}
                             onChange={onStatusChange}/>
                             <span
                                 className='text-danger d-block fw-400 fs-small mt-2'>{errors['status'] ? errors['status'] : null}</span>

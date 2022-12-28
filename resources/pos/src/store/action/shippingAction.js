@@ -6,11 +6,11 @@ import {addInToTotalRecord, removeFromTotalRecord, setTotalRecord} from './total
 import {setLoading} from './loadingAction';
 import {getFormattedMessage} from '../../shared/sharedMethod';
 
-export const fetchShippingTypes = (filter = {}, isLoading = true) => async (dispatch) => {
+export const fetchShippingTypes = (filter = {}, isLoading = true, type) => async (dispatch) => {
     if (isLoading) {
         dispatch(setLoading(true))
     }
-    let url = apiBaseURL.SHIPPING;
+    let url = apiBaseURL.SHIPPING+'?slug='+type;
     if (!_.isEmpty(filter) && (filter.page || filter.pageSize || filter.search || filter.order_By || filter.created_at)) {
         url += requestParam(filter);
     }
