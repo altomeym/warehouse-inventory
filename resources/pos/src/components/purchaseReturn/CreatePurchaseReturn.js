@@ -40,8 +40,8 @@ const CreatePurchaseReturn = (props) => {
 }
 
 const mapStateToProps = (state) => {
-    const {warehouses, suppliers, totalRecord, shipingTypes, statusTypeValues} = state;
-    return {warehouses, suppliers, totalRecord, shipingTypes, statusTypeValues}
+    const {warehouses, suppliers, totalRecord, shipingTypes, allStatusTypes} = state;
+    return {warehouses, suppliers, totalRecord, shipingTypes, allStatusTypes}
 };
 
 export default connect(mapStateToProps, {

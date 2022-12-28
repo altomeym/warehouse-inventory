@@ -357,19 +357,7 @@ const SaleReturnForm = (props) => {
                                 <span
                                     className='text-danger d-block fw-400 fs-small mt-2'>{errors['title'] ? errors['title'] : null}</span>
                         </div>
-                        <div className='col-md-4 mb-5'>
-                            <label
-                                className='form-label'>{getFormattedMessage('purchase.select.status.label')}: </label>
-                            <span className='required'/>
-                            <ReactSelect
-                            multiLanguageOption={statusTypeValues}
-                            name='status'
-                            value={saleReturnValue.status} isRequired
-                            placeholder={placeholderText('purchase.select.status.placeholder.label')}
-                            onChange={onStatusChange}/>
-                            <span
-                                className='text-danger d-block fw-400 fs-small mt-2'>{errors['status'] ? errors['status'] : null}</span>
-                        </div>
+                       
                         <div className='mb-5'>
                             <label className='form-label'>
                                 {/*{getFormattedMessage('product.title')}:*/}
@@ -428,6 +416,19 @@ const SaleReturnForm = (props) => {
                                 />
                                 <InputGroup.Text>{frontSetting.value && frontSetting.value.currency_symbol}</InputGroup.Text>
                             </InputGroup>
+                        </div>
+                        <div className='col-md-4 mb-5'>
+                            <label
+                                className='form-label'>{getFormattedMessage('purchase.select.status.label')}: </label>
+                            <span className='required'/>
+                            <ReactSelect
+                            multiLanguageOption={statusTypeValues}
+                            name='status'
+                            value={saleReturnValue.status} isRequired
+                            placeholder={placeholderText('purchase.select.status.placeholder.label')}
+                            onChange={onStatusChange}/>
+                            <span
+                                className='text-danger d-block fw-400 fs-small mt-2'>{errors['status'] ? errors['status'] : null}</span>
                         </div>
                         {/* <div className='col-md-4 mb-5'>
                             <label

@@ -754,6 +754,10 @@
     "status-types.success.delete.message": "Status Types deleted successfully",
 
     "print.qrcode.title": "Print QRcode",
-    "global.status.placeholder": "Payments Net"
+    "global.status.placeholder": "Payments Net",
+
+    "tax.type.shipping.label": "Shipping",
+    "tax.type.tax.label": "Tax",
+    "tax.type.label": "Type"
 
 }

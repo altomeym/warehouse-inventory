@@ -727,3 +727,7 @@ export const saleReturnStatusOptions = [
     { id: 1, name: 'status.filter.received.label' },
     { id: 2, name: 'status.filter.pending.label' }
 ];
+export const taxTypesOptions = [
+    { id: 1, name: 'tax.type.shipping.label' },
+    { id: 2, name: 'tax.type.tax.label' }
+]; 
