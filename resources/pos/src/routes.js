@@ -515,10 +515,10 @@ export const route = [
         permission: Permissions.MANAGE_SMS_API
     },  // Start new development 
     {
-        path: "shipping-types",
+        path: "charges-types",
         ele: <ShippingTypes />,
         permission: Permissions.MANAGE_EXPENSES
-    }, 
+    },
     {
         path: "status-types",
         ele: <TranStatusTypes />,

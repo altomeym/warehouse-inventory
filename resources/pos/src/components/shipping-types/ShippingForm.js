@@ -1,4 +1,5 @@
 import React, {useState, createRef} from 'react';
+import { useSearchParams } from "react-router-dom";
 import Form from 'react-bootstrap/Form';
 import {connect} from 'react-redux';
 import {Modal} from 'react-bootstrap-v5';
@@ -8,9 +9,12 @@ import ModelFooter from '../../shared/components/modelFooter';
 
 const ShippingForm = (props) => {
     const {addItemFormData, editShippingType, singleShippingType, handleClose, show, title} = props;
+    const [searchParams, setSearchParams] = useSearchParams();
+
     const innerRef = createRef();
     const [formValue, setFormValue] = useState({
         name: singleShippingType ? singleShippingType.name : '',
+        slug: searchParams.get("slug"),
     });
 
     const [errors, setErrors] = useState({
