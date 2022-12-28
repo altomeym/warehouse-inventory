@@ -26,6 +26,7 @@ class TransferRepository extends BaseRepository
         'discount',
         'shipping',
         'shipping_data',
+        'tax_data',
         'grand_total',
         'note',
         'created_at',
@@ -41,6 +42,7 @@ class TransferRepository extends BaseRepository
         'tax_amount',
         'discount',
         'shipping_data',
+        'tax_data',
         'shipping',
         'grand_total',
         'note',
@@ -78,11 +80,12 @@ class TransferRepository extends BaseRepository
             $input['date'] = $input['date'] ?? date("Y/m/d");
             $TransferInputArray = Arr::only($input, [
                 'from_warehouse_id', 'to_warehouse_id', 'tax_rate', 'tax_amount', 'discount', 'shipping', 'grand_total',
-                'note', 'date', 'status','shipping_data',
+                'note', 'date', 'status','shipping_data','tax_data',
             ]);
 
             /** @var Transfer $transfer */
             $TransferInputArray['shipping_data'] = json_encode($input['shipping_data']);
+            $TransferInputArray['tax_data'] = json_encode($input['tax_data']);
             $transfer = Transfer::create($TransferInputArray);
             $transfer = $this->storeTransferItems($transfer, $input);
 
@@ -422,9 +425,10 @@ class TransferRepository extends BaseRepository
 
         $transferInputArray = Arr::only($input, [
             'from_warehouse_id', 'to_warehouse_id', 'tax_rate', 'tax_amount', 'discount', 'shipping', 'grand_total',
-            'note', 'date', 'status','shipping_data',
+            'note', 'date', 'status','shipping_data','tax_data',
         ]);
         $transferInputArray['shipping_data'] = json_encode($input['shipping_data']);
+        $transferInputArray['tax_data'] = json_encode($input['tax_data']);
         $transfer->update($transferInputArray);
         DB::commit();
          /*new code*/
