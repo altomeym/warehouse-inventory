@@ -99,25 +99,28 @@ class PurchaseReturnRepository extends BaseRepository
             $purchaseReturn = PurchaseReturn::create($purchaseReturnInputArray);
 
             $purchaseReturn = $this->storePurchaseReturnItems($purchaseReturn, $input);
-            foreach ($input['purchase_return_items'] as $saleItem) {
-                $product = ManageStock::whereWarehouseId($input['warehouse_id'])->whereProductId($saleItem['product_id'])->first();
-                $purchaseExist = PurchaseItem::where('product_id', $saleItem['product_id'])->whereHas('purchase',
-                    function (Builder $q) use ($input) {
-                        $q->where('supplier_id', $input['supplier_id'])->where('warehouse_id', $input['warehouse_id']);
-                    })->exists();
-                if ($purchaseExist) {
-                    if ($product && $product->quantity >= $saleItem['quantity']) {
-                        $totalQuantity = $product->quantity - $saleItem['quantity'];
-                        $product->update([
-                            'quantity' => $totalQuantity,
-                        ]);
+           /* if($input['status'] == '2')
+            {*/
+                foreach ($input['purchase_return_items'] as $saleItem) {
+                    $product = ManageStock::whereWarehouseId($input['warehouse_id'])->whereProductId($saleItem['product_id'])->first();
+                    $purchaseExist = PurchaseItem::where('product_id', $saleItem['product_id'])->whereHas('purchase',
+                        function (Builder $q) use ($input) {
+                            $q->where('supplier_id', $input['supplier_id'])->where('warehouse_id', $input['warehouse_id']);
+                        })->exists();
+                    if ($purchaseExist) {
+                        if ($product && $product->quantity >= $saleItem['quantity']) {
+                            $totalQuantity = $product->quantity - $saleItem['quantity'];
+                            $product->update([
+                                'quantity' => $totalQuantity,
+                            ]);
+                        } else {
+                            throw new UnprocessableEntityHttpException("Quantity must be less than Available quantity.");
+                        }
                     } else {
-                        throw new UnprocessableEntityHttpException("Quantity must be less than Available quantity.");
+                        throw new UnprocessableEntityHttpException("Purchase Does Not exist");
                     }
-                } else {
-                    throw new UnprocessableEntityHttpException("Purchase Does Not exist");
                 }
-            }
+            /*}*/
             DB::commit();
              /*new code*/
             if(!empty($input['shipping_data']))

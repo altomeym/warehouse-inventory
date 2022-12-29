@@ -100,7 +100,7 @@ class SaleReturnRepository extends BaseRepository
             $input['date'] = $input['date'] ?? date("Y/m/d");
             $saleReturnInputArray = Arr::only($input, [
                 'customer_id', 'warehouse_id', 'tax_rate', 'tax_amount', 'discount', 'shipping', 'grand_total',
-                'paid_amount', 'payment_type', 'note', 'date', 'status', 'sale_id','shipping_data','tax_data',
+                'paid_amount', 'payment_type', 'note', 'date', 'status', 'sale_id','shipping_data','tax_data','status'
             ]);
 
             /** @var Sale $sale */
@@ -119,7 +119,7 @@ class SaleReturnRepository extends BaseRepository
                         $q->where('customer_id', $input['customer_id'])->where('warehouse_id',
                             $input['warehouse_id'])->where('id', $input['sale_id']);
                     })->exists();
-                if ($saleExist) {
+                if ($saleExist && $input['status'] == 2) {
                     if ($product) {
                         if ($product->quantity >= $purchaseItem['quantity']) {
                             $product->update([
@@ -403,7 +403,7 @@ class SaleReturnRepository extends BaseRepository
                 $saleReturnItemArray = Arr::only($saleReturnItem, [
                     'sale_return_item_id', 'product_id', 'product_price', 'net_unit_price', 'tax_type', 'tax_value',
                     'tax_amount', 'discount_type', 'discount_value', 'discount_amount', 'sale_unit', 'quantity',
-                    'sub_total',
+                    'sub_total','status'
                 ]);
 
                 $salesExists = SaleItem::where('product_id', $saleReturnItemArray['product_id'])
@@ -455,7 +455,9 @@ class SaleReturnRepository extends BaseRepository
 //                    }
 //                }
 
-                $this->updateItem($saleReturnItemArray, $input['warehouse_id']);
+                if($input['status'] == 2){                    
+                    $this->updateItem($saleReturnItemArray, $input['warehouse_id']);
+                }
                 //create new product items
 //                if (is_null($saleReturnItem['sale_return_item_id'])) {
 //                    $saleReturnItem = $this->calculationSaleReturnItems($saleReturnItem);
@@ -493,12 +495,13 @@ class SaleReturnRepository extends BaseRepository
             }
             $removeItemIds = array_diff($saleReturnItemIds, $saleReturnItemOldIds);
             //delete remove product
+            //echo $input['status']; exit;
             if (!empty(array_values($removeItemIds))) {
                 foreach ($removeItemIds as $removeItemId) {
                     // remove quantity manage storage
                     $oldProduct = SaleReturnItem::whereId($removeItemId)->first();
                     $productQuantity = ManageStock::whereWarehouseId($input['warehouse_id'])->whereProductId($oldProduct->product_id)->first();
-                    if ($productQuantity && $oldProduct) {
+                    if ($productQuantity && $oldProduct && $input['status'] == 2) {
                         if ($oldProduct->quantity <= $productQuantity->quantity) {
                             $stockQuantity = $productQuantity->quantity - $oldProduct->quantity;
                             if ($stockQuantity < 0) {
@@ -534,6 +537,7 @@ class SaleReturnRepository extends BaseRepository
      */
     public function updateItem($saleReturnItem, $warehouseId): bool
     {
+
         try {
             $saleReturnItem = $this->calculationSaleReturnItems($saleReturnItem);
             $item = SaleReturnItem::whereId($saleReturnItem['sale_return_item_id']);
@@ -541,6 +545,10 @@ class SaleReturnRepository extends BaseRepository
             $product = ManageStock::whereWarehouseId($warehouseId)->whereProductId($saleReturnItem['product_id'])->first();
             $oldItem = SaleReturnItem::whereId($saleReturnItem['sale_return_item_id'])->first();
             $totalQuantity = 0;
+           // if ($product && $oldItem && $oldItem->quantity != $saleReturnItem['quantity']) {
+           /* echo $oldItem->quantity.'</br>'; 
+            echo  $saleReturnItem['quantity'].'</br>'; 
+            exit;*/
             if ($product && $oldItem && $oldItem->quantity != $saleReturnItem['quantity']) {
                 if ($oldItem->quantity > $saleReturnItem['quantity']) {
                     $totalQuantity = $product->quantity - ($oldItem->quantity - $saleReturnItem['quantity']);
@@ -589,10 +597,10 @@ class SaleReturnRepository extends BaseRepository
 
         $input['grand_total'] += $input['tax_amount'];
 
-        if ($input['shipping'] > $input['grand_total'] || $input['shipping'] < 0) {
+       /* if ($input['shipping'] > $input['grand_total'] || $input['shipping'] < 0) {
 
             throw new UnprocessableEntityHttpException("Shipping amount should not be greater than total.");
-        }
+        }*/
 
         $input['grand_total'] += $input['shipping'];
 

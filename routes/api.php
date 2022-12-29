@@ -32,6 +32,7 @@ use App\Http\Controllers\API\WarehouseAPIController;
 use App\Http\Controllers\API\ShippingTypeAPIController;
 use App\Http\Controllers\API\TranStatusTypesAPIController;
 use App\Http\Controllers\API\CommonApiController;
+use App\Http\Controllers\API\ProductSubCategoryAPIController;
 
 use App\Http\Controllers\MailTemplateAPIController;
 use Illuminate\Support\Facades\Route;
@@ -69,6 +70,11 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     });
     Route::resource('shipping_type', ShippingTypeAPIController::class);
     Route::get('shipping_type', [ShippingTypeAPIController::class, 'index']);
+    /*product_sub_category route*/
+    Route::group(['middleware' => ['permission:manage_product_sub_category']], function () {
+    });
+    Route::resource('product_sub_category', ProductSubCategoryAPIController::class);
+    Route::get('product_sub_category', [ProductSubCategoryAPIController::class, 'index']);
 
     Route::group(['middleware' => ['permission:manage_status_types']], function () {
     });

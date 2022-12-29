@@ -175,6 +175,7 @@ class SaleReturn extends BaseModel implements HasMedia, JsonResourceful
             'payment_type'      => $this->payment_type,
             'note'              => $this->note,
             'status'            => $this->status,
+            'toStatus'          => $this->toStatus,
             'reference_code'    => $this->reference_code,
             'sale_return_items' => $this->saleReturnItems,
             'created_at'        => $this->created_at,
@@ -193,6 +194,7 @@ class SaleReturn extends BaseModel implements HasMedia, JsonResourceful
         return $this->belongsTo(Customer::class, 'customer_id', 'id');
     }
 
+  
     /**
      *
      *
