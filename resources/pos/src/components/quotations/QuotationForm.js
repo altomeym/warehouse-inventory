@@ -19,6 +19,7 @@ import {quotationStatusOptions, toastType} from '../../constants';
 import {fetchFrontSetting} from '../../store/action/frontSettingAction';
 import ReactSelect from '../../shared/select/reactSelect';
 import { editQuotation } from '../../store/action/quotationAction';
+import TaxChargerTypes from '../purchase/TaxChargerTypes';
 
 const QuotationForm = (props) => {
     const {
@@ -33,7 +34,9 @@ const QuotationForm = (props) => {
         fetchFrontSetting,
         frontSetting,
         editQuotation,
-        allConfigData
+        allConfigData,
+        allShipingTypes,
+        allStatusTypes
     } = props;
 
     const navigate = useNavigate();
@@ -66,6 +69,12 @@ const QuotationForm = (props) => {
         warehouse_id: '',
         status_id: ''
     });
+    const [customDynamicFields, setCustomDynamicFields] = useState([{
+        shipping_type_id:"", 
+        shipping_value:"",
+        shipping_type_name:"",
+    }]);
+    const [customTaxDynamicFields, setCustomTaxDynamicFields] = useState([{tax_type_id: "", tax_value:"", tax_type_name:"",}]);
 
     useEffect(() => {
         setUpdateProducts(updateProducts)
@@ -104,6 +113,14 @@ const QuotationForm = (props) => {
     useEffect(()=>{
         saleValue.warehouse_id.value && fetchProductsByWarehouse(saleValue?.warehouse_id?.value)
     },[saleValue.warehouse_id.value])
+
+    useEffect(()=>{
+        if(singleQuotation){
+          setCustomDynamicFields(singleQuotation?.shipping_data);
+          setCustomTaxDynamicFields(singleQuotation?.tax_data);
+        }
+  },[])
+
 
     const handleValidation = () => {
         let error = {};
@@ -224,6 +241,8 @@ const QuotationForm = (props) => {
             paid_amount: 0,
             note: prepareData.notes,
             status: prepareData.status_id.value ? prepareData.status_id.value : prepareData.status_id,
+            shipping_data:customDynamicFields ? customDynamicFields : [],
+            tax_data:customTaxDynamicFields ? customTaxDynamicFields : [],
         }
         return formValue
     };
@@ -244,16 +263,29 @@ const QuotationForm = (props) => {
     const onBlurInput = (el) => {
         if (el.target.value === '') {
             if(el.target.name === "shipping"){
-                setSaleValue({...saleValue, shipping: "0.00"});
+                // setSaleValue({...saleValue, shipping: "0.00"});
             }
             if(el.target.name === "discount"){
                 setSaleValue({...saleValue, discount: "0.00"});
             }
             if(el.target.name === "tax_rate"){
-                setSaleValue({...saleValue, tax_rate: "0.00"});
+                // setSaleValue({...saleValue, tax_rate: "0.00"});
             }
         }
     }
+
+    // ...New changes
+   const handleCustomDynamicFields = (val)=> {
+    setCustomDynamicFields(val)
+ }
+
+ const handleCustomTaxDynamicFields = (val)=> {
+     setCustomTaxDynamicFields(val)
+  }
+  const handleItemValue = (type, shipping_rate, tax_rate )=>{
+             setSaleValue(inputs => ({...inputs, ['shipping']: shipping_rate && shipping_rate}))
+             setSaleValue(inputs => ({...inputs, ['tax_rate']: tax_rate && tax_rate}))
+  }
 
     return (
         <div className='card'>
@@ -304,9 +336,9 @@ const QuotationForm = (props) => {
                             />
                         </div>
                         <div className='col-12'>
-                            <ProductMainCalculation inputValues={saleValue} allConfigData={allConfigData} updateProducts={updateProducts} frontSetting={frontSetting}/>
+                            <ProductMainCalculation inputValues={saleValue} shippingInputValues={customDynamicFields} allConfigData={allConfigData} updateProducts={updateProducts} taxInputValues={customTaxDynamicFields} frontSetting={frontSetting}/>
                         </div>
-                        <div className='col-md-4 mb-3'>
+                        {/* <div className='col-md-4 mb-3'>
                             <label
                                 className='form-label'>{getFormattedMessage('purchase.input.order-tax.label')}: </label>
                             <InputGroup>
@@ -320,7 +352,7 @@ const QuotationForm = (props) => {
                                               }}/>
                                 <InputGroup.Text>%</InputGroup.Text>
                             </InputGroup>
-                        </div>
+                        </div> */}
                         <div className='col-md-4 mb-3'>
                             <Form.Label
                                 className='form-label'>{getFormattedMessage('purchase.order-item.table.discount.column.label')}: </Form.Label>
@@ -335,26 +367,16 @@ const QuotationForm = (props) => {
                                 <InputGroup.Text>{frontSetting.value && frontSetting.value.currency_symbol}</InputGroup.Text>
                             </InputGroup>
                         </div>
-                        <div className='col-md-4 mb-3'>
-                            <label
-                                className='form-label'>{getFormattedMessage('purchase.input.shipping.label')}: </label>
-                            <InputGroup>
-                                <input aria-label='Dollar amount (with dot and two decimal places)' type='text'
-                                              className='form-control'
-                                              name='shipping' value={saleValue.shipping}
-                                              onBlur={(event)=>onBlurInput(event)} onFocus={(event)=>onFocusInput(event)}
-                                              onKeyPress={(event) => decimalValidate(event)}
-                                              onChange={(e) => onChangeInput(e)}
-                                />
-                                <InputGroup.Text>{frontSetting.value && frontSetting.value.currency_symbol}</InputGroup.Text>
-                            </InputGroup>
-                        </div>
+                       
                         <div className='col-md-4'>
                             <ReactSelect multiLanguageOption={quotationStatusFilterOptions}name='status_id'onChange={onStatusChange}
                                          title={getFormattedMessage('purchase.select.status.label')}
                                          value={saleValue.status_id} errors={errors['status_id']}
                                          placeholder={placeholderText('purchase.select.status.placeholder.label')}/>
                         </div>
+                         {/* .......... */}
+                     < TaxChargerTypes frontSetting={frontSetting} allShipingTypes={allShipingTypes}   setItemVal={handleItemValue} itemValue={saleValue} customPropsTaxDynamicFields={handleCustomTaxDynamicFields} customPropsDynamicFields={handleCustomDynamicFields} singleDataEntity={singleQuotation}  />
+                        {/* ................... */}
                         <div className='mb-3 mt-2'>
                             <label className='form-label'>
                                 {getFormattedMessage('globally.input.notes.label')}: </label>

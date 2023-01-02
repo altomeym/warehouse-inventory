@@ -67,6 +67,7 @@ const EditPurchase = (props) => {
         tax_rate: purchases.attributes.tax_rate,
         shipping: purchases.attributes.shipping,
         shipping_data: JSON.parse(purchases.attributes.shipping_data),
+        tax_data: JSON.parse(purchases.attributes.tax_data),
         notes: purchases.attributes.notes,
         purchase_items: editPrepareArray(purchases.attributes.purchase_items, purchases.attributes.warehouse_id),
         newItem: '',

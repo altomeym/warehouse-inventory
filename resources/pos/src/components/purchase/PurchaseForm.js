@@ -11,6 +11,7 @@ import status from '../../shared/option-lists/status.json'
 import {fetchAllProducts} from '../../store/action/productAction';
 // import {fetchShippingTypes} from '../../store/action/shippingAction';
 import PurchaseTable from '../../shared/components/purchase/PurchaseTable';
+import TaxChargerTypes from './TaxChargerTypes';
 import {preparePurchaseProductArray} from '../../shared/prepareArray/preparePurchaseArray';
 import {decimalValidate, getFormattedMessage, placeholderText, onFocusInput, getFormattedOptions} from '../../shared/sharedMethod';
 import {calculateCartTotalAmount, calculateCartTotalTaxAmount} from '../../shared/calculation/calculation';
@@ -70,6 +71,7 @@ const PurchaseForm = (props) => {
     });
 
     const [customDynamicFields, setCustomDynamicFields] = useState([{shipping_type_id: "", shipping_value:"", shipping_type_name:"",}]);
+    const [customTaxDynamicFields, setCustomTaxDynamicFields] = useState([{tax_type_id: "", tax_value:"", tax_type_name:"",}]);
     useEffect(() => {
         setUpdateProducts(updateProducts);
     }, [updateProducts, quantity, newCost, newDiscount, newTax, subTotal, newPurchaseUnit]);
@@ -88,13 +90,13 @@ const PurchaseForm = (props) => {
         purchaseValue.warehouse_id.value ? fetchAllProducts() : null
     },[purchaseValue.warehouse_id])
 
-    useEffect(()=>{
-        // fetchShippingTypes()
-      },[])
+    
 
     useEffect(()=>{
-        if(singlePurchase)
-        setCustomDynamicFields(singlePurchase?.shipping_data);
+        if(singlePurchase){
+          setCustomDynamicFields(singlePurchase?.shipping_data);
+          setCustomTaxDynamicFields(singlePurchase?.tax_data);
+        }
   },[])
 
     const handleValidation = () => {
@@ -140,47 +142,6 @@ const PurchaseForm = (props) => {
         setPurchaseValue(inputs => ({...inputs, status_id: obj}))
         
     };
-
-    let  onShippingTypeChange = (i, e) => {
-        let newFormValues = [...customDynamicFields];  
-        newFormValues[i]['shipping_type_id'] = e;
-        newFormValues[i]['shipping_type_name'] = e.label;
-        setCustomDynamicFields(newFormValues);
-    };
-
-    let  addDynamicField = ()=>{
-        setCustomDynamicFields([...customDynamicFields, { shipping_type_id: "", shipping_value: "" }])
-
-    }
-
-    let handleChange = (i, e) => {
-        let newFormValues = [...customDynamicFields];
-        newFormValues[i][e.target.name] = e.target.value;
-        setCustomDynamicFields(newFormValues);
-        calShippingTotal();
-      }
-
-       let removeFormFields = (i) => {
-        let newFormValues = [...customDynamicFields];
-        newFormValues.splice(i, 1);
-        setCustomDynamicFields(newFormValues)
-       calShippingTotal(customDynamicFields[i]['shipping_value'])
-       
-    }
-
-    let calShippingTotal = (singleVal=0)=>{
-        let totalShipTax = 0;
-        if(singleVal)
-          totalShipTax =  parseFloat(purchaseValue.shipping) -   parseFloat(singleVal);
-        else
-        customDynamicFields.map((element)=>{
-            if(element.shipping_value && element.shipping_value != '' && element.shipping_value != NaN && element.shipping_value !=null ){
-               totalShipTax = parseFloat(totalShipTax) + parseFloat(element.shipping_value)
-            }
-    });
-
-        setPurchaseValue(inputs => ({...inputs, ['shipping']: totalShipTax && totalShipTax}))
-    }
 
     const updateCost = (item) => {
         setNewCost(item);
@@ -241,14 +202,7 @@ const PurchaseForm = (props) => {
             label: option.name
         }
     })
-    const shippingTypeValues = [];
-    const shippingTypeDefaultValue = allShipingTypes?.length >0 ? allShipingTypes.map((option) => {
-        shippingTypeValues.push({
-            id: option.id,
-            name: option.attributes.name
-        })
-    }) : [];
-
+   
     const statusTypeValues = [];
     const statusValue = allStatusTypes && allStatusTypes?.length > 0 ? allStatusTypes.map((option) => {
         statusTypeValues.push({
@@ -270,11 +224,12 @@ const PurchaseForm = (props) => {
             grand_total: calculateCartTotalAmount(updateProducts, purchaseValue),
             received_amount: '',
             paid_amount: '',
-            payment_type: 0,
+            payment_type: 0, 
             notes: prepareData.notes,
             reference_code: '',
             status: prepareData.status_id.value ? prepareData.status_id.value : prepareData.status_id,
             shipping_data:customDynamicFields ? customDynamicFields : [],
+            tax_data:customTaxDynamicFields ? customTaxDynamicFields : [],
         }
         return formValue
     };
@@ -301,10 +256,24 @@ const PurchaseForm = (props) => {
                 setPurchaseValue({...purchaseValue, discount: '0.00'})
             }
             if (el.target.name === 'tax_rate') {
-                setPurchaseValue({...purchaseValue, tax_rate: '0.00'})
+                // setPurchaseValue({...purchaseValue, tax_rate: '0.00'})
             }
         }
     }
+// ...New changes
+   const handleCustomDynamicFields = (val)=> {
+       setCustomDynamicFields(val)
+    }
+
+    const handleCustomTaxDynamicFields = (val)=> {
+        setCustomTaxDynamicFields(val)
+     }
+     const handleItemValue = (type, shipping_rate, tax_rate )=>{
+                setPurchaseValue(inputs => ({...inputs, ['shipping']: shipping_rate && shipping_rate}))
+                setPurchaseValue(inputs => ({...inputs, ['tax_rate']: tax_rate && tax_rate}))
+     }
+
+
     return (
         <div className='card'>
             <div className='card-body'>
@@ -382,10 +351,10 @@ const PurchaseForm = (props) => {
                             </Table>
                         </div>
                         <div className='col-12'>
-                            <ProductMainCalculation inputValues={purchaseValue} shippingInputValues={customDynamicFields} updateProducts={updateProducts}
+                            <ProductMainCalculation inputValues={purchaseValue} shippingInputValues={customDynamicFields} taxInputValues={customTaxDynamicFields} updateProducts={updateProducts}
                                                     frontSetting={frontSetting}  allConfigData={allConfigData}/>
                         </div>
-                        <div className='col-md-4 mb-5'>
+                        {/* <div className='col-md-4 mb-5'>
                             <label className='form-label'>
                                 {getFormattedMessage('purchase.input.order-tax.label')}:
                             </label>
@@ -402,7 +371,7 @@ const PurchaseForm = (props) => {
                                 <InputGroup.Text>%</InputGroup.Text>
                             </InputGroup>
                             <span className='text-danger d-block fw-400 fs-small mt-2'>{errors['orderTax'] ? errors['orderTax'] : null}</span>
-                        </div>
+                        </div> */}
                         <div className='col-md-4 mb-5'>
                             <label className='form-label'>
                                 {getFormattedMessage('purchase.order-item.table.discount.column.label')}:
@@ -427,67 +396,9 @@ const PurchaseForm = (props) => {
                         //  defaultValue={statusDefaultValue[0]}
                          placeholder={getFormattedMessage('purchase.select.status.label')}/>
                         </div>
-                        {/* <div className='col-md-4 mb-5'>
-                            <label
-                                className='form-label'>
-                                {getFormattedMessage('purchase.input.shipping.label')}:
-                            </label>
-                            <InputGroup>
-                                <input aria-label='Dollar amount (with dot and two decimal places)'
-                                              className='form-control' value={purchaseValue.shipping}
-                                              type='text' name='shipping'
-                                              onBlur={(event) => onBlurInput(event)}
-                                              onFocus={(event) => onFocusInput(event)}
-                                              onKeyPress={(event) => decimalValidate(event)}
-                                              onChange={(e) => onChangeInput(e)}
-                                />
-                                <InputGroup.Text>{frontSetting.value && frontSetting.value.currency_symbol}</InputGroup.Text>
-                            </InputGroup>
-                            <span className='text-danger d-block fw-400 fs-small mt-2'>{errors['shipping'] ? errors['shipping'] : null}</span>
-                        </div> */}
-                        {/* .......... */}
-                        {customDynamicFields.map((element, index) => (
-                        <React.Fragment key={index}>
-                        <div className='col-md-5'>
-                             <ReactSelect multiLanguageOption={shippingTypeValues} onChange={e => onShippingTypeChange(index, e)} name='shipping_type_id'
-                          title={'Shipping Type'}
-                          value={element.shipping_type_id || ""}  errors={errors['status_id']}
-                        //  defaultValue={shippingTypeValues}
-                         placeholder={'shipping type '}/>
-                        </div>
-                        {/* ... */}
-                        <div className='col-md-5 mb-5'>
-                            <div className='align_o'>
-                                <label
-                                    className='form-label'>
-                                Shipping value
-                                </label>
-                                <InputGroup>
-                                    <input aria-label='Dollar amount (with dot and two decimal places)'
-                                                className='form-control'  value={element.shipping_value || ""}
-                                                type='text' name='shipping_value'
-                                                onBlur={(event) => onBlurInput(index, event)}
-                                                onFocus={(event) => onFocusInput(event)}
-                                                onKeyPress={(event) => decimalValidate(event)}
-                                                onChange={e => handleChange(index, e)}
-                                    />
-                                    <InputGroup.Text>{frontSetting.value && frontSetting.value.currency_symbol}</InputGroup.Text>
-                                </InputGroup>
-                                <span className='text-danger d-block fw-400 fs-small mt-2'>{errors['shipping'] ? errors['shipping'] : null}</span>
-                                {
-                                    index ? 
-                        <button type="button"  className="btn btn-danger remove" onClick={() => removeFormFields(index)}><FontAwesomeIcon icon={faTrash}/></button> 
-                                    : null
-                                }
-                            </div>
-                        </div>
-                        </React.Fragment>
-                        )) }
-                        <div  className='col-md-2 '>
-                            <button className='btn btn-primary me-2 float-lg-right float_plus' onClick={addDynamicField} type='submit' > + </button> 
-                        </div>
-                        {/* ................... */}
-                       
+                       {/* ... */}
+                      < TaxChargerTypes frontSetting={frontSetting} allShipingTypes={allShipingTypes}   setItemVal={handleItemValue} itemValue={purchaseValue} customPropsTaxDynamicFields={handleCustomTaxDynamicFields} customPropsDynamicFields={handleCustomDynamicFields} singleDataEntity={singlePurchase}  />
+                       {/* ... */}
                         <div className='col-md-12 mb-5'>
                             <label className='form-label'>
                                 {getFormattedMessage('globally.input.notes.label')}:

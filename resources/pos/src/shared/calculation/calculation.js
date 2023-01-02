@@ -65,6 +65,7 @@ export const calculateSubTotal = (carts) => {
 }
 
 export const calculateCartTotalAmount = (carts, inputValue) => {
+   
     let finalTotalAmount
     const value = inputValue && inputValue;
     let totalAmountAfterDiscount = calculateSubTotal(carts) - value.discount

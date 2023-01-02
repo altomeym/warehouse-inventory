@@ -1,28 +1,44 @@
-import React, {useEffect, useState} from 'react';
-import {useNavigate} from 'react-router-dom';
-import {Form, InputGroup} from 'react-bootstrap-v5';
-import moment from 'moment';
-import {connect, useDispatch} from 'react-redux';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import { faTrash} from '@fortawesome/free-solid-svg-icons';
-import {fetchProductsByWarehouse} from '../../store/action/productAction';
-import {editSale} from '../../store/action/salesAction';
-import {fetchShippingTypes} from '../../store/action/shippingAction'
-import ProductSearch from '../../shared/components/product-cart/search/ProductSearch';
-import ProductRowTable from '../../shared/components/sales/ProductRowTable';
-import {placeholderText, getFormattedMessage, decimalValidate, onFocusInput, getFormattedOptions} from '../../shared/sharedMethod';
-import status from '../../shared/option-lists/status.json';
-import paymentStatus from '../../shared/option-lists/paymentStatus.json'
-import paymentType from '../../shared/option-lists/paymentType.json'
-import ReactDatePicker from '../../shared/datepicker/ReactDatePicker';
-import ProductMainCalculation from './ProductMainCalculation';
-import {calculateCartTotalAmount, calculateCartTotalTaxAmount} from '../../shared/calculation/calculation';
-import {prepareSaleProductArray} from '../../shared/prepareArray/prepareSaleArray';
-import ModelFooter from '../../shared/components/modelFooter';
-import {addToast} from '../../store/action/toastAction';
-import {paymentMethodOptions, salePaymentStatusOptions, saleStatusOptions, statusOptions, toastType} from '../../constants';
-import {fetchFrontSetting} from '../../store/action/frontSettingAction';
-import ReactSelect from '../../shared/select/reactSelect';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Form, InputGroup } from "react-bootstrap-v5";
+import moment from "moment";
+import { connect, useDispatch } from "react-redux";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { fetchProductsByWarehouse } from "../../store/action/productAction";
+import { editSale } from "../../store/action/salesAction";
+import { fetchShippingTypes } from "../../store/action/shippingAction";
+import TaxChargerTypes from "../purchase/TaxChargerTypes";
+import ProductSearch from "../../shared/components/product-cart/search/ProductSearch";
+import ProductRowTable from "../../shared/components/sales/ProductRowTable";
+import {
+    placeholderText,
+    getFormattedMessage,
+    decimalValidate,
+    onFocusInput,
+    getFormattedOptions,
+} from "../../shared/sharedMethod";
+import status from "../../shared/option-lists/status.json";
+import paymentStatus from "../../shared/option-lists/paymentStatus.json";
+import paymentType from "../../shared/option-lists/paymentType.json";
+import ReactDatePicker from "../../shared/datepicker/ReactDatePicker";
+import ProductMainCalculation from "./ProductMainCalculation";
+import {
+    calculateCartTotalAmount,
+    calculateCartTotalTaxAmount,
+} from "../../shared/calculation/calculation";
+import { prepareSaleProductArray } from "../../shared/prepareArray/prepareSaleArray";
+import ModelFooter from "../../shared/components/modelFooter";
+import { addToast } from "../../store/action/toastAction";
+import {
+    paymentMethodOptions,
+    salePaymentStatusOptions,
+    saleStatusOptions,
+    statusOptions,
+    toastType,
+} from "../../constants";
+import { fetchFrontSetting } from "../../store/action/frontSettingAction";
+import ReactSelect from "../../shared/select/reactSelect";
 
 const SalesForm = (props) => {
     const {
@@ -37,58 +53,83 @@ const SalesForm = (props) => {
         fetchProductsByWarehouse,
         fetchFrontSetting,
         frontSetting,
-        isQuotation, allConfigData, allShipingTypes, allStatusTypes
+        isQuotation,
+        allConfigData,
+        allShipingTypes,
+        allStatusTypes,
     } = props;
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [updateProducts, setUpdateProducts] = useState([]);
     const [quantity, setQuantity] = useState(0);
-    const [newCost, setNewCost] = useState('');
-    const [newDiscount, setNewDiscount] = useState('');
-    const [newTax, setNewTax] = useState('');
-    const [subTotal, setSubTotal] = useState('');
-    const [newSaleUnit, setNewSaleUnit] = useState('');
-    const [isPaymentType,setIsPaymentType] = useState(false)
+    const [newCost, setNewCost] = useState("");
+    const [newDiscount, setNewDiscount] = useState("");
+    const [newTax, setNewTax] = useState("");
+    const [subTotal, setSubTotal] = useState("");
+    const [newSaleUnit, setNewSaleUnit] = useState("");
+    const [isPaymentType, setIsPaymentType] = useState(false);
 
     const [saleValue, setSaleValue] = useState({
         date: new Date(),
-        customer_id: '',
-        warehouse_id: '',
+        customer_id: "",
+        warehouse_id: "",
         tax_rate: "0.00",
-        tax_amount: 0.00,
+        tax_amount: 0.0,
         discount: "0.00",
         shipping: "0.00",
-        grand_total: 0.00,
-        notes: singleSale ? singleSale.notes : '',
+        grand_total: 0.0,
+        notes: singleSale ? singleSale.notes : "",
         received_amount: 0,
         paid_amount: 0,
-        status_id:'',
-        payment_status: {label: getFormattedMessage("payment-status.filter.unpaid.label"), value: 2},
-        payment_type: {label: getFormattedMessage("payment-type.filter.cash.label"), value: 1}
+        status_id: "",
+        payment_status: {
+            label: getFormattedMessage("payment-status.filter.unpaid.label"),
+            value: 2,
+        },
+        payment_type: {
+            label: getFormattedMessage("payment-type.filter.cash.label"),
+            value: 1,
+        },
     });
     const [errors, setErrors] = useState({
-        date: '',
-        customer_id: '',
-        warehouse_id: '',
-        status_id: '',
-        payment_status: '',
-        payment_type: ''
+        date: "",
+        customer_id: "",
+        warehouse_id: "",
+        status_id: "",
+        payment_status: "",
+        payment_type: "",
     });
 
-    const [customDynamicFields, setCustomDynamicFields] = useState([{
-        shipping_type_id:"", 
-        shipping_value:"",
-        shipping_type_name:"",
-    }]);
+    const [customDynamicFields, setCustomDynamicFields] = useState([
+        {
+            shipping_type_id: "",
+            shipping_value: "",
+            shipping_type_name: "",
+        },
+    ]);
+
+    const [customTaxDynamicFields, setCustomTaxDynamicFields] = useState([
+        { tax_type_id: "", tax_value: "", tax_type_name: "" },
+    ]);
 
     useEffect(() => {
-        setUpdateProducts(updateProducts)
-    }, [updateProducts, quantity, newCost, newDiscount, newTax, subTotal, newSaleUnit])
+        setUpdateProducts(updateProducts);
+    }, [
+        updateProducts,
+        quantity,
+        newCost,
+        newDiscount,
+        newTax,
+        subTotal,
+        newSaleUnit,
+    ]);
 
     useEffect(() => {
-        updateProducts.length >= 1 ? dispatch({type: 'DISABLE_OPTION', payload: true}) : dispatch({type: 'DISABLE_OPTION', payload: false})
-    }, [updateProducts])
+        updateProducts.length >= 1
+            ? dispatch({ type: "DISABLE_OPTION", payload: true })
+            : dispatch({ type: "DISABLE_OPTION", payload: false });
+    }, [updateProducts]);
 
     useEffect(() => {
         fetchFrontSetting();
@@ -97,38 +138,64 @@ const SalesForm = (props) => {
     useEffect(() => {
         if (singleSale && !isQuotation) {
             setSaleValue({
-                date: singleSale ? moment(singleSale.date).toDate() : '',
-                customer_id: singleSale ? singleSale.customer_id : '',
-                quotation_id: singleSale ? singleSale.quotation_id : '',
-                warehouse_id: singleSale ? singleSale.warehouse_id : '',
-                tax_rate: singleSale ? singleSale.tax_rate.toFixed(2) : '0.00',
-                tax_amount: singleSale ? singleSale.tax_amount.toFixed(2) : '0.00',
-                discount: singleSale ? singleSale.discount.toFixed(2) : '0.00',
-                shipping: singleSale ? singleSale.shipping.toFixed(2) : '0.00',
-                grand_total: singleSale ? singleSale.grand_total : '0.00',
-                status_id: singleSale ? singleSale.status_id : '',
-                payment_status: singleSale.is_Partial === 3 ? { "label": getFormattedMessage('payment-status.filter.partial.label'), "value": 3} : singleSale ? singleSale.payment_status : '',
-                payment_type: singleSale ? singleSale.payment_type : '',
-                shipping_data: singleSale?.shipping_data ? singleSale?.shipping_data : '',
-
-            })
+                date: singleSale ? moment(singleSale.date).toDate() : "",
+                customer_id: singleSale ? singleSale.customer_id : "",
+                quotation_id: singleSale ? singleSale.quotation_id : "",
+                warehouse_id: singleSale ? singleSale.warehouse_id : "",
+                tax_rate: singleSale ? singleSale.tax_rate.toFixed(2) : "0.00",
+                tax_amount: singleSale
+                    ? singleSale.tax_amount.toFixed(2)
+                    : "0.00",
+                discount: singleSale ? singleSale.discount.toFixed(2) : "0.00",
+                shipping: singleSale ? singleSale.shipping.toFixed(2) : "0.00",
+                grand_total: singleSale ? singleSale.grand_total : "0.00",
+                status_id: singleSale ? singleSale.status_id : "",
+                payment_status:
+                    singleSale.is_Partial === 3
+                        ? {
+                              label: getFormattedMessage(
+                                  "payment-status.filter.partial.label"
+                              ),
+                              value: 3,
+                          }
+                        : singleSale
+                        ? singleSale.payment_status
+                        : "",
+                payment_type: singleSale ? singleSale.payment_type : "",
+                shipping_data: singleSale?.shipping_data
+                    ? singleSale?.shipping_data
+                    : "",
+                tax_data: singleSale?.tax_data ? singleSale?.tax_data : "",
+            });
         }
-        if(singleSale && isQuotation){
+        if (singleSale && isQuotation) {
             setSaleValue({
-                date: singleSale ? moment(singleSale.date).toDate() : '',
-                quotation_id: singleSale ? singleSale.quotation_id : '',
-                customer_id: singleSale ? singleSale.customer_id : '',
-                warehouse_id: singleSale ? singleSale.warehouse_id : '',
-                tax_rate: singleSale ? singleSale.tax_rate.toFixed(2) : '0.00',
-                tax_amount: singleSale ? singleSale.tax_amount.toFixed(2) : '0.00',
-                discount: singleSale ? singleSale.discount.toFixed(2) : '0.00',
-                shipping: singleSale ? singleSale.shipping.toFixed(2) : '0.00',
-                grand_total: singleSale ? singleSale.grand_total : '0.00',
-                status_id: singleSale ? singleSale.status_id : '',
-                payment_status: saleValue.payment_status ? saleValue.payment_status : '',
-                shipping_data: saleValue?.shipping_data ? saleValue?.shipping_data : '',
-                payment_type: {label: getFormattedMessage("payment-type.filter.cash.label"), value: 1}
-            })
+                date: singleSale ? moment(singleSale.date).toDate() : "",
+                quotation_id: singleSale ? singleSale.quotation_id : "",
+                customer_id: singleSale ? singleSale.customer_id : "",
+                warehouse_id: singleSale ? singleSale.warehouse_id : "",
+                tax_rate: singleSale ? singleSale.tax_rate.toFixed(2) : "0.00",
+                tax_amount: singleSale
+                    ? singleSale.tax_amount.toFixed(2)
+                    : "0.00",
+                discount: singleSale ? singleSale.discount.toFixed(2) : "0.00",
+                shipping: singleSale ? singleSale.shipping.toFixed(2) : "0.00",
+                grand_total: singleSale ? singleSale.grand_total : "0.00",
+                status_id: singleSale ? singleSale.status_id : "",
+                payment_status: saleValue.payment_status
+                    ? saleValue.payment_status
+                    : "",
+                shipping_data: saleValue?.shipping_data
+                    ? saleValue?.shipping_data
+                    : "",
+                tax_data: saleValue?.tax_data ? saleValue?.tax_data : "",
+                payment_type: {
+                    label: getFormattedMessage(
+                        "payment-type.filter.cash.label"
+                    ),
+                    value: 1,
+                },
+            });
         }
     }, [singleSale]);
 
@@ -138,30 +205,62 @@ const SalesForm = (props) => {
         }
     }, []);
 
+    useEffect(() => {
+        saleValue.warehouse_id.value &&
+            fetchProductsByWarehouse(saleValue?.warehouse_id?.value);
+    }, [saleValue.warehouse_id.value]);
+
     useEffect(()=>{
-        saleValue.warehouse_id.value && fetchProductsByWarehouse(saleValue?.warehouse_id?.value)
-    },[saleValue.warehouse_id.value])
+        if(singleSale){
+          setCustomDynamicFields(singleSale?.shipping_data);
+          setCustomTaxDynamicFields(singleSale?.tax_data);
+        }
+      },[])
 
     const handleValidation = () => {
         let error = {};
         let isValid = false;
         const qtyCart = updateProducts.filter((a) => a.quantity === 0);
         if (!saleValue.date) {
-            error['date'] = getFormattedMessage('globally.date.validate.label');
+            error["date"] = getFormattedMessage("globally.date.validate.label");
         } else if (!saleValue.warehouse_id) {
-            error['warehouse_id'] = getFormattedMessage('product.input.warehouse.validate.label');
+            error["warehouse_id"] = getFormattedMessage(
+                "product.input.warehouse.validate.label"
+            );
         } else if (!saleValue.customer_id) {
-            error['customer_id'] = getFormattedMessage('sale.select.customer.validate.label');
+            error["customer_id"] = getFormattedMessage(
+                "sale.select.customer.validate.label"
+            );
         } else if (qtyCart.length > 0) {
-            dispatch(addToast({text: getFormattedMessage('globally.product-quantity.validate.message'), type: toastType.ERROR}))
+            dispatch(
+                addToast({
+                    text: getFormattedMessage(
+                        "globally.product-quantity.validate.message"
+                    ),
+                    type: toastType.ERROR,
+                })
+            );
         } else if (updateProducts.length < 1) {
-            dispatch(addToast({text: getFormattedMessage('purchase.product-list.validate.message'), type: toastType.ERROR}))
+            dispatch(
+                addToast({
+                    text: getFormattedMessage(
+                        "purchase.product-list.validate.message"
+                    ),
+                    type: toastType.ERROR,
+                })
+            );
         } else if (!saleValue.status_id) {
-            error['status_id'] = getFormattedMessage("globally.status.validate.label")
+            error["status_id"] = getFormattedMessage(
+                "globally.status.validate.label"
+            );
         } else if (!saleValue.payment_status) {
-            error['payment_status'] = getFormattedMessage("globally.payment.status.validate.label")
+            error["payment_status"] = getFormattedMessage(
+                "globally.payment.status.validate.label"
+            );
         } else if (!saleValue.payment_type) {
-            error['payment_type'] = getFormattedMessage("globally.payment.type.validate.label")
+            error["payment_type"] = getFormattedMessage(
+                "globally.payment.type.validate.label"
+            );
         } else {
             isValid = true;
         }
@@ -169,94 +268,58 @@ const SalesForm = (props) => {
         return isValid;
     };
 
-      useEffect(()=>{
-        if(singleSale)
-        setCustomDynamicFields(singleSale?.shipping_data);
-  },[])
-
     const onWarehouseChange = (obj) => {
-        setSaleValue(inputs => ({...inputs, warehouse_id: obj}));
-        setErrors('');
+        setSaleValue((inputs) => ({ ...inputs, warehouse_id: obj }));
+        setErrors("");
     };
 
     const onCustomerChange = (obj) => {
-        setSaleValue(inputs => ({...inputs, customer_id: obj}));
-        setErrors('');
+        setSaleValue((inputs) => ({ ...inputs, customer_id: obj }));
+        setErrors("");
     };
 
     const onChangeInput = (e) => {
         e.preventDefault();
-        const {value} = e.target;
+        const { value } = e.target;
         // check if value includes a decimal point
         if (value.match(/\./g)) {
-            const [, decimal] = value.split('.');
+            const [, decimal] = value.split(".");
             // restrict value to only 2 decimal places
             if (decimal?.length > 2) {
                 // do nothing
                 return;
             }
         }
-        setSaleValue(inputs => ({...inputs, [e.target.name]: value && value}));
+        setSaleValue((inputs) => ({
+            ...inputs,
+            [e.target.name]: value && value,
+        }));
     };
 
     const onNotesChangeInput = (e) => {
         e.preventDefault();
-        setSaleValue(inputs => ({...inputs, notes : e.target.value}));
+        setSaleValue((inputs) => ({ ...inputs, notes: e.target.value }));
     };
 
     const onStatusChange = (obj) => {
-        setSaleValue(inputs => ({...inputs, status_id: obj}));
+        setSaleValue((inputs) => ({ ...inputs, status_id: obj }));
     };
 
     const onPaymentStatusChange = (obj) => {
-        setSaleValue(inputs => ({...inputs, payment_status: obj}));
-        obj.value !== 2 ? setIsPaymentType(true) : setIsPaymentType(false)
-        setSaleValue(input => ({...input, payment_type: {label: getFormattedMessage("payment-type.filter.cash.label"), value: 1}}))
+        setSaleValue((inputs) => ({ ...inputs, payment_status: obj }));
+        obj.value !== 2 ? setIsPaymentType(true) : setIsPaymentType(false);
+        setSaleValue((input) => ({
+            ...input,
+            payment_type: {
+                label: getFormattedMessage("payment-type.filter.cash.label"),
+                value: 1,
+            },
+        }));
     };
 
     const onPaymentTypeChange = (obj) => {
-        setSaleValue(inputs => ({...inputs, payment_type: obj}));
+        setSaleValue((inputs) => ({ ...inputs, payment_type: obj }));
     };
-    
-    let  onShippingTypeChange = (i, e) => {
-        let newFormValues = [...customDynamicFields];  
-        newFormValues[i]['shipping_type_id'] = e;
-        newFormValues[i]['shipping_type_name'] = e.label;
-        setCustomDynamicFields(newFormValues);
-    };
-
-    let  addDynamicField = ()=>{
-        setCustomDynamicFields([...customDynamicFields, { shipping_type_id: "", shipping_value: "" }])
-
-    }
-
-    let handleChange = (i, e) => {
-        let newFormValues = [...customDynamicFields];
-        newFormValues[i][e.target.name] = e.target.value;
-        setCustomDynamicFields(newFormValues);
-        calShippingTotal();
-      }
-
-       let removeFormFields = (i) => {
-        let newFormValues = [...customDynamicFields];
-        newFormValues.splice(i, 1);
-        setCustomDynamicFields(newFormValues)
-       calShippingTotal(customDynamicFields[i]['shipping_value'])
-       
-    }
-
-    let calShippingTotal = (singleVal=0)=>{
-        let totalShipTax = 0;
-        if(singleVal)
-          totalShipTax =  parseFloat(saleValue.shipping) -   parseFloat(singleVal);
-        else
-        customDynamicFields.map((element)=>{
-            if(element.shipping_value && element.shipping_value != '' && element.shipping_value != NaN && element.shipping_value !=null ){
-               totalShipTax = parseFloat(totalShipTax) + parseFloat(element.shipping_value)
-            }
-       });
-       setSaleValue(inputs => ({...inputs, ['shipping']: totalShipTax && totalShipTax}))
-    }
 
     const updatedQty = (qty) => {
         setQuantity(qty);
@@ -283,67 +346,62 @@ const SalesForm = (props) => {
     };
 
     const handleCallback = (date) => {
-        setSaleValue(previousState => {
-            return {...previousState, date: date}
+        setSaleValue((previousState) => {
+            return { ...previousState, date: date };
         });
-        setErrors('');
+        setErrors("");
     };
 
-
-    const statusFilterOptions = getFormattedOptions(saleStatusOptions)
+    const statusFilterOptions = getFormattedOptions(saleStatusOptions);
     const statusDefaultValue = statusFilterOptions.map((option) => {
         return {
             value: option.id,
-            label: option.name
-        }
-    })
+            label: option.name,
+        };
+    });
 
-    const paymentStatusFilterOptions = getFormattedOptions(salePaymentStatusOptions)
-    const paymentStatusDefaultValue = paymentStatusFilterOptions.map((option) => {
-        return {
-            value: option.id,
-            label: option.name
+    const paymentStatusFilterOptions = getFormattedOptions(
+        salePaymentStatusOptions
+    );
+    const paymentStatusDefaultValue = paymentStatusFilterOptions.map(
+        (option) => {
+            return {
+                value: option.id,
+                label: option.name,
+            };
         }
-    })
+    );
 
-    const paymentMethodOption = getFormattedOptions(paymentMethodOptions)
+    const paymentMethodOption = getFormattedOptions(paymentMethodOptions);
     const paymentTypeDefaultValue = paymentMethodOption.map((option) => {
         return {
             value: option.id,
-            label: option.name
-        }
-    })
-
-    const shippingTypeValues = [];
-    const shippingTypeValue = allShipingTypes.length > 0 ? allShipingTypes.map((option) => {
-        shippingTypeValues.push({
-            id: option.id,
-            name: option.attributes.name
-        })
-    }) : []
+            label: option.name,
+        };
+    });
 
     const statusTypeValues = [];
-    const statusValue = allStatusTypes && allStatusTypes?.length > 0 ? allStatusTypes.map((option) => {
-        statusTypeValues.push({
-            id: option.id,
-            name: option.attributes.name
-        })
-    }) : []
-
-
-
-    const shippingTypeDefaultValues = {
-            value: allShipingTypes[0]?.id,
-            label: allShipingTypes[0]?.attributes?.name
-        }
+    const statusValue =
+        allStatusTypes && allStatusTypes?.length > 0
+            ? allStatusTypes.map((option) => {
+                  statusTypeValues.push({
+                      id: option.id,
+                      name: option.attributes.name,
+                  });
+              })
+            : [];
 
     const prepareFormData = (prepareData) => {
         const formValue = {
             date: moment(prepareData.date).toDate(),
             is_sale_created: "true",
-            quotation_id: prepareData ? prepareData.quotation_id : '',
-            customer_id: prepareData.customer_id.value ? prepareData.customer_id.value : prepareData.customer_id,
-            warehouse_id: prepareData.warehouse_id.value ? prepareData.warehouse_id.value : prepareData.warehouse_id,
+            quotation_id: prepareData ? prepareData.quotation_id : "",
+            customer_id: prepareData.customer_id.value
+                ? prepareData.customer_id.value
+                : prepareData.customer_id,
+            warehouse_id: prepareData.warehouse_id.value
+                ? prepareData.warehouse_id.value
+                : prepareData.warehouse_id,
             discount: prepareData.discount,
             tax_rate: prepareData.tax_rate,
             tax_amount: calculateCartTotalTaxAmount(updateProducts, saleValue),
@@ -353,13 +411,22 @@ const SalesForm = (props) => {
             received_amount: 0,
             paid_amount: 0,
             note: prepareData.notes,
-            status: prepareData.status_id.value ? prepareData.status_id.value : prepareData.status_id,
-            payment_status: prepareData.payment_status.value ? prepareData.payment_status.value : prepareData.payment_status,
-            payment_type: prepareData.payment_status.value === 2 ? 0 : prepareData.payment_type.value ? prepareData.payment_type.value : prepareData.payment_type,
-            shipping_data:customDynamicFields ? customDynamicFields : [],
-
-        }
-        return formValue
+            status: prepareData.status_id.value
+                ? prepareData.status_id.value
+                : prepareData.status_id,
+            payment_status: prepareData.payment_status.value
+                ? prepareData.payment_status.value
+                : prepareData.payment_status,
+            payment_type:
+                prepareData.payment_status.value === 2
+                    ? 0
+                    : prepareData.payment_type.value
+                    ? prepareData.payment_type.value
+                    : prepareData.payment_type,
+            shipping_data: customDynamicFields ? customDynamicFields : [],
+            tax_data: customTaxDynamicFields ? customTaxDynamicFields : [],
+        };
+        return formValue;
     };
 
     const onSubmit = (event) => {
@@ -376,215 +443,325 @@ const SalesForm = (props) => {
     };
 
     const onBlurInput = (el) => {
-        if (el.target.value === '') {
-            if(el.target.name === "shipping"){
+        if (el.target.value === "") {
+            if (el.target.name === "shipping") {
                 // setSaleValue({...saleValue, shipping: "0.00"});
             }
-            if(el.target.name === "discount"){
-                setSaleValue({...saleValue, discount: "0.00"});
+            if (el.target.name === "discount") {
+                setSaleValue({ ...saleValue, discount: "0.00" });
             }
-            if(el.target.name === "tax_rate"){
-                setSaleValue({...saleValue, tax_rate: "0.00"});
+            if (el.target.name === "tax_rate") {
+                // setSaleValue({...saleValue, tax_rate: "0.00"});
             }
         }
-    }
+    };
+
+    // ...New changes
+    const handleCustomDynamicFields = (val) => {
+        setCustomDynamicFields(val);
+    };
+
+    const handleCustomTaxDynamicFields = (val) => {
+        setCustomTaxDynamicFields(val);
+    };
+
+    const handleItemValue = (type, shipping_rate, tax_rate) => {
+        setSaleValue((inputs) => ({
+            ...inputs,
+            ["shipping"]: shipping_rate && shipping_rate,
+        }));
+        setSaleValue((inputs) => ({
+            ...inputs,
+            ["tax_rate"]: tax_rate && tax_rate,
+        }));
+    };
 
     return (
-        <div className='card'>
-            <div className='card-body'>
+        <div className="card">
+            <div className="card-body">
                 {/*<Form>*/}
-                    <div className='row'>
-                        <div className='col-md-4'>
-                            <label className='form-label'>
-                                {getFormattedMessage('react-data-table.date.column.label')}:
-                            </label>
-                            <span className='required'/>
-                            <div className='position-relative'>
-                                <ReactDatePicker onChangeDate={handleCallback} newStartDate={saleValue.date}/>
-                            </div>
-                            <span className='text-danger d-block fw-400 fs-small mt-2'>{errors['date'] ? errors['date'] : null}</span>
-                        </div>
-                        <div className='col-md-4'>
-                            <ReactSelect name='warehouse_id' data={warehouses} onChange={onWarehouseChange}
-                                         title={getFormattedMessage('warehouse.title')} errors={errors['warehouse_id']}
-                                         defaultValue={saleValue.warehouse_id} value={saleValue.warehouse_id} addSearchItems={singleSale}
-                                         isWarehouseDisable={true}
-                                         placeholder={placeholderText('purchase.select.warehouse.placeholder.label')}/>
-                        </div>
-                        <div className='col-md-4'>
-                            <ReactSelect name='customer_id' data={customers} onChange={onCustomerChange}
-                                         title=  {getFormattedMessage('customer.title')} errors={errors['customer_id']}
-                                         defaultValue={saleValue.customer_id} value={saleValue.customer_id}
-                                         placeholder={placeholderText('sale.select.customer.placeholder.label')}/>
-                        </div>
-                        <div className='mb-5'>
-                            <label className='form-label'>
-                                {getFormattedMessage('product.title')}:
-                            </label>
-                            <ProductSearch values={saleValue} products={products} handleValidation={handleValidation}
-                                           updateProducts={updateProducts}
-                                           setUpdateProducts={setUpdateProducts} customProducts={customProducts}/>
-                        </div>
-                        <div>
-                            <label className='form-label'>
-                                {getFormattedMessage('purchase.order-item.table.label')}:
-                            </label>
-                            <span className='required'/>
-                            <ProductRowTable updateProducts={updateProducts} setUpdateProducts={setUpdateProducts}
-                                             updatedQty={updatedQty} frontSetting={frontSetting}
-                                             updateCost={updateCost} updateDiscount={updateDiscount}
-                                             updateTax={updateTax} updateSubTotal={updateSubTotal}
-                                             updateSaleUnit={updateSaleUnit}
+                <div className="row">
+                    <div className="col-md-4">
+                        <label className="form-label">
+                            {getFormattedMessage(
+                                "react-data-table.date.column.label"
+                            )}
+                            :
+                        </label>
+                        <span className="required" />
+                        <div className="position-relative">
+                            <ReactDatePicker
+                                onChangeDate={handleCallback}
+                                newStartDate={saleValue.date}
                             />
                         </div>
-                        <div className='col-12'>
-                            <ProductMainCalculation inputValues={saleValue} allConfigData={allConfigData} shippingInputValues={customDynamicFields} updateProducts={updateProducts} frontSetting={frontSetting}/>
-                        </div>
-                        <div className='col-md-4 mb-3'>
-                            <label
-                                className='form-label'>{getFormattedMessage('purchase.input.order-tax.label')}: </label>
-                            <InputGroup>
-                                <input aria-label='Dollar amount (with dot and two decimal places)'
-                                              className='form-control'
-                                              type='text' name='tax_rate' value={saleValue.tax_rate}
-                                              onBlur={(event)=>onBlurInput(event)} onFocus={(event)=>onFocusInput(event)}
-                                              onKeyPress={(event) => decimalValidate(event)}
-                                              onChange={(e) => {
-                                                  onChangeInput(e)
-                                              }}/>
-                                <InputGroup.Text>%</InputGroup.Text>
-                            </InputGroup>
-                        </div>
-                        <div className='col-md-4 mb-3'>
-                            <Form.Label
-                                className='form-label'>{getFormattedMessage('purchase.order-item.table.discount.column.label')}: </Form.Label>
-                            <InputGroup>
-                                <input aria-label='Dollar amount (with dot and two decimal places)'
-                                              className='form-control'
-                                              type='text' name='discount' value={saleValue.discount}
-                                              onBlur={(event)=>onBlurInput(event)} onFocus={(event)=>onFocusInput(event)}
-                                              onKeyPress={(event) => decimalValidate(event)}
-                                              onChange={(e) => onChangeInput(e)}
-                                />
-                                <InputGroup.Text>{frontSetting.value && frontSetting.value.currency_symbol}</InputGroup.Text>
-                            </InputGroup>
-                        </div>
-                        {/* <div className='col-md-4 mb-3'>
-                            <label
-                                className='form-label'>{getFormattedMessage('purchase.input.shipping.label')}: </label>
-                            <InputGroup>
-                                <input aria-label='Dollar amount (with dot and two decimal places)' type='text'
-                                              className='form-control'
-                                              name='shipping' value={saleValue.shipping}
-                                              onBlur={(event)=>onBlurInput(event)} onFocus={(event)=>onFocusInput(event)}
-                                              onKeyPress={(event) => decimalValidate(event)}
-                                              onChange={(e) => onChangeInput(e)}
-                                />
-                                <InputGroup.Text>{frontSetting.value && frontSetting.value.currency_symbol}</InputGroup.Text>
-                            </InputGroup>
-                        </div> */}
-                        <div className='col-md-4'>
-                    <ReactSelect multiLanguageOption={statusTypeValues} onChange={onStatusChange} name='status_id'
-                         title={getFormattedMessage('purchase.select.status.label')}
-                         value={saleValue.status_id} errors={errors['status_id']}
-                         placeholder={getFormattedMessage('purchase.select.status.label')}/>
-                        </div>
-                         {/* .......... */}
-                         {customDynamicFields.map((element, index) => (
-                        <React.Fragment key={index}>
-                        <div className='col-md-5'>
-                             <ReactSelect multiLanguageOption={shippingTypeValues} onChange={e => onShippingTypeChange(index, e)} name='shipping_type_id'
-                          title={'Shipping Type'}
-                          value={element.shipping_type_id || ""} 
-                         defaultValue={shippingTypeDefaultValues}
-                         placeholder={'shipping type '}/>
-                        </div>
-                        {/* ... */}
-                        <div className='col-md-5 mb-5'>
-                            <div className='align_o'>
-                                <label
-                                    className='form-label'>
-                                Shipping value
-                                </label>
-                                <InputGroup>
-                                    <input aria-label='Dollar amount (with dot and two decimal places)'
-                                                className='form-control'  value={element.shipping_value || ""}
-                                                type='text' name='shipping_value'
-                                                // onBlur={(event) => onBlurInput(index, event)}
-                                                onFocus={(event) => onFocusInput(event)}
-                                                onKeyPress={(event) => decimalValidate(event)}
-                                                onChange={e => handleChange(index, e)}
-                                    />
-                                    <InputGroup.Text>{frontSetting.value && frontSetting.value.currency_symbol}</InputGroup.Text>
-                                </InputGroup>
-                                <span className='text-danger d-block fw-400 fs-small mt-2'>{errors['shipping'] ? errors['shipping'] : null}</span>
-                                {
-                                index ? 
-                    <button type="button"  className="btn btn-danger remove" onClick={() => removeFormFields(index)}><FontAwesomeIcon icon={faTrash}/></button> 
-                                : null
-                            }
-                            </div>
-                        </div>
-                        </React.Fragment>
-                        )) }
-                          <div  className='col-md-2 '>
-                             <button className='btn btn-primary me-2 float-lg-right float_plus' onClick={addDynamicField} type='submit' > + </button> 
-                           </div>
-                        {/* ................... */}
-                        { !singleSale && <div className='col-md-4'>
-                    <ReactSelect multiLanguageOption={paymentStatusFilterOptions} onChange={onPaymentStatusChange} name='payment_status'
-                         title={getFormattedMessage('dashboard.recentSales.paymentStatus.label')}
-                         value={saleValue.payment_status} errors={errors['payment_status']}
-                         defaultValue={paymentStatusDefaultValue[0]}
-                         placeholder={placeholderText('sale.select.payment-status.placeholder')}/>
-                        </div>}
-                        { !singleSale && saleValue.payment_status.value !== 2 && <div className='col-md-4'>
-                            <ReactSelect title={getFormattedMessage('select.payment-type.label')}
-                            name='payment_type'
-                            value={saleValue.payment_type} errors={errors['payment_type']}
-                            placeholder={placeholderText('sale.select.payment-type.placeholder')}
-                            defaultValue={paymentTypeDefaultValue[0]}
-                            multiLanguageOption={paymentMethodOption}
-                            onChange={onPaymentTypeChange}
-                        />
-                        </div>}
-                        { isQuotation && <div className='col-md-4'>
-                        <ReactSelect multiLanguageOption={paymentStatusFilterOptions} onChange={onPaymentStatusChange} name='payment_status'
-                         title={getFormattedMessage('dashboard.recentSales.paymentStatus.label')}
-                         value={saleValue.payment_status} errors={errors['payment_status']}
-                        //  defaultValue={paymentStatusDefaultValue[0]}
-                         placeholder={placeholderText('sale.select.payment-status.placeholder')}/>
-                        </div>}
-                        {isQuotation && isPaymentType &&  <div className='col-md-4'>
-                             <ReactSelect title={getFormattedMessage('select.payment-type.label')}
-                            name='payment_type'
-                            value={saleValue.payment_type} errors={errors['payment_type']}
-                            placeholder={placeholderText('sale.select.payment-type.placeholder')}
-                            defaultValue={paymentTypeDefaultValue[0]}
-                            multiLanguageOption={paymentMethodOption}
-                            onChange={onPaymentTypeChange}
-                        />
-                        </div>}
-                        <div className='mb-3'>
-                            <label className='form-label'>
-                                {getFormattedMessage('globally.input.notes.label')}: </label>
-                            <textarea name='notes' className='form-control' value={saleValue.notes}
-                                          placeholder={placeholderText('globally.input.notes.placeholder.label')}
-                                          onChange={(e) => onNotesChangeInput(e)}
-                            />
-                        </div>
-                        <ModelFooter onEditRecord={singleSale} onSubmit={onSubmit} link='/app/sales'/>
+                        <span className="text-danger d-block fw-400 fs-small mt-2">
+                            {errors["date"] ? errors["date"] : null}
+                        </span>
                     </div>
+                    <div className="col-md-4">
+                        <ReactSelect
+                            name="warehouse_id"
+                            data={warehouses}
+                            onChange={onWarehouseChange}
+                            title={getFormattedMessage("warehouse.title")}
+                            errors={errors["warehouse_id"]}
+                            defaultValue={saleValue.warehouse_id}
+                            value={saleValue.warehouse_id}
+                            addSearchItems={singleSale}
+                            isWarehouseDisable={true}
+                            placeholder={placeholderText(
+                                "purchase.select.warehouse.placeholder.label"
+                            )}
+                        />
+                    </div>
+                    <div className="col-md-4">
+                        <ReactSelect
+                            name="customer_id"
+                            data={customers}
+                            onChange={onCustomerChange}
+                            title={getFormattedMessage("customer.title")}
+                            errors={errors["customer_id"]}
+                            defaultValue={saleValue.customer_id}
+                            value={saleValue.customer_id}
+                            placeholder={placeholderText(
+                                "sale.select.customer.placeholder.label"
+                            )}
+                        />
+                    </div>
+                    <div className="mb-5">
+                        <label className="form-label">
+                            {getFormattedMessage("product.title")}:
+                        </label>
+                        <ProductSearch
+                            values={saleValue}
+                            products={products}
+                            handleValidation={handleValidation}
+                            updateProducts={updateProducts}
+                            setUpdateProducts={setUpdateProducts}
+                            customProducts={customProducts}
+                        />
+                    </div>
+                    <div>
+                        <label className="form-label">
+                            {getFormattedMessage(
+                                "purchase.order-item.table.label"
+                            )}
+                            :
+                        </label>
+                        <span className="required" />
+                        <ProductRowTable
+                            updateProducts={updateProducts}
+                            setUpdateProducts={setUpdateProducts}
+                            updatedQty={updatedQty}
+                            frontSetting={frontSetting}
+                            updateCost={updateCost}
+                            updateDiscount={updateDiscount}
+                            updateTax={updateTax}
+                            updateSubTotal={updateSubTotal}
+                            updateSaleUnit={updateSaleUnit}
+                        />
+                    </div>
+                    <div className="col-12">
+                        <ProductMainCalculation
+                            inputValues={saleValue}
+                            allConfigData={allConfigData}
+                            shippingInputValues={customDynamicFields}
+                            taxInputValues={customTaxDynamicFields}
+                            updateProducts={updateProducts}
+                            frontSetting={frontSetting}
+                        />
+                    </div>
+                    {/* <div className="col-md-4 mb-3">
+                        <label className="form-label">
+                            {getFormattedMessage(
+                                "purchase.input.order-tax.label"
+                            )}
+                            :{" "}
+                        </label>
+                        <InputGroup>
+                            <input
+                                aria-label="Dollar amount (with dot and two decimal places)"
+                                className="form-control"
+                                type="text"
+                                name="tax_rate"
+                                value={saleValue.tax_rate}
+                                onBlur={(event) => onBlurInput(event)}
+                                onFocus={(event) => onFocusInput(event)}
+                                onKeyPress={(event) => decimalValidate(event)}
+                                onChange={(e) => {
+                                    onChangeInput(e);
+                                }}
+                            />
+                            <InputGroup.Text>%</InputGroup.Text>
+                        </InputGroup>
+                    </div> */}
+                    <div className="col-md-4 mb-3">
+                        <Form.Label className="form-label">
+                            {getFormattedMessage(
+                                "purchase.order-item.table.discount.column.label"
+                            )}
+                            :{" "}
+                        </Form.Label>
+                        <InputGroup>
+                            <input
+                                aria-label="Dollar amount (with dot and two decimal places)"
+                                className="form-control"
+                                type="text"
+                                name="discount"
+                                value={saleValue.discount}
+                                onBlur={(event) => onBlurInput(event)}
+                                onFocus={(event) => onFocusInput(event)}
+                                onKeyPress={(event) => decimalValidate(event)}
+                                onChange={(e) => onChangeInput(e)}
+                            />
+                            <InputGroup.Text>
+                                {frontSetting.value &&
+                                    frontSetting.value.currency_symbol}
+                            </InputGroup.Text>
+                        </InputGroup>
+                    </div>
+
+                    <div className="col-md-4">
+                        <ReactSelect
+                            multiLanguageOption={statusTypeValues}
+                            onChange={onStatusChange}
+                            name="status_id"
+                            title={getFormattedMessage(
+                                "purchase.select.status.label"
+                            )}
+                            value={saleValue.status_id}
+                            errors={errors["status_id"]}
+                            placeholder={getFormattedMessage(
+                                "purchase.select.status.label"
+                            )}
+                        />
+                    </div>
+                    {/* .......... */}
+                    <TaxChargerTypes
+                        frontSetting={frontSetting}
+                        allShipingTypes={allShipingTypes}
+                        setItemVal={handleItemValue}
+                        itemValue={saleValue}
+                        customPropsTaxDynamicFields={
+                            handleCustomTaxDynamicFields
+                        }
+                        customPropsDynamicFields={handleCustomDynamicFields}
+                        singleDataEntity={singleSale}
+                    />
+
+                    {/* ................... */}
+                    {!singleSale && (
+                        <div className="col-md-4">
+                            <ReactSelect
+                                multiLanguageOption={paymentStatusFilterOptions}
+                                onChange={onPaymentStatusChange}
+                                name="payment_status"
+                                title={getFormattedMessage(
+                                    "dashboard.recentSales.paymentStatus.label"
+                                )}
+                                value={saleValue.payment_status}
+                                errors={errors["payment_status"]}
+                                defaultValue={paymentStatusDefaultValue[0]}
+                                placeholder={placeholderText(
+                                    "sale.select.payment-status.placeholder"
+                                )}
+                            />
+                        </div>
+                    )}
+                    {!singleSale && saleValue.payment_status.value !== 2 && (
+                        <div className="col-md-4">
+                            <ReactSelect
+                                title={getFormattedMessage(
+                                    "select.payment-type.label"
+                                )}
+                                name="payment_type"
+                                value={saleValue.payment_type}
+                                errors={errors["payment_type"]}
+                                placeholder={placeholderText(
+                                    "sale.select.payment-type.placeholder"
+                                )}
+                                defaultValue={paymentTypeDefaultValue[0]}
+                                multiLanguageOption={paymentMethodOption}
+                                onChange={onPaymentTypeChange}
+                            />
+                        </div>
+                    )}
+                    {isQuotation && (
+                        <div className="col-md-4">
+                            <ReactSelect
+                                multiLanguageOption={paymentStatusFilterOptions}
+                                onChange={onPaymentStatusChange}
+                                name="payment_status"
+                                title={getFormattedMessage(
+                                    "dashboard.recentSales.paymentStatus.label"
+                                )}
+                                value={saleValue.payment_status}
+                                errors={errors["payment_status"]}
+                                //  defaultValue={paymentStatusDefaultValue[0]}
+                                placeholder={placeholderText(
+                                    "sale.select.payment-status.placeholder"
+                                )}
+                            />
+                        </div>
+                    )}
+                    {isQuotation && isPaymentType && (
+                        <div className="col-md-4">
+                            <ReactSelect
+                                title={getFormattedMessage(
+                                    "select.payment-type.label"
+                                )}
+                                name="payment_type"
+                                value={saleValue.payment_type}
+                                errors={errors["payment_type"]}
+                                placeholder={placeholderText(
+                                    "sale.select.payment-type.placeholder"
+                                )}
+                                defaultValue={paymentTypeDefaultValue[0]}
+                                multiLanguageOption={paymentMethodOption}
+                                onChange={onPaymentTypeChange}
+                            />
+                        </div>
+                    )}
+                    <div className="mb-3">
+                        <label className="form-label">
+                            {getFormattedMessage("globally.input.notes.label")}:{" "}
+                        </label>
+                        <textarea
+                            name="notes"
+                            className="form-control"
+                            value={saleValue.notes}
+                            placeholder={placeholderText(
+                                "globally.input.notes.placeholder.label"
+                            )}
+                            onChange={(e) => onNotesChangeInput(e)}
+                        />
+                    </div>
+                    <ModelFooter
+                        onEditRecord={singleSale}
+                        onSubmit={onSubmit}
+                        link="/app/sales"
+                    />
+                </div>
                 {/*</Form>*/}
             </div>
         </div>
-    )
-}
+    );
+};
 
 const mapStateToProps = (state) => {
-    const {purchaseProducts, products, frontSetting, allConfigData} = state;
-    return {customProducts: prepareSaleProductArray(products), purchaseProducts, products, frontSetting, allConfigData}
-}
+    const { purchaseProducts, products, frontSetting, allConfigData } = state;
+    return {
+        customProducts: prepareSaleProductArray(products),
+        purchaseProducts,
+        products,
+        frontSetting,
+        allConfigData,
+    };
+};
 
-export default connect(mapStateToProps, {editSale, fetchProductsByWarehouse, fetchFrontSetting})(SalesForm)
-
+export default connect(mapStateToProps, {
+    editSale,
+    fetchProductsByWarehouse,
+    fetchFrontSetting,
+})(SalesForm);

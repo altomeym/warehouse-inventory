@@ -50,6 +50,7 @@ const EditTransfer = (props) => {
         discount: tansfers.attributes.discount,
         shipping: tansfers.attributes.shipping,
         shipping_data:tansfers?.attributes?.shipping_data ? JSON.parse(tansfers?.attributes?.shipping_data) : [],
+        tax_data:tansfers?.attributes?.tax_data ? JSON.parse(tansfers?.attributes?.tax_data) : [],
         grand_total: tansfers.attributes.grand_total,
         amount: tansfers.attributes.amount,
         transfer_items: tansfers.attributes.transfer_items.map((item) => ({

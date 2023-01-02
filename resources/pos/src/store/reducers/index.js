@@ -96,6 +96,7 @@ import tranStatusTypeReducer from './tranStatusTypeReducer';
 import allCountriesReducer from './allCountriesReducer';
 import allStatesReducer from './allStatesReducer';
 import allCitiesReducer from './allCitiesReducer';
+import TaxTypeReducer from './TaxTypeReducer';
 
 export default combineReducers({
     loginUser: loginReducers,
@@ -195,4 +196,5 @@ export default combineReducers({
     allCountryList: allCountriesReducer, 
     allStatesList: allStatesReducer, 
     allCitiesList: allCitiesReducer, 
+    allTaxTypes: TaxTypeReducer, 
 });

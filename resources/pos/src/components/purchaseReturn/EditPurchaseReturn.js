@@ -64,6 +64,7 @@ const EditPurchaseReturn = (props) => {
         orderTax: purchaseReturn.attributes.tax_rate,
         shipping: purchaseReturn.attributes.shipping,
         shipping_data: JSON.parse(purchaseReturn.attributes.shipping_data),
+        tax_data: JSON.parse(purchaseReturn.attributes.tax_data),
         notes: purchaseReturn.attributes.notes,
         purchase_return_items: editPurchaseReturnArray(purchaseReturn.attributes.purchase_return_items, purchaseReturn.attributes.warehouse_id),
         newItem: '',
