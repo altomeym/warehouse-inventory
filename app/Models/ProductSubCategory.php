@@ -35,7 +35,7 @@ class ProductSubCategory extends BaseModel
     const JSON_API_TYPE = 'product_sub_category';
 
     protected $fillable = [
-        'name','product_category_id'
+        'name','product_category_id','parent_id'
     ];
 
     public static $rules = [
@@ -61,6 +61,7 @@ class ProductSubCategory extends BaseModel
         $fields = [
             'name'   => $this->name,
             'product_category_id'   => $this->product_category_id,
+            'parent_id'   => $this->parent_id,
         ];
 
         return $fields;
