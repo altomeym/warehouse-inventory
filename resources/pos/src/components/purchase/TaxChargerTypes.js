@@ -133,7 +133,7 @@ const TaxChargerTypes = (props) => {
 
     const taxTypeValues = [];
     const TaxTypeDefaultValue = allShipingTypes?.length >0 ? allShipingTypes.map((option) => {
-        option &&  option.attributes.slug == 'tax' ? 
+        option &&  option.attributes.slug == 'Tax' ? 
         taxTypeValues.push({
                 id: option.id,
                 name: option.attributes.name
