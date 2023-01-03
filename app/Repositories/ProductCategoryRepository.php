@@ -63,7 +63,7 @@ class ProductCategoryRepository extends BaseRepository
                 $input['parent_id'] = 0;
             }elseif($input['category_type'] == 'child'){
 
-                $input['parent_id'] = 1;
+                $input['parent_id'] = $input['product_category_id'];
             }
                 
             $productCategory = $this->create($input);
@@ -96,7 +96,7 @@ class ProductCategoryRepository extends BaseRepository
                 $input['parent_id'] = 0;
             }elseif($input['category_type'] == 'child'){
 
-                $input['parent_id'] = 1;
+               $input['parent_id'] = $input['product_category_id'];
             }
             $productCategory = $productCategory->update($input, $id);
             if (isset($input['image']) && $input['image']) {
