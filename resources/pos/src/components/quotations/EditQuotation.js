@@ -24,7 +24,7 @@ const EditQuotation = (props) => {
         fetchAllWarehouses();
         fetchQuotation(id);
     }, []);
-    
+
     useEffect(() => {
         fetchStatusTypes();
         fetchShippingTypes({}, false,'');
@@ -48,8 +48,8 @@ const EditQuotation = (props) => {
         tax_amount: quotations.attributes.tax_amount,
         discount: quotations.attributes.discount,
         shipping: quotations.attributes.shipping,
-        shipping_data: JSON.parse(purchases.attributes.shipping_data),
-        tax_data: JSON.parse(purchases.attributes.tax_data),
+        shipping_data: JSON.parse(quotations.attributes.shipping_data),
+        tax_data: JSON.parse(quotations.attributes.tax_data),
         grand_total: quotations.attributes.grand_total,
         amount: quotations.attributes.amount,
         quotation_items: quotations.attributes.quotation_items.map((item) => ({

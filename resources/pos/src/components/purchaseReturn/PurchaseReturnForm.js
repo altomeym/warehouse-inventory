@@ -26,7 +26,7 @@ import ReactSelect from '../../shared/select/reactSelect';
 
 const PurchaseReturnForm = (props) => {
     const { addPurchaseReturnData, id, editPurchaseReturn, customProducts, singlePurchase, warehouses, suppliers,
-        fetchProductsByWarehouse, products, frontSetting, allConfigData, fetchShippingTypes, allShipingTypes, allStatusTypes
+        fetchProductsByWarehouse, products, frontSetting, allConfigData,  allShipingTypes, allStatusTypes
     } = props;
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -91,7 +91,7 @@ const PurchaseReturnForm = (props) => {
     },[purchaseValue.warehouse_id])
 
     useEffect(()=>{
-        fetchShippingTypes()
+        // fetchShippingTypes()
       },[])
 
 
@@ -421,8 +421,8 @@ const PurchaseReturnForm = (props) => {
 };
 
 const mapStateToProps = (state) => {
-    const {purchaseProducts, products, frontSetting, allConfigData, allShipingTypes} = state;
-    return {customProducts: preparePurchaseReturnArray(products), purchaseProducts, products, frontSetting, allConfigData, allShipingTypes, fetchAllProducts}
+    const {purchaseProducts, products, frontSetting, allConfigData} = state;
+    return {customProducts: preparePurchaseReturnArray(products), purchaseProducts, products, frontSetting, allConfigData, fetchAllProducts}
 };
 
-export default connect(mapStateToProps, {editPurchaseReturn, fetchProductsByWarehouse, searchPurchaseProduct, fetchAllProducts, fetchShippingTypes})(PurchaseReturnForm);
+export default connect(mapStateToProps, {editPurchaseReturn, fetchProductsByWarehouse, searchPurchaseProduct, fetchAllProducts})(PurchaseReturnForm);
