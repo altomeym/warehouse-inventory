@@ -8,7 +8,7 @@ import ReactSelect from '../select/reactSelect';
 import {getFormattedMessage, getFormattedOptions} from '../sharedMethod';
 import {faFilter} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {baseUnitOptions, paymentStatusOptions, paymentTypeOptions, statusOptions, transferStatusOptions} from "../../constants";
+import {baseUnitOptions, paymentStatusOptions, paymentTypeOptions, statusOptions, transferStatusOptions, adjustmentMethodTypesOptions} from "../../constants";
 
 const FilterDropdown = (props) => {
     const {
@@ -30,6 +30,20 @@ const FilterDropdown = (props) => {
         onWarehouseChange,
         warehouseOptions,
         tableWarehouseValue,
+
+        isAdjustmentType,
+        adjustmentOptions,
+        onAdjustmentChange,
+        tableAdjustmentValue,
+
+        productCatOptions,
+        isProductCategoriesFilter,
+        onProductCategoryOptionChange,
+        tableProductCategorytValue,
+        isProductBrandFilter,
+        onProductOptionChange,
+        tableProducttValue,
+        
         isTransferStatus,
         onTransferStatusChange,
         transferStatus
@@ -44,10 +58,8 @@ const FilterDropdown = (props) => {
     const paymentFilterOptions = getFormattedOptions(paymentStatusOptions)
     const paymentTypeFilterOptions = getFormattedOptions(paymentTypeOptions)
 
-
-
     const transferStatusFilterOptions = getFormattedOptions(transferStatusOptions)
-
+    const adjustmentMethodTypesFilterOptions  = getFormattedOptions(adjustmentMethodTypesOptions)
     const unitDefaultValue = baseUnitFilterOptions.map((option) => {
         return {
             value: option.id,
@@ -90,6 +102,32 @@ const FilterDropdown = (props) => {
             label: option.attributes.name
         }
     })
+
+    const productBrandValues = productCatOptions.map((option) => {
+        return {
+            value: option.id,
+            label: option.attributes?.brand_name
+        }
+    })
+    
+    const productcategoriesValues = productCatOptions.map((option) => {
+        return {
+            value: option.id,
+            label: option.attributes?.product_category_name
+        }
+    })
+
+    console.log('productCatOptions ', productCatOptions)
+    // console.log('productcategoriesValues ', productcategoriesValues)
+    
+    const adjustmentDefaultValue = adjustmentMethodTypesFilterOptions.map((option) => {
+        return {
+            value: option.id,
+            label: option.name
+        }
+    })
+
+    
 
     const onReset = () => {
         dispatch({type: 'RESET_OPTION', payload: true})
@@ -191,6 +229,42 @@ const FilterDropdown = (props) => {
                         />
                     </Dropdown.Header>
                     : null}
+                    {/* ....New changes */}
+                    {isAdjustmentType ?
+                    <Dropdown.Header onClick={(e) => {
+                        e.stopPropagation();
+                    }} eventkey='4' className='mb-5 p-0'>
+                        <ReactSelect multiLanguageOption={adjustmentMethodTypesFilterOptions} onChange={onAdjustmentChange} name='payment_type'
+                                     title={getFormattedMessage('globally.type.label')}
+                                     value={isReset ? adjustmentDefaultValue[0] : tableAdjustmentValue} isRequired
+                                     defaultValue={adjustmentDefaultValue[0]}
+                                     // placeholder={getFormattedMessage('select.payment-type.label')}
+                        />
+                    </Dropdown.Header>
+                    : null}
+                     {isProductCategoriesFilter ?
+                    <Dropdown.Header onClick={(e) => {
+                        e.stopPropagation();
+                    }} eventkey='4' className='mb-5 p-0'>
+                        <ReactSelect multiLanguageOption={productcategoriesValues} onChange={onProductCategoryOptionChange} name='payment_type'
+                                     title={getFormattedMessage('product-category.title')}
+                                     value={isReset ? tableProductCategorytValue[0] : tableProductCategorytValue} isRequired
+                                    //  defaultValue={adjustmentDefaultValue[0]}
+                        />
+                    </Dropdown.Header>
+                    : null}
+                     {isProductBrandFilter ?
+                    <Dropdown.Header onClick={(e) => {
+                        e.stopPropagation();
+                    }} eventkey='4' className='mb-5 p-0'>
+                        <ReactSelect multiLanguageOption={productBrandValues} onChange={onProductOptionChange} name='payment_type'
+                                     title={getFormattedMessage('product.input.brand.label')}
+                                     value={isReset ? tableProducttValue[0] : tableProducttValue} isRequired
+                                    //  defaultValue={adjustmentDefaultValue[0]}
+                        />
+                    </Dropdown.Header>
+                    : null}
+                    {/* ....End new changes */}
                      {isTransferStatus ?
                     <Dropdown.Header onClick={(e) => {
                         e.stopPropagation();

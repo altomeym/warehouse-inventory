@@ -732,3 +732,11 @@ export const taxTypesOptions = [
     { id: 1, name: 'tax.type.shipping.label' },
     { id: 2, name: 'tax.type.tax.label' }
 ]; 
+export const categoryTypesOptions = [
+    { id: 'parent', name: 'category.type.parent.label' },
+    { id: 'child', name: 'category.type.child.label' }
+]; 
+export const adjustmentMethodTypesOptions = [
+    { id: 1, name: 'adjustment.method.add.label' },
+    { id: 2, name: 'adjustment.method.sub.label' }
+];

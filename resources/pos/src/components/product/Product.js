@@ -196,7 +196,8 @@ const Product = (props) => {
                                        onClickDeleteModel={onClickDeleteModel} isDeleteMode={is_deleteAdable} />
         }
     ];
-
+const productnewArray = products && products.length> 0 ? products : [];
+console.log('productnewArray ', productnewArray);
     return (
         <MasterLayout>
             <TopProgressBar />
@@ -206,7 +207,9 @@ const Product = (props) => {
                             to='#/app/products/create' isShowFilterField isUnitFilter
                             title={getFormattedMessage('product.input.product-unit.label')}
                             buttonImport={true}  goToImportProduct={handleClose}
-                            isExport onExcelClick={onExcelClick}/>
+                            isExport onExcelClick={onExcelClick}
+                            isProductBrandFilter={true} isProductCategoriesFilter={true}  productCatOptions = {productnewArray}
+                            />
             <DeleteProduct onClickDeleteModel={onClickDeleteModel} deleteModel={deleteModel} onDelete={isDelete}/>
             {isOpen && lightBoxImage.length !== 0 && <ProductImageLightBox setIsOpen={setIsOpen} isOpen={isOpen}
                                                                            lightBoxImage={lightBoxImage}/>}
