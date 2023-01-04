@@ -58,6 +58,8 @@ const Adjustments = (props) => {
         date: getFormattedDate(item.attributes.created_at, allConfigData && allConfigData),
         time: moment(item.attributes.created_at).format('LT'),
         warehouse_name: item.attributes.warehouse_name,
+        method_type: item.attributes?.adjustment_items[0]?.method_type,
+        quantity: item.attributes?.adjustment_items[0]?.quantity,
         id: item.id,
         currency: currencySymbol
     }));
@@ -91,6 +93,26 @@ const Adjustments = (props) => {
             cell: row => {
                 return <span>
                             <span>{row.total_products}</span>
+                        </span>
+            }
+        },
+        {
+            name: getFormattedMessage('dashboard.stockAlert.quantity.label'),
+            sortField: 'quantities',
+            sortable: false,
+            cell: row => {
+                return <span>
+                            <span>{row.quantity}</span>
+                        </span>
+            }
+        },
+        {
+            name: getFormattedMessage('globally.type.label'),
+            sortField: 'type',
+            sortable: false,
+            cell: row => {
+                return <span>
+                            <span>{row.method_type === 1 ? 'Addition' : "Subtraction"}</span>
                         </span>
             }
         },

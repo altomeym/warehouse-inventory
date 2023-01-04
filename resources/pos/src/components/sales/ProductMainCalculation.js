@@ -7,7 +7,9 @@ import {currencySymbolHendling, getFormattedMessage} from '../../shared/sharedMe
 
 const ProductMainCalculation = (props) => {
     const {inputValues, updateProducts, frontSetting, allConfigData, shippingInputValues, taxInputValues} = props;
- let totalAmountAfterDiscount = calculateSubTotal(updateProducts) - inputValues.discount
+    let calDiscount =  (calculateSubTotal(updateProducts)  * inputValues.discount / 100).toFixed(2)
+    // let totalAmountAfterDiscount = calculateSubTotal(updateProducts) - inputValues.discount
+    let totalAmountAfterDiscount = calculateSubTotal(updateProducts) - calDiscount
    
     let taxTr =   
           taxInputValues && taxInputValues.length > 0 ? taxInputValues.map((element, index) => {
@@ -31,7 +33,11 @@ const ProductMainCalculation = (props) => {
                             {taxTr}
                             <tr>
                                 <td className='py-3'>{getFormattedMessage('purchase.order-item.table.discount.column.label')}</td>
-                                <td className='py-3'>{currencySymbolHendling(allConfigData, frontSetting.value && frontSetting.value.currency_symbol, inputValues.discount ? inputValues.discount : 0)}</td>
+                                <td className='py-3'>
+                                    {/* {currencySymbolHendling(allConfigData, frontSetting.value && frontSetting.value.currency_symbol, inputValues.discount ? inputValues.discount : 0)} */}
+                                  {currencySymbolHendling(allConfigData, frontSetting.value && frontSetting.value.currency_symbol, calDiscount)} ({parseFloat(inputValues?.discount ? inputValues?.discount : 0).toFixed(2)})
+                                     %
+                                </td>
                             </tr>
                             {shippingInputValues && shippingInputValues.length > 0 ? shippingInputValues.map((element, index) => (
                             <tr key={index} >
