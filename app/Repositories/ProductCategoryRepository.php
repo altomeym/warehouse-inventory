@@ -19,6 +19,7 @@ class ProductCategoryRepository extends BaseRepository
      */
     protected $fieldSearchable = [
         'name',
+        'parent_id',
         'created_at',
     ];
 
@@ -27,6 +28,7 @@ class ProductCategoryRepository extends BaseRepository
      */
     protected $allowedFields = [
         'name',
+        'parent_id',
     ];
 
     /**
@@ -56,6 +58,14 @@ class ProductCategoryRepository extends BaseRepository
     {
         try {
             DB::beginTransaction();
+            if($input['category_type'] =='parent')
+            {
+                $input['parent_id'] = 0;
+            }elseif($input['category_type'] == 'child'){
+
+                $input['parent_id'] = $input['product_category_id'];
+            }
+                
             $productCategory = $this->create($input);
             if (isset($input['image']) && $input['image']) {
                 $media = $productCategory->addMedia($input['image'])->toMediaCollection(productCategory::PATH,
@@ -81,6 +91,13 @@ class ProductCategoryRepository extends BaseRepository
         try {
             DB::beginTransaction();
             $productCategory = $this->withCount('products');
+            if($input['category_type'] =='parent')
+            {
+                $input['parent_id'] = 0;
+            }elseif($input['category_type'] == 'child'){
+
+               $input['parent_id'] = $input['product_category_id'];
+            }
             $productCategory = $productCategory->update($input, $id);
             if (isset($input['image']) && $input['image']) {
                 $productCategory->clearMediaCollection(productCategory::PATH);
