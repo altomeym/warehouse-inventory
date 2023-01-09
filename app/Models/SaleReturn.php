@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Illuminate\Support\Facades\Storage;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 
 /**
@@ -66,9 +68,13 @@ class SaleReturn extends BaseModel implements HasMedia, JsonResourceful
 
     protected $table = 'sales_return';
 
+     public const PATH = 'sales_return';
+
     public const JSON_API_TYPE = 'sales_return';
 
     public const SALE_RETURN_PDF = 'sale_return_pdf';
+
+    protected $appends = ['image_url'];
 
     /**
      * @var string[]
@@ -150,6 +156,23 @@ class SaleReturn extends BaseModel implements HasMedia, JsonResourceful
         ];
     }
 
+    public function getImageUrlAttribute()
+    {
+        /** @var Media $media */
+        $medias = $this->getMedia(SaleReturn::PATH);
+        $images = [];
+        if (!empty($medias)) {
+            foreach ($medias as $key => $media) {
+                $images['imageUrls'][$key] = $media->getFullUrl();
+                $images['id'][$key] = $media->id;
+            }
+
+            return $images;
+        }
+
+        return '';
+    }
+
     /**
      *
      *
@@ -179,6 +202,7 @@ class SaleReturn extends BaseModel implements HasMedia, JsonResourceful
             'reference_code'    => $this->reference_code,
             'sale_return_items' => $this->saleReturnItems,
             'created_at'        => $this->created_at,
+            'images'          => $this->image_url,
         ];
 
         return $fields;

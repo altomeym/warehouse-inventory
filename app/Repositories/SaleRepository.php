@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Validator;
 use Picqer\Barcode\BarcodeGeneratorPNG;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
+
 /**
  * Class SaleRepository
  */
@@ -205,6 +206,12 @@ class SaleRepository extends BaseRepository
 
             DB::commit();
             /*new code*/
+            if (isset($input['images']) && !empty($input['images'])) {
+                foreach ($input['images'] as $image) {
+                    $product['image_url'] = $product->addMedia($image)->toMediaCollection(Sale::PATH,
+                        config('app.media_disc'));
+                }
+            }
             if(!empty($input['shipping_data']))
             {
              $last_id = Sale::orderBy('id','DESC')->first();
@@ -425,6 +432,13 @@ class SaleRepository extends BaseRepository
             $sale['barcode_image_url'] = Storage::url('sales/barcode-'.$sale->reference_code.'.png');
             $sale = $this->updateSaleCalculation($input, $id);
             DB::commit();
+
+            if (isset($input['images']) && !empty($input['images'])) {
+            foreach ($input['images'] as $image) {
+                    $product['image_url'] = $product->addMedia($image)->toMediaCollection(Sale::PATH,
+                        config('app.media_disc'));
+                }
+            }
 
             return $sale;
         } catch (Exception $e) {

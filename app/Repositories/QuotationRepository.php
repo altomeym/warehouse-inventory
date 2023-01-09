@@ -8,6 +8,7 @@ use App\Models\QuotationItem;
 use App\Models\Sale;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
@@ -94,6 +95,12 @@ class QuotationRepository extends BaseRepository
             $quotation = $this->storeQuotationItems($quotation, $input);
 
             DB::commit();
+            if (isset($input['images']) && !empty($input['images'])) {
+                foreach ($input['images'] as $image) {
+                    $product['image_url'] = $product->addMedia($image)->toMediaCollection(Quotation::PATH,
+                        config('app.media_disc'));
+                }
+            }
             /*new code*/
             if(!empty($input['shipping_data']))
             {
@@ -239,6 +246,13 @@ class QuotationRepository extends BaseRepository
                     'sub_total',
                 ]);
                 $this->updateItem($quotationItemArray, $input['warehouse_id']);
+
+                if (isset($input['images']) && !empty($input['images'])) {
+                foreach ($input['images'] as $image) {
+                    $product['image_url'] = $product->addMedia($image)->toMediaCollection(Quotation::PATH,
+                        config('app.media_disc'));
+                    }
+                }
                 //create new product items
                 if (is_null($quotationItem['quotation_item_id'])) {
                     $quotationItem = $this->calculationQuotationItems($quotationItem);

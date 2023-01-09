@@ -9,6 +9,7 @@ use Exception;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 /**
@@ -93,7 +94,12 @@ class PurchaseRepository extends BaseRepository
             $purchase = Purchase::create($purchaseInputArray);
 
             $purchase = $this->storePurchaseItems($purchase, $input);
-
+            if (isset($input['images']) && !empty($input['images'])) {
+                foreach ($input['images'] as $image) {
+                    $product['image_url'] = $product->addMedia($image)->toMediaCollection(Purchase::PATH,
+                        config('app.media_disc'));
+                }
+            }
 
             // manage stock 
             if($input['status'] == 2)
@@ -246,6 +252,12 @@ class PurchaseRepository extends BaseRepository
                 ]);
                 $this->updateItem($purchaseItemArr, $input['warehouse_id']);
                 //create new product items
+                if (isset($input['images']) && !empty($input['images'])) {
+                foreach ($input['images'] as $image) {
+                        $product['image_url'] = $product->addMedia($image)->toMediaCollection(Purchase::PATH,
+                            config('app.media_disc'));
+                    }
+                }
                 if (is_null($purchaseItem['purchase_item_id'])) {
                     $purchaseItem = $this->calculationPurchaseItems($purchaseItem);
                     $purchaseItemArr = Arr::only($purchaseItem, [

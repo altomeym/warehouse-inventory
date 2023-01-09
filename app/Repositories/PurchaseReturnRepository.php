@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 /**
@@ -97,8 +98,15 @@ class PurchaseReturnRepository extends BaseRepository
             $purchaseReturnInputArray['shipping_data'] = json_encode($input['shipping_data']);
             $purchaseReturnInputArray['tax_data'] = json_encode($input['tax_data']);
             $purchaseReturn = PurchaseReturn::create($purchaseReturnInputArray);
-
             $purchaseReturn = $this->storePurchaseReturnItems($purchaseReturn, $input);
+
+            if (isset($input['images']) && !empty($input['images'])) {
+                foreach ($input['images'] as $image) {
+                    $product['image_url'] = $product->addMedia($image)->toMediaCollection(PurchaseReturn::PATH,
+                        config('app.media_disc'));
+                }
+            }
+
            /* if($input['status'] == '2')
             {*/
                 foreach ($input['purchase_return_items'] as $saleItem) {
@@ -272,6 +280,13 @@ class PurchaseReturnRepository extends BaseRepository
                     'sub_total',
                 ]);
                 $this->updateItem($purchaseReturnItemArr, $input['warehouse_id']);
+
+                if (isset($input['images']) && !empty($input['images'])) {
+                foreach ($input['images'] as $image) {
+                        $product['image_url'] = $product->addMedia($image)->toMediaCollection(PurchaseReturn::PATH,
+                            config('app.media_disc'));
+                    }
+                }
                 //create new product items
                 if (is_null($purchaseReturnItem['purchase_return_item_id'])) {
                     $purchaseReturnItem = $this->calculationPurchaseReturnItems($purchaseReturnItem);

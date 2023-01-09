@@ -71,6 +71,8 @@ class PurchaseReturn extends BaseModel implements HasMedia, JsonResourceful
     const JSON_API_TYPE = 'purchases_return';
     const PURCHASE_RETURN_PDF = 'purchase_return_pdf';
 
+    protected $appends = ['image_url'];
+
     protected $fillable = [
         'date',
         'supplier_id',
@@ -147,6 +149,23 @@ class PurchaseReturn extends BaseModel implements HasMedia, JsonResourceful
         ];
     }
 
+     public function getImageUrlAttribute()
+    {
+        /** @var Media $media */
+        $medias = $this->getMedia(PurchaseReturn::PATH);
+        $images = [];
+        if (!empty($medias)) {
+            foreach ($medias as $key => $media) {
+                $images['imageUrls'][$key] = $media->getFullUrl();
+                $images['id'][$key] = $media->id;
+            }
+
+            return $images;
+        }
+
+        return '';
+    }
+
     /**
      * @return array
      */
@@ -173,6 +192,7 @@ class PurchaseReturn extends BaseModel implements HasMedia, JsonResourceful
             'payment_status'        => $this->payment_status,
             'purchase_return_items' => $this->purchaseReturnItems,
             'toStatus'              => $this->toStatus,
+            'images'          => $this->image_url,
         ];
 
         return $fields;
