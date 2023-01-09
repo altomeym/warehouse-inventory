@@ -80,11 +80,15 @@ class Sale extends BaseModel implements HasMedia, JsonResourceful
     public const SALE_PDF = 'sale_pdf';
     public const SALE_BARCODE_PATH = 'sale_barcode_path';
 
+    public const PATH = 'sales';
+
     public const CODE128 = 1;
     public const CODE39 = 2;
     public const EAN8 = 3;
     public const UPC = 4;
     public const EAN13 = 5;
+
+    protected $appends = ['image_url'];
 
     protected $fillable = [
         'date',
@@ -166,6 +170,23 @@ class Sale extends BaseModel implements HasMedia, JsonResourceful
     /**
      * @return array
      */
+
+    public function getImageUrlAttribute()
+    {
+        /** @var Media $media */
+        $medias = $this->getMedia(Sale::PATH);
+        $images = [];
+        if (!empty($medias)) {
+            foreach ($medias as $key => $media) {
+                $images['imageUrls'][$key] = $media->getFullUrl();
+                $images['id'][$key] = $media->id;
+            }
+
+            return $images;
+        }
+
+        return '';
+    }
     function prepareLinks(): array
     {
         return [
@@ -215,6 +236,7 @@ class Sale extends BaseModel implements HasMedia, JsonResourceful
             'sale_items'      => $this->saleItems,
             'created_at'      => $this->created_at,
             'barcode_url'     => Storage::url('sales/barcode-'.$this->reference_code.'.png'),
+            'images'          => $this->image_url,
         ];
 
         return $fields;

@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * Class SaleRepository
@@ -197,6 +198,12 @@ class SaleReturnRepository extends BaseRepository
             }
 
             DB::commit();
+            if (isset($input['images']) && !empty($input['images'])) {
+                foreach ($input['images'] as $image) {
+                    $product['image_url'] = $product->addMedia($image)->toMediaCollection(SaleReturn::PATH,
+                        config('app.media_disc'));
+                }
+            }
             /*new code*/
             if(!empty($input['shipping_data']))
             {
@@ -521,6 +528,13 @@ class SaleReturnRepository extends BaseRepository
 
             $saleReturn = $this->updateSaleReturnCalculation($input, $id);
             DB::commit();
+
+            if (isset($input['images']) && !empty($input['images'])) {
+            foreach ($input['images'] as $image) {
+                    $product['image_url'] = $product->addMedia($image)->toMediaCollection(SaleReturn::PATH,
+                        config('app.media_disc'));
+                }
+            }
 
             return $saleReturn;
         } catch (Exception $e) {

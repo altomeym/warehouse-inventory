@@ -7,6 +7,7 @@ use App\Traits\HasJsonResourcefulData;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * App\Models\Quotation
@@ -61,8 +62,10 @@ class Quotation extends BaseModel implements JsonResourceful
     use HasFactory, HasJsonResourcefulData;
 
     public const JSON_API_TYPE = 'quotations';
+    public const PATH = 'quotation';
     const QuotationSale = 3;
 
+    protected $appends = ['image_url'];
     /**
      * @var string[]
      */
@@ -127,6 +130,23 @@ class Quotation extends BaseModel implements JsonResourceful
     /**
      * @return array
      */
+
+     public function getImageUrlAttribute()
+    {
+        /** @var Media $media */
+        $medias = $this->getMedia(Quotation::PATH);
+        $images = [];
+        if (!empty($medias)) {
+            foreach ($medias as $key => $media) {
+                $images['imageUrls'][$key] = $media->getFullUrl();
+                $images['id'][$key] = $media->id;
+            }
+
+            return $images;
+        }
+
+        return '';
+    }
     function prepareLinks(): array
     {
         return [
@@ -160,6 +180,7 @@ class Quotation extends BaseModel implements JsonResourceful
             'reference_code'  => $this->reference_code,
             'quotation_items' => $this->quotationItems,
             'created_at'      => $this->created_at,
+            'images'          => $this->image_url,
         ];
 
         return $fields;
