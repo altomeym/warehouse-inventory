@@ -3468,3 +3468,218 @@ a.link-info.fs-6.text-decoration-none {
   height: 45px;
 }
 
+
+.treeStart {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.treeStart .ct_box {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  background: #f8d7cd;
+  padding: 15px 0px;
+  border-radius: 10px;
+}
+
+.treeStart .ct_box h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.treeStart .ct_box ul {
+  padding: 0;
+  margin: 0;
+  width: 83%;
+  text-align: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+}
+
+.treeStart .ct_box ul li {
+  display: inline-block;
+  background: #1c315e;
+  color: #fff;
+  padding: 10px 25px;
+  font-size: 18px;
+  border-radius: 10px;
+  border: 2px solid #fff;
+  position: relative;
+}
+
+.treeStart .ct_box ul li.orange {
+  background: #ff4f00;
+}
+
+.treeStart .ct_box ul.category li::after {
+  content: '';
+  height: 28px;
+  width: 3px;
+  display: inline-block;
+  position: absolute;
+  bottom: -28px;
+  background: #000;
+  left: 50%;
+}
+
+.treeStart .ct_box ul.subCategory li::before {
+  content: '';
+  height: 25px;
+  width: 3px;
+  display: inline-block;
+  position: absolute;
+  top: -25px;
+  background: #000;
+  left: 50%;
+}
+
+.treeStart .ct_box ul li span::before {
+  content: '';
+  position: absolute;
+  top: -65%;
+  width: 125%;
+  height: 3px;
+  background: #000;
+  left: 50%;
+}
+
+.treeStart .ct_box ul li:last-child span::before {
+  display: none;
+}
+
+#treeView {
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+  align-items: center;
+}
+
+/*Now the CSS*/
+/*
+* {margin: 0; padding: 0;}
+*/
+
+.tree ul {
+	padding-top: 20px; position: relative;
+	transition: all 0.5s;
+	-webkit-transition: all 0.5s;
+	-moz-transition: all 0.5s;
+}
+
+.tree li {
+	float: left; text-align: center;
+	list-style-type: none;
+	position: relative;
+	padding: 20px 5px 0 5px;
+	transition: all 0.5s;
+	-webkit-transition: all 0.5s;
+	-moz-transition: all 0.5s;
+}
+
+/*We will use ::before and ::after to draw the connectors*/
+.tree li::before, .tree li::after {
+	content: '';
+	position: absolute; top: 0; right: 50%;
+	border-top: 1px solid #ccc;
+	width: 50%; height: 20px;
+}
+.tree li::after{
+	right: auto; left: 50%;
+	border-left: 1px solid #ccc;
+}
+
+/*We need to remove left-right connectors from elements without 
+any siblings*/
+.tree li:only-child::after, .tree li:only-child::before {
+	display: none;
+}
+
+/*Remove space from the top of single children*/
+.tree li:only-child{ padding-top: 0;}
+
+/*Remove left connector from first child and 
+right connector from last child*/
+
+.tree li:first-child::before, .tree li:last-child::after{
+	border: 0 none;
+}
+
+/*Adding back the vertical connector to the last nodes*/
+.tree li:last-child::before{
+	border-right: 1px solid #ccc;
+	border-radius: 0 5px 0 0;
+	-webkit-border-radius: 0 5px 0 0;
+	-moz-border-radius: 0 5px 0 0;
+}
+.tree li:first-child::after{
+	border-radius: 5px 0 0 0;
+	-webkit-border-radius: 5px 0 0 0;
+	-moz-border-radius: 5px 0 0 0;
+}
+
+
+/*Time to add downward connectors from parents*/
+.tree ul ul::before{
+	content: '';
+	position: absolute; top: 0; left: 50%;
+	border-left: 1px solid #ccc;
+	width: 0; height: 20px;
+}
+
+.tree li .item {
+  border: 1px solid #ccc;
+  padding: 8px 0px;
+  text-decoration: none;
+  color: #666;
+  font-family: Poppins, Helvetica, "sans-serif";
+  font-weight: 500;
+  font-size: 14px;
+  display: inline-block;
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  transition: all 0.5s;
+  -webkit-transition: all 0.5s;
+  -moz-transition: all 0.5s;
+  width: 150px;
+}
+
+/*Time for some hover effects*/
+/*We will apply the hover effect the the lineage of the element also*/
+.tree li .item:hover, .tree li .item:hover+ul li .item {
+  background: #fff6f2;
+  color: #000;
+  border: 1px solid #94a0b4;
+}
+
+/*Connector styles on hover*/
+.tree li .item:hover+ul li::after, 
+.tree li .item:hover+ul li::before, 
+.tree li .item:hover+ul::before, 
+.tree li .item:hover+ul ul::before{
+	border-color:  #94a0b4;
+}
+
+.tree li .item.blue {
+  background: #1c315e;
+  color: #fff;
+  padding: 10px 25px;
+  font-size: 15px;
+  border-radius: 10px;
+  border: none;
+}
+
+.tree li .item.orange {
+  background: #ff4f00bf;
+  color: #fff;
+  padding: 10px 25px;
+  font-size: 15px;
+  border-radius: 10px;
+  border: none;
+}

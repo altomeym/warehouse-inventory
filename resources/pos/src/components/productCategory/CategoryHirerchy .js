@@ -96,9 +96,77 @@ const CategoryHirerchy  = (props) => {
     return (
         <MasterLayout> 
             <TopProgressBar />
-                <ReactDataTable columns={columns} items={itemsValue} onChange={onChange} isLoading={isLoading}
-                                totalRows={totalRecord}/>
-                
+            <section id='treeView'>
+                <div class="tree">
+                    <ul>
+                        <li>
+                            <div class="item blue">Bike</div>
+                            <ul>
+                                <li>
+                                    <div class="item blue">Honda</div>
+                                    <ul>
+                                        <li>
+                                            <div class="item orange">Honda 800</div>
+                                        </li>
+                                        <li>
+                                            <div class="item orange">Honda 700</div>
+                                        </li>
+                                        <li>
+                                            <div class="item orange">Honda 600</div>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <div class="item blue">Hero</div>
+                                    <ul>
+                                        <li><div class="item orange">Splender</div></li>
+                                        <li>
+                                            <div class="item orange">Splender +</div>
+                                            <ul>
+                                                <li>
+                                                    <div class="item orange">Splender 100</div>
+                                                </li>
+                                                <li>
+                                                    <div class="item orange">Splender 100</div>
+                                                </li>
+                                                <li>
+                                                    <div class="item orange">Splender 100</div>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                        <li><div class="item orange">Splender Pro</div></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+            {/* <div className='treeStart'>
+                <div className='ct_box'>
+                    <h3>Category</h3>
+                    <ul className='category'>
+                        <li>Honda</li>
+                    </ul>
+                </div>
+                <div className='ct_box'>
+                    <h3>Sub Category</h3>
+                    <ul className='subCategory'>
+                        <li className='orange'><span>&nbsp;</span>Honda 800</li>
+                        <li className='orange'><span>&nbsp;</span>Honda 700</li>
+                        <li className='orange'><span>&nbsp;</span>Honda 500</li>
+                    </ul>
+                </div>
+                <div className='ct_box'>
+                    <h3>Sub Category</h3>
+                    <ul className='subCategory'>
+                        <li className='orange'><span>&nbsp;</span>Honda 800</li>
+                        <li className='orange'><span>&nbsp;</span>Honda 700</li>
+                        <li className='orange'><span>&nbsp;</span>Honda 500</li>
+                        <li className='orange'><span>&nbsp;</span>Honda 500</li>
+                    </ul>
+                </div>
+            </div> */}
         </MasterLayout>
     )
 };
