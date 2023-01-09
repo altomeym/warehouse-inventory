@@ -81,6 +81,24 @@ export default (filters = Filters.OBJ, admin, stockReport, isProductQuantity) =>
         }
         url = url + 'warehouse_id=' + filters.warehouse_id;
     }
+    if (filters.adj_method_type) {
+        if (url !== '?') {
+            url += '&'
+        }
+        url = url + 'adj_method_type=' + filters.adj_method_type;
+    }
+    if (filters.brand_id) {
+        if (url !== '?') {
+            url += '&'
+        }
+        url = url + 'brand_id=' + filters.brand_id;
+    }
+    if (filters.category_id) {
+        if (url !== '?') {
+            url += '&'
+        }
+        url = url + 'category_id=' + filters.category_id;
+    }
     if (filters.customer_id) {
         if (url !== '?') {
             url += '&'

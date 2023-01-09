@@ -44,6 +44,7 @@ const ProductCategory = (props) => {
     const itemsValue = productCategories.length >= 0 && productCategories.map(product => ({
         name: product.attributes.name,
         image: product.attributes.image,
+        parent_id: product.attributes?.parent_id,
         products_count: product.attributes.products_count,
         id: product.id,
     }));

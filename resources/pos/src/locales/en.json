@@ -758,6 +758,11 @@
 
     "tax.type.shipping.label": "Shipping",
     "tax.type.tax.label": "Tax",
-    "tax.type.label": "Type"
+    "tax.type.label": "Type",
 
+    "category.type.parent.label": "Parent",
+    "category.type.child.label": "child",
+
+    "adjustment.method.add.label": "Addition",
+    "adjustment.method.sub.label": "Subtraction"
 }

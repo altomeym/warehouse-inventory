@@ -16,7 +16,7 @@ const ProductMainCalculation = (props) => {
             let taxCal = (totalAmountAfterDiscount * element?.tax_value / 100).toFixed(2);
             return (
         <tr key={index}>
-            <td className='py-3'>{element?.tax_name ? element?.tax_name : 'Tax'}</td>
+            <td className='py-3'>{element?.tax_type_name ? element?.tax_type_name : 'Tax'}</td>
             <td className='py-3'>
                 {currencySymbolHendling(allConfigData, frontSetting.value && frontSetting.value.currency_symbol, taxCal)} ({parseFloat(element?.tax_value ? element?.tax_value : 0).toFixed(2)})
                 %

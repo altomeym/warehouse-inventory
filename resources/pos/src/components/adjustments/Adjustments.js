@@ -75,9 +75,16 @@ const Adjustments = (props) => {
             sortField: 'reference_code',
             sortable: false,
             cell: row => {
-                return <span>
-                            <span>{row.reference_code}</span>
-                        </span>
+                return (
+                    row.method_type === 1 ?
+                    <span className='badge bg-light-success'>
+                        <span>{row.reference_code}</span>
+                    </span>
+                   :
+                    <span className='badge bg-light-primary'>
+                        <span>{row.reference_code}</span>
+                    </span>
+                )
             }
         },
         {
@@ -145,6 +152,7 @@ const Adjustments = (props) => {
     const array = warehouses
     const newFirstElement = {attributes: {name: getFormattedMessage('unit.filter.all.label')}, id: "0"}
     const newArray = [newFirstElement].concat(array)
+    const newMethodTypeArray = adjustments && adjustments.length >0 ? adjustments : [] ;
 
     return (
         <MasterLayout>
@@ -154,7 +162,7 @@ const Adjustments = (props) => {
             <ReactDataTable columns={columns} items={itemsValue} to='#/app/adjustments/create'
                             ButtonValue={is_addedAble ? getFormattedMessage('adjustments.create.title') : null } isShowPaymentModel={isShowPaymentModel} isCallSaleApi={isCallSaleApi}
                             onChange={onChange} totalRows={totalRecord} goToEdit={goToEdit} isShowFilterField
-                            isLoading={isLoading} isWarehouseType={true} warehouseOptions={newArray}  warehouses={warehouses} />}
+                            isLoading={isLoading} isWarehouseType={true} warehouseOptions={newArray} isAdjustmentType={false} adjustmentOptions={newMethodTypeArray}  warehouses={warehouses} />}
             <DeleteSaleAdjustMents onClickDeleteModel={onClickDeleteModel} deleteModel={deleteModel} onDelete={isDelete}/>
             <AdjustMentDetail onClickDetailsModel={onClickDetailsModel} detailsModel={detailsModel} onDetails={isDetails} setLgShow={setLgShow} lgShow={lgShow}/>
         </MasterLayout>
