@@ -41,8 +41,15 @@ class ProductAPIController extends AppBaseController
         $perPage = getPageSize($request);
         $products = $this->productRepository;
 
+
         if ($request->get('product_unit')) {
             $products->where('product_unit', $request->get('product_unit'));
+        }
+        if ($request->get('brand_id')) {
+            $products->where('brand_id', $request->get('brand_id'));
+        }
+        if ($request->get('category_id')) {
+            $products->where('product_category_id', $request->get('category_id'));
         }
 
         if ($request->get('warehouse_id') && $request->get('warehouse_id') != "null") {
