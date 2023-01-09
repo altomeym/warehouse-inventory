@@ -17,7 +17,7 @@ const ProductCategoryForm = (props) => {
     const editType =  singleProductCategory && singleProductCategory?.parent_id == 0 ? 'parent' : 'child';
     const typeoptions = getFormattedOptions(categoryTypesOptions)
     let typeDefaultValue =  singleProductCategory && editType && typeoptions.filter((option) => option.id === editType)
-    const categoryDefaultValue =  singleProductCategory && singleProductCategory?.parent_id && productCategories.filter((option) => option.id === singleProductCategory.parent_id)
+    const categoryDefaultValue =  singleProductCategory  && productCategories.filter((option) => option.id === singleProductCategory.parent_id)
     
     const [productCategoryValue, setProductCategoryValue] = useState({
         name: singleProductCategory ? singleProductCategory.name : '',
@@ -27,13 +27,16 @@ const ProductCategoryForm = (props) => {
         },
         product_category_id: {
             value: categoryDefaultValue && categoryDefaultValue[0] && categoryDefaultValue[0]?.id,
-            label:categoryDefaultValue && categoryDefaultValue[0] && categoryDefaultValue[0]?.attributes?.name,
+            label: categoryDefaultValue && categoryDefaultValue[0] && categoryDefaultValue[0]?.attributes?.name,
         },
         image: singleProductCategory ? singleProductCategory.image : '',
     });
     const [errors, setErrors] = useState({
         name: '',
     });
+    console.log('categoryDefaultValue ', categoryDefaultValue);
+    console.log('singleProductCategory ', singleProductCategory);
+
     const editImg = singleProductCategory ? singleProductCategory.image : user;
     const newImg = productCategoryValue.image === false ? user : editImg;
     const [imagePreviewUrl, setImagePreviewUrl] = useState(newImg);

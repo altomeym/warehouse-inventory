@@ -19,7 +19,7 @@ const ReactDataTable = (props) => {
         columns, AddButton, items, ButtonValue, to, defaultLimit = Filters.OBJ.page, onChange, totalRows,isShowPaymentModel,isCallSaleApi,isCallBrandApi,
         paginationRowsPerPageOptions = [10, 15, 25, 50, 100], isLoading, isShowDateRangeField, isShowFilterField,isWarehouseType,warehouseOptions, isAdjustmentType, adjustmentOptions,
         isStatus, isPaymentStatus,warehouseValue, isUnitFilter, title, isPdf, isReportPdf, isEXCEL, onExcelClick, isShowSearch, isPaymentType, subHeader = true,
-        buttonImport, goToImportProduct, isTransferStatus, isExport, customerId, onReportPdfClick, productCatOptions, isProductBrandFilter, isProductCategoriesFilter
+        buttonImport, goToImportProduct, isTransferStatus, isExport, customerId, onReportPdfClick,  isProductBrandFilter, isProductCategoriesFilter 
     } = props;
     const [perPage, setPerPages] = useState(defaultLimit);
     const [pageSize, setPageSize] = useState(Filters.OBJ.pageSize);
@@ -34,8 +34,8 @@ const ReactDataTable = (props) => {
     const [paymentType, setPaymentType] = useState();
     const [tableWarehouseValue, setTableWarehouseValue] = useState()
     const [tableAdjustmentValue, setTableAdjustmentValue] = useState()
-    const [tableProductBrandtValue, setTableBrandProductValue] = useState()
-    const [tableProductCategorytValue, setTableProducCateoryValue] = useState()
+    const [tableBrandProductValue, setTableBrandProductValue] = useState()
+    const [tableProductCategorytValue, setTableProductCategorytValue] = useState()
     const [status, setStatus] = useState();
     const [transferStatus, setTransferStatus] = useState();
     const [productUnit, setProductUnit] = useState();
@@ -49,14 +49,13 @@ const ReactDataTable = (props) => {
     useEffect(() => {
         onChangeDidMount(currentPage);
         setAdminName(adminName);
-    }, [currentPage, status, transferStatus, productUnit,warehouseValue, tableWarehouseValue, tableAdjustmentValue, tableProductBrandtValue, tableProductCategorytValue, isShowPaymentModel,isCallSaleApi, isCallBrandApi, paymentStatus, paymentType, perPage, order_By, direction, searchText, pageSize, adminName, totalRows, selectDate]);
+    }, [currentPage, status, transferStatus, productUnit,warehouseValue, tableWarehouseValue, tableAdjustmentValue, tableBrandProductValue, tableProductCategorytValue, isShowPaymentModel,isCallSaleApi, isCallBrandApi, paymentStatus, paymentType, perPage, order_By, direction, searchText, pageSize, adminName, totalRows, selectDate]);
     const onStatusChange = (obj) => {
         dispatch({type: 'RESET_OPTION', payload: false})
         setStatus(obj);
         dispatch({type: 'ON_TOGGLE', payload: false})
     };
 
-console.log('data type productCatOptions ', productCatOptions)
     const onTransferStatusChange = (obj) => {
         dispatch({type: 'RESET_OPTION', payload: false})
         setTransferStatus(obj);
@@ -107,6 +106,8 @@ console.log('data type productCatOptions ', productCatOptions)
         setProductUnit({label: 'All', value: '0'})
         setTableWarehouseValue({label:"All", value: "0"})
         setTableAdjustmentValue({label:"All", value: "0"})
+        setTableBrandProductValue({label:"All", value: "0"})
+        setTableProductCategorytValue({label:"All", value: "0"})
         dispatch({type: 'ON_TOGGLE', payload: false})
     }
 
@@ -128,9 +129,10 @@ console.log('data type productCatOptions ', productCatOptions)
 
     const onProductCategoryOptionChange = (obj) => {
         dispatch({type: 'RESET_OPTION', payload: false})
-        setTableProducCateoryValue(obj);
+        setTableProductCategorytValue(obj);
         dispatch({type: 'ON_TOGGLE', payload: false});
     };
+    // console.log('data tablle productCatOptions ', productCatOptions)
 
     const subHeaderComponentMemo = React.useMemo(() => {
         return (
@@ -142,7 +144,7 @@ console.log('data type productCatOptions ', productCatOptions)
                                                          isPaymentStatus={isPaymentStatus} productUnit={productUnit}
                                                          paymentType={paymentType} isPaymentType={isPaymentType}
                                                          onStatusChange={onStatusChange}
-                                                         
+                                                        
                                                          isStatus={isStatus}
                                                          isTransferStatus={isTransferStatus}
                                                          onTransferStatusChange={onTransferStatusChange}
@@ -159,10 +161,9 @@ console.log('data type productCatOptions ', productCatOptions)
                                                          tableAdjustmentValue={tableAdjustmentValue} isAdjustmentType={isAdjustmentType}
                                                          onAdjustmentChange ={onAdjustmentChange} adjustmentOptions={adjustmentOptions}
 
-                                                         productCatOptions={productCatOptions}
                                                          onProductCategoryOptionChange={onProductCategoryOptionChange} tableProductCategorytValue={tableProductCategorytValue}
                                                          isProductCategoriesFilter={isProductCategoriesFilter}
-                                                         onProductBrandOptionChange={onProductBrandOptionChange} tableProductBrandtValue={tableProductBrandtValue}
+                                                         onProductBrandOptionChange={onProductBrandOptionChange} tableBrandProductValue={tableBrandProductValue}
                                                          isProductBrandFilter={isProductBrandFilter}
                                                         
                                                          
@@ -223,7 +224,7 @@ console.log('data type productCatOptions ', productCatOptions)
             base_unit: productUnit ? productUnit.value : null,
             warehouse_id: warehouseValue ? warehouseValue.value : tableWarehouseValue?.value ? tableWarehouseValue?.value : null,
             adj_method_type: tableAdjustmentValue ? tableAdjustmentValue.value : null,
-            brand_id: tableProductBrandtValue ? tableProductBrandtValue.value : null,
+            brand_id: tableBrandProductValue ? tableBrandProductValue.value : null,
             category_id: tableProductCategorytValue ? tableProductCategorytValue.value : null,
             customer_id: customerId ? customerId : null
         };

@@ -17,9 +17,9 @@ import Modal from 'react-bootstrap/Modal';
 import ImportProductModel from './ImportProductModel';
 import { productExcelAction } from '../../store/action/productExcelAction';
 
-
 const Product = (props) => {
-    const {fetchProducts, products, totalRecord, isLoading, frontSetting, fetchFrontSetting, productExcelAction, productUnitId, allConfigData, config} = props;
+    const {fetchProducts, products, totalRecord, isLoading, frontSetting, fetchFrontSetting, productExcelAction, productUnitId,
+         allConfigData, config} = props;
     const [deleteModel, setDeleteModel] = useState(false);
     const [isDelete, setIsDelete] = useState(null);
     const [isOpen, setIsOpen] = useState(false);
@@ -45,6 +45,8 @@ const Product = (props) => {
     useEffect(() => {
         fetchFrontSetting();
     }, []);
+
+ 
 
     const onClickDeleteModel = (isDelete = null) => {
         setDeleteModel(!deleteModel);
@@ -196,8 +198,7 @@ const Product = (props) => {
                                        onClickDeleteModel={onClickDeleteModel} isDeleteMode={is_deleteAdable} />
         }
     ];
-const productnewArray = products && products.length> 0 ? products : [];
-console.log('productnewArray ', productnewArray);
+
     return (
         <MasterLayout>
             <TopProgressBar />
@@ -207,8 +208,8 @@ console.log('productnewArray ', productnewArray);
                             to='#/app/products/create' isShowFilterField isUnitFilter
                             title={getFormattedMessage('product.input.product-unit.label')}
                             buttonImport={true}  goToImportProduct={handleClose}
-                            isExport onExcelClick={onExcelClick}
-                            isProductBrandFilter={true} isProductCategoriesFilter={true}  productCatOptions = {productnewArray}
+                            isExport onExcelClick={onExcelClick} 
+                            isProductBrandFilter={true} isProductCategoriesFilter={true}   
                             />
             <DeleteProduct onClickDeleteModel={onClickDeleteModel} deleteModel={deleteModel} onDelete={isDelete}/>
             {isOpen && lightBoxImage.length !== 0 && <ProductImageLightBox setIsOpen={setIsOpen} isOpen={isOpen}
