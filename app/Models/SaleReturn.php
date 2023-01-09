@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Illuminate\Support\Facades\Storage;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 
 /**
@@ -66,9 +68,13 @@ class SaleReturn extends BaseModel implements HasMedia, JsonResourceful
 
     protected $table = 'sales_return';
 
+     public const PATH = 'sales_return';
+
     public const JSON_API_TYPE = 'sales_return';
 
     public const SALE_RETURN_PDF = 'sale_return_pdf';
+
+    protected $appends = ['image_url'];
 
     /**
      * @var string[]
@@ -81,6 +87,7 @@ class SaleReturn extends BaseModel implements HasMedia, JsonResourceful
         'tax_amount',
         'discount',
         'shipping_data',
+        'tax_data',
         'shipping',
         'grand_total',
         'paid_amount',
@@ -102,6 +109,7 @@ class SaleReturn extends BaseModel implements HasMedia, JsonResourceful
         'tax_amount'      => 'nullable|numeric',
         'discount'        => 'nullable|numeric',
         'shipping_data'   => 'nullable',
+        'tax_data'   => 'nullable',
         'shipping'        => 'nullable|numeric',
         'grand_total'     => 'nullable|numeric',
         'paid_amount'     => 'numeric|nullable',
@@ -148,6 +156,23 @@ class SaleReturn extends BaseModel implements HasMedia, JsonResourceful
         ];
     }
 
+    public function getImageUrlAttribute()
+    {
+        /** @var Media $media */
+        $medias = $this->getMedia(SaleReturn::PATH);
+        $images = [];
+        if (!empty($medias)) {
+            foreach ($medias as $key => $media) {
+                $images['imageUrls'][$key] = $media->getFullUrl();
+                $images['id'][$key] = $media->id;
+            }
+
+            return $images;
+        }
+
+        return '';
+    }
+
     /**
      *
      *
@@ -166,15 +191,18 @@ class SaleReturn extends BaseModel implements HasMedia, JsonResourceful
             'tax_amount'        => $this->tax_amount,
             'discount'          => $this->discount,
             'shipping_data'     => $this->shipping_data,
+            'tax_data'          => $this->tax_data,
             'shipping'          => $this->shipping,
             'grand_total'       => $this->grand_total,
             'paid_amount'       => $this->paid_amount,
             'payment_type'      => $this->payment_type,
             'note'              => $this->note,
             'status'            => $this->status,
+            'toStatus'          => $this->toStatus,
             'reference_code'    => $this->reference_code,
             'sale_return_items' => $this->saleReturnItems,
             'created_at'        => $this->created_at,
+            'images'          => $this->image_url,
         ];
 
         return $fields;
@@ -190,6 +218,7 @@ class SaleReturn extends BaseModel implements HasMedia, JsonResourceful
         return $this->belongsTo(Customer::class, 'customer_id', 'id');
     }
 
+  
     /**
      *
      *
@@ -200,6 +229,10 @@ class SaleReturn extends BaseModel implements HasMedia, JsonResourceful
         return $this->belongsTo(Warehouse::class, 'warehouse_id', 'id');
     }
 
+    public function toStatus(): BelongsTo
+    {
+        return $this->belongsTo(TranStatusType::class, 'status', 'id');
+    }
 
     /**
      *

@@ -24,7 +24,19 @@ const EditCustomer = (props) => {
         country: customer.attributes.country,
         city: customer.attributes.city,
         address: customer.attributes.address,
-        id: customer.id
+        id: customer.id,
+        city: {
+            label: customer.attributes?.city_name?.name && customer.attributes?.city_name?.name,
+            value: customer.attributes?.city_name?.id && customer.attributes?.city_name?.id
+        },
+        country: {
+            label: customer.attributes?.country_name?.name && customer.attributes?.country_name?.name,
+            value: customer.attributes?.country_name?.id && customer.attributes?.country_name?.id
+        },
+        state: {
+            label: customer.attributes?.state_name?.name && customer.attributes?.state_name?.name,
+            value: customer.attributes?.state_name?.id && customer.attributes?.state_name?.id
+        }
     }));
 
     return (

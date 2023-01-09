@@ -4,7 +4,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {
     faPieChart, faUser, faTruck, faUserGroup, faHome, faBoxes, faPrint, faBookmark, faBoxOpen,
     faMoneyCheckDollar, faMoneyBills, faQuoteRight, faDollarSign, faReceipt, faArrowRight, faArrowLeft,
-    faEnvelope, faCartShopping, faChartColumn, faGear, faMapLocation, faBasketShopping, faSms, faCube, faFile,faShippingFast
+    faEnvelope, faCartShopping, faChartColumn, faGear, faMapLocation, faBasketShopping, faSms, faCube, faFile,faShippingFast, faMinusSquare
 } from '@fortawesome/free-solid-svg-icons';
 import {getFormattedMessage} from '../shared/sharedMethod';
 import {ShieldLock} from "react-bootstrap-icons";
@@ -38,6 +38,7 @@ export default [
             brandsSubPath : "/app/brands",
             unitsSubPath : "/app/units",
             barcodeSubPath : "/app/print/barcode",
+            qrcodeSubPath : "/app/print/qrcode",
         },
         subMenu: [
             {
@@ -47,12 +48,20 @@ export default [
                 class: 'd-flex',
                 fontIcon: <FontAwesomeIcon icon={faBoxes}/>,
                 permission: Permissions.MANAGE_PRODUCTS
-            },
+            }, 
             {
                 title: 'product.categories.title',
                 name: "product categories",
                 fontIcon: <FontAwesomeIcon icon={faBoxOpen}/>,
                 to: '/app/product-categories',
+                class: 'd-flex',
+                permission: Permissions.MANAGE_PRODUCT_CATEGORIES,
+            },
+            {
+                title: 'Categories Hhirerchy',
+                name: "categories hirerchy",
+                fontIcon: <FontAwesomeIcon icon={faBoxOpen}/>,
+                to: '/app/categories-hirerchy',
                 class: 'd-flex',
                 permission: Permissions.MANAGE_PRODUCT_CATEGORIES,
             },
@@ -81,6 +90,14 @@ export default [
                 class: 'd-flex',
                 permission: Permissions.MANAGE_PRODUCTS,
             },
+            {
+                title: 'print.qrcode.title',
+                name: "print qrcode",
+                fontIcon: <FontAwesomeIcon icon={faPrint}/>,
+                to: '/app/print/qrcode',
+                class: 'd-flex',
+                permission: Permissions.MANAGE_PRODUCTS,
+            },
         ]
     },
     {
@@ -98,16 +115,16 @@ export default [
         ],
     },
     {
-        title: "shipping.title",
-        name: "shipping.title",
+        title: "tax.title",
+        name: "tax.title",
         fontIcon: <FontAwesomeIcon icon={faShippingFast}/>,
-        to: '/app/shipping-types',
+        to: '/app/charges-types',
         class: 'd-flex',
-        permission: Permissions.MANAGE_ADJUSTMENTS,
+        permission: Permissions.MANAGE_SHIPPING_TYPES,
         items: [
             {
-                title: getFormattedMessage("shipping.title"),
-                to: '/app/shipping-types'
+                title: getFormattedMessage("tax.title"),
+                to: '/app/charges-types'
             }
         ],
     },
@@ -198,6 +215,20 @@ export default [
             {
                 title: getFormattedMessage("transfers.title"),
                 to: '/app/transfers'
+            }
+        ],
+    },
+    {
+        title: "status-types.title",
+        name: "status-types.title",
+        fontIcon: <FontAwesomeIcon icon={faMinusSquare}/>,
+        to: '/app/status-types',
+        class: 'd-flex',
+        permission: Permissions.MANAGE_STATUS_TYPES,
+        items: [
+            {
+                title: getFormattedMessage("status-types.title"),
+                to: '/app/status-types'
             }
         ],
     },

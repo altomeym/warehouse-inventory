@@ -42,6 +42,7 @@ class WarehouseAPIController extends AppBaseController
     {
         $perPage = getPageSize($request);
         $warehouses = $this->warehouseRepository->paginate($perPage);
+
         WarehouseResource::usingWithCollection();
 
         return new WarehouseCollection($warehouses);

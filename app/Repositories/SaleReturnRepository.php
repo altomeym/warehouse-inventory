@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * Class SaleRepository
@@ -35,6 +36,7 @@ class SaleReturnRepository extends BaseRepository
         'discount',
         'shipping',
         'shipping_data',
+        'tax_data',
         'grand_total',
         'paid_amount',
         'payment_type',
@@ -52,6 +54,7 @@ class SaleReturnRepository extends BaseRepository
         'tax_amount',
         'discount',
         'shipping_data',
+        'tax_data',
         'shipping',
         'grand_total',
         'note',
@@ -98,11 +101,12 @@ class SaleReturnRepository extends BaseRepository
             $input['date'] = $input['date'] ?? date("Y/m/d");
             $saleReturnInputArray = Arr::only($input, [
                 'customer_id', 'warehouse_id', 'tax_rate', 'tax_amount', 'discount', 'shipping', 'grand_total',
-                'paid_amount', 'payment_type', 'note', 'date', 'status', 'sale_id',
+                'paid_amount', 'payment_type', 'note', 'date', 'status', 'sale_id','shipping_data','tax_data','status'
             ]);
 
             /** @var Sale $sale */
             $saleReturnInputArray['shipping_data'] = json_encode($input['shipping_data']);
+            $saleReturnInputArray['tax_data'] = json_encode($input['tax_data']);
             $saleReturn = SaleReturn::create($saleReturnInputArray);
             $saleUpdate = $sale->update(['is_return' => 1]);
             $saleReturn = $this->storeSaleReturnItems($saleReturn, $input);
@@ -116,7 +120,7 @@ class SaleReturnRepository extends BaseRepository
                         $q->where('customer_id', $input['customer_id'])->where('warehouse_id',
                             $input['warehouse_id'])->where('id', $input['sale_id']);
                     })->exists();
-                if ($saleExist) {
+                if ($saleExist && $input['status'] == 2) {
                     if ($product) {
                         if ($product->quantity >= $purchaseItem['quantity']) {
                             $product->update([
@@ -194,6 +198,12 @@ class SaleReturnRepository extends BaseRepository
             }
 
             DB::commit();
+            if (isset($input['images']) && !empty($input['images'])) {
+                foreach ($input['images'] as $image) {
+                    $product['image_url'] = $product->addMedia($image)->toMediaCollection(SaleReturn::PATH,
+                        config('app.media_disc'));
+                }
+            }
             /*new code*/
             if(!empty($input['shipping_data']))
             {
@@ -298,11 +308,12 @@ class SaleReturnRepository extends BaseRepository
             throw new UnprocessableEntityHttpException("Please enter tax value between 0 to 100.");
         }
         $input['grand_total'] += $input['tax_amount'];
-        if ($input['shipping'] <= $input['grand_total'] && $input['shipping'] >= 0) {
+        $input['grand_total'] += $input['shipping'];
+       /* if ($input['shipping'] <= $input['grand_total'] && $input['shipping'] >= 0) {
             $input['grand_total'] += $input['shipping'];
         } else {
             throw new UnprocessableEntityHttpException("Shipping amount should not be greater than total.");
-        }
+        }*/
 
         $input['reference_code'] = getSettingValue('sale_return_code').'_111'.$saleReturn->id;
         $saleReturn->update($input);
@@ -400,7 +411,7 @@ class SaleReturnRepository extends BaseRepository
                 $saleReturnItemArray = Arr::only($saleReturnItem, [
                     'sale_return_item_id', 'product_id', 'product_price', 'net_unit_price', 'tax_type', 'tax_value',
                     'tax_amount', 'discount_type', 'discount_value', 'discount_amount', 'sale_unit', 'quantity',
-                    'sub_total',
+                    'sub_total','status'
                 ]);
 
                 $salesExists = SaleItem::where('product_id', $saleReturnItemArray['product_id'])
@@ -452,7 +463,9 @@ class SaleReturnRepository extends BaseRepository
 //                    }
 //                }
 
-                $this->updateItem($saleReturnItemArray, $input['warehouse_id']);
+                if($input['status'] == 2){                    
+                    $this->updateItem($saleReturnItemArray, $input['warehouse_id']);
+                }
                 //create new product items
 //                if (is_null($saleReturnItem['sale_return_item_id'])) {
 //                    $saleReturnItem = $this->calculationSaleReturnItems($saleReturnItem);
@@ -490,12 +503,13 @@ class SaleReturnRepository extends BaseRepository
             }
             $removeItemIds = array_diff($saleReturnItemIds, $saleReturnItemOldIds);
             //delete remove product
+            //echo $input['status']; exit;
             if (!empty(array_values($removeItemIds))) {
                 foreach ($removeItemIds as $removeItemId) {
                     // remove quantity manage storage
                     $oldProduct = SaleReturnItem::whereId($removeItemId)->first();
                     $productQuantity = ManageStock::whereWarehouseId($input['warehouse_id'])->whereProductId($oldProduct->product_id)->first();
-                    if ($productQuantity && $oldProduct) {
+                    if ($productQuantity && $oldProduct && $input['status'] == 2) {
                         if ($oldProduct->quantity <= $productQuantity->quantity) {
                             $stockQuantity = $productQuantity->quantity - $oldProduct->quantity;
                             if ($stockQuantity < 0) {
@@ -515,6 +529,13 @@ class SaleReturnRepository extends BaseRepository
             $saleReturn = $this->updateSaleReturnCalculation($input, $id);
             DB::commit();
 
+            if (isset($input['images']) && !empty($input['images'])) {
+            foreach ($input['images'] as $image) {
+                    $product['image_url'] = $product->addMedia($image)->toMediaCollection(SaleReturn::PATH,
+                        config('app.media_disc'));
+                }
+            }
+
             return $saleReturn;
         } catch (Exception $e) {
             DB::rollBack();
@@ -531,6 +552,7 @@ class SaleReturnRepository extends BaseRepository
      */
     public function updateItem($saleReturnItem, $warehouseId): bool
     {
+
         try {
             $saleReturnItem = $this->calculationSaleReturnItems($saleReturnItem);
             $item = SaleReturnItem::whereId($saleReturnItem['sale_return_item_id']);
@@ -538,6 +560,10 @@ class SaleReturnRepository extends BaseRepository
             $product = ManageStock::whereWarehouseId($warehouseId)->whereProductId($saleReturnItem['product_id'])->first();
             $oldItem = SaleReturnItem::whereId($saleReturnItem['sale_return_item_id'])->first();
             $totalQuantity = 0;
+           // if ($product && $oldItem && $oldItem->quantity != $saleReturnItem['quantity']) {
+           /* echo $oldItem->quantity.'</br>'; 
+            echo  $saleReturnItem['quantity'].'</br>'; 
+            exit;*/
             if ($product && $oldItem && $oldItem->quantity != $saleReturnItem['quantity']) {
                 if ($oldItem->quantity > $saleReturnItem['quantity']) {
                     $totalQuantity = $product->quantity - ($oldItem->quantity - $saleReturnItem['quantity']);
@@ -586,18 +612,19 @@ class SaleReturnRepository extends BaseRepository
 
         $input['grand_total'] += $input['tax_amount'];
 
-        if ($input['shipping'] > $input['grand_total'] || $input['shipping'] < 0) {
+       /* if ($input['shipping'] > $input['grand_total'] || $input['shipping'] < 0) {
 
             throw new UnprocessableEntityHttpException("Shipping amount should not be greater than total.");
-        }
+        }*/
 
         $input['grand_total'] += $input['shipping'];
 
         $saleReturnInputArray = Arr::only($input, [
             'customer_id', 'warehouse_id', 'tax_rate', 'tax_amount', 'discount', 'shipping', 'grand_total',
-            'received_amount', 'paid_amount', 'payment_type', 'note', 'date', 'status', 'payment_status','shipping_data'
+            'received_amount', 'paid_amount', 'payment_type', 'note', 'date', 'status', 'payment_status','shipping_data','tax_data',
         ]);
         $saleReturnInputArray['shipping_data'] = json_encode($input['shipping_data']);
+        $saleReturnInputArray['tax_data'] = json_encode($input['tax_data']);
         $saleReturn->update($saleReturnInputArray);
         /*new code*/
             if(!empty($input['shipping_data']))

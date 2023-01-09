@@ -17,6 +17,7 @@ class SupplierRepository extends BaseRepository
         'email',
         'phone',
         'country',
+        'state',
         'city',
         'address',
         'created_at',

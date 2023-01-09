@@ -11,6 +11,7 @@ use App\Exports\PurchaseReportExport;
 use App\Exports\PurchaseReturnWarehouseReportExport;
 use App\Exports\PurchasesWarehouseReportExport;
 use App\Exports\SaleReportExport;
+use App\Exports\ProfitLossReportExport;
 use App\Exports\SaleReturnWarehouseReportExport;
 use App\Exports\SalesWarehouseReportExport;
 use App\Exports\StockReportExport;
@@ -625,6 +626,18 @@ class ReportAPIController extends AppBaseController
         $data['gross_profit'] = $data['sales'] - $productCost;
 
         return $this->sendResponse($data, 'Profit loss report info retrieved successfully');
+    }
+
+    public function getProfitLossReportExcel(Request $request): JsonResponse
+    {
+        if (Storage::exists('excel/total-profit-loss-report-excel.xlsx')) {
+            Storage::delete('excel/total-profit-loss-report-excel.xlsx');
+        }
+        Excel::store(new ProfitLossReportExport, 'excel/total-profit-loss-report-excel.xlsx');
+
+        $data['total_profit_loss_excel_url'] = Storage::url('excel/total-profit-loss-report-excel.xlsx');
+
+        return $this->sendResponse($data, 'Profit Loss Report retrieved successfully');
     }
     public function getCustomerReport(Request $request)
     {

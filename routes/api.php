@@ -30,6 +30,9 @@ use App\Http\Controllers\API\UnitAPIController;
 use App\Http\Controllers\API\UserAPIController;
 use App\Http\Controllers\API\WarehouseAPIController;
 use App\Http\Controllers\API\ShippingTypeAPIController;
+use App\Http\Controllers\API\TranStatusTypesAPIController;
+use App\Http\Controllers\API\CommonApiController;
+use App\Http\Controllers\API\ProductSubCategoryAPIController;
 
 use App\Http\Controllers\MailTemplateAPIController;
 use Illuminate\Support\Facades\Route;
@@ -58,11 +61,25 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     });
     Route::get('/brands', [BrandAPIController::class, 'index']);
 /*New added*/
-
+    /*Country state city*/
+    Route::get('/country', [CommonApiController::class, 'country']);
+    Route::get('/state/{id}', [CommonApiController::class, 'state']);
+    Route::get('/city/{id}', [CommonApiController::class, 'city']);
+    
     Route::group(['middleware' => ['permission:manage_shipping_type']], function () {
     });
     Route::resource('shipping_type', ShippingTypeAPIController::class);
     Route::get('shipping_type', [ShippingTypeAPIController::class, 'index']);
+    /*product_sub_category route*/
+    Route::group(['middleware' => ['permission:manage_product_sub_category']], function () {
+    });
+    Route::resource('product_sub_category', ProductSubCategoryAPIController::class);
+    Route::get('product_sub_category', [ProductSubCategoryAPIController::class, 'index']);
+
+    Route::group(['middleware' => ['permission:manage_status_types']], function () {
+    });
+    Route::resource('tran_status_types', TranStatusTypesAPIController::class);
+    Route::get('tran_status_types', [TranStatusTypesAPIController::class, 'index']);
     
 
     //Dashboard
@@ -276,6 +293,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     // profit loss report
     Route::get('profit-loss-report', [ReportAPIController::class, 'getProfitLossReport']);
 
+    Route::get('total-profit-loss-sale-report-excel',
+        [ReportAPIController::class, 'getProfitLossReportExcel'])->name('report-getProfitLossReportExcel');
+
     // best customers report
 
     Route::get('best-customers-report', [ReportAPIController::class, 'getBestCustomersReport']);
@@ -309,6 +329,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('get-purchase-return-product-report', [
         PurchaseReturnAPIController::class, 'getPurchaseReturnProductReport',
     ]);
+    Route::get('stock-get', [ManageStockAPIController::class, 'stockGet'])->name('stockGet');
 
     // Today sale overall report
 

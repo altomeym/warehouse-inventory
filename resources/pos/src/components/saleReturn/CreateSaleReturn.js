@@ -11,12 +11,13 @@ import {addSaleReturn} from '../../store/action/salesReturnAction';
 import {getFormattedMessage} from '../../shared/sharedMethod';
 import {useParams} from "react-router-dom";
 import {fetchSale} from "../../store/action/salesAction";
+import {fetchStatusTypes} from '../../store/action/tranStatusTypesAction';
 import TopProgressBar from "../../shared/components/loaders/TopProgressBar";
 import Spinner from "../../shared/components/loaders/Spinner";
 import saleReturnStatus from "./saleReturnStatus.json";
 
 const CreateSaleReturn = (props) => {
-    const {addSaleReturn, customers, sales,isLoading, fetchSale, fetchAllCustomer, warehouses, fetchAllWarehouses, shipingTypes, fetchShippingTypes } = props;
+    const {addSaleReturn, customers, sales,isLoading, fetchSale, fetchAllCustomer, warehouses, fetchAllWarehouses, shipingTypes, fetchShippingTypes, allStatusTypes, fetchStatusTypes } = props;
     const navigate = useNavigate();
     const {id} = useParams()
 
@@ -28,6 +29,7 @@ const CreateSaleReturn = (props) => {
 
     useEffect(() => {
         fetchShippingTypes();
+        fetchStatusTypes();
     }, []);
 
     const addSaleData = (formValue, navigate) => {
@@ -49,6 +51,8 @@ const CreateSaleReturn = (props) => {
         tax_amount: 0,
         discount: 0,
         shipping: 0,
+         shipping_data: sales && sales?.attributes?.shipping_data ?  JSON.parse(sales.attributes?.shipping_data) : [],
+        tax_data: sales && sales?.attributes?.tax_data ?  JSON.parse(sales.attributes?.tax_data) : [],
         grand_total : 0,
         amount: sales.attributes.amount,
         sale_items: sales.attributes.sale_items.map((item) => ({
@@ -95,14 +99,14 @@ const CreateSaleReturn = (props) => {
             <TopProgressBar/>
             <HeaderTitle title={getFormattedMessage('sale-return.create.title')} to='/app/sales'/>
             {isLoading ? <Spinner /> :
-                sales && <SaleReturnForm addSaleData={addSaleData} singleSale={itemsValue}  id={id} customers={customers} warehouses={warehouses} allShipingTypes={shipingTypes} />}
+                sales && <SaleReturnForm addSaleData={addSaleData} singleSale={itemsValue}  id={id} customers={customers} warehouses={warehouses} allShipingTypes={shipingTypes} allStatusTypes={allStatusTypes} />}
         </MasterLayout>
     )
 }
 
 const mapStateToProps = (state) => {
-    const {customers,sales, warehouses, totalRecord, isLoading, addSaleReturn, shipingTypes} = state;
-    return {customers,sales, warehouses, totalRecord, isLoading, addSaleReturn, shipingTypes}
+    const {customers,sales, warehouses, totalRecord, isLoading, addSaleReturn, allStatusTypes, shipingTypes} = state;
+    return {customers,sales, warehouses, totalRecord, isLoading, addSaleReturn, allStatusTypes, shipingTypes}
 };
 
-export default connect(mapStateToProps, {addSaleReturn,fetchSale, fetchAllCustomer, fetchAllWarehouses, fetchShippingTypes})(CreateSaleReturn);
+export default connect(mapStateToProps, {addSaleReturn,fetchSale, fetchAllCustomer, fetchAllWarehouses, fetchShippingTypes, fetchStatusTypes})(CreateSaleReturn);

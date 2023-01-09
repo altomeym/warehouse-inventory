@@ -8,6 +8,7 @@ use App\Models\QuotationItem;
 use App\Models\Sale;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
@@ -31,6 +32,8 @@ class QuotationRepository extends BaseRepository
         'note',
         'created_at',
         'reference_code',
+        'shipping_data',
+        'tax_data',
     ];
 
     /**
@@ -45,6 +48,8 @@ class QuotationRepository extends BaseRepository
         'grand_total',
         'received_amount',
         'note',
+        'shipping_data',
+        'tax_data',
     ];
 
     /**
@@ -79,14 +84,42 @@ class QuotationRepository extends BaseRepository
             $input['date'] = $input['date'] ?? date("Y/m/d");
             $quotationInputArray = Arr::only($input, [
                 'customer_id', 'warehouse_id', 'tax_rate', 'tax_amount', 'discount', 'shipping', 'grand_total',
-                'received_amount', 'paid_amount', 'note', 'date', 'status',
+                'received_amount', 'paid_amount', 'note', 'date', 'status','shipping_data',
+                'tax_data',
             ]);
 
             /** @var Quotation $quotation */
+            $quotationInputArray['shipping_data'] = json_encode($input['shipping_data']);
+            $quotationInputArray['tax_data'] = json_encode($input['tax_data']);
             $quotation = Quotation::create($quotationInputArray);
             $quotation = $this->storeQuotationItems($quotation, $input);
 
             DB::commit();
+            if (isset($input['images']) && !empty($input['images'])) {
+                foreach ($input['images'] as $image) {
+                    $product['image_url'] = $product->addMedia($image)->toMediaCollection(Quotation::PATH,
+                        config('app.media_disc'));
+                }
+            }
+            /*new code*/
+            if(!empty($input['shipping_data']))
+            {
+             $last_id = Sale::orderBy('id','DESC')->first();
+              for ($i = 0; $i < count($input['shipping_data']); $i++) {
+                        if ($input['shipping_data'][$i]['shipping_value'] != '') {
+                            $requestData = [
+                                'shipping_type_id' => (!empty($input['shipping_data'][$i]['shipping_value']) ? $input['shipping_data'][$i]['shipping_value']: ''),
+                                'sale_purchases_id' =>  (!empty($last_id['id']) ? $last_id['id']: ''),
+                                'slug' => 'quotation',
+                                'shipping_type_name' => (!empty($input['shipping_data'][$i]['shipping_type_name']) ? $input['shipping_data'][$i]['shipping_type_name']: ''),           
+                            ];
+                         $shipping_has_values = \App\Models\Shipping_has_values::create($requestData);
+
+                        }
+                    }
+            }
+
+            /**/
 
             return $quotation;
         } catch (Exception $e) {
@@ -123,11 +156,12 @@ class QuotationRepository extends BaseRepository
             throw new UnprocessableEntityHttpException("Please enter tax value between 0 to 100.");
         }
         $input['grand_total'] += $input['tax_amount'];
-        if ($input['shipping'] <= $input['grand_total'] && $input['shipping'] >= 0) {
+        $input['grand_total'] += $input['shipping'];
+        /*if ($input['shipping'] <= $input['grand_total'] && $input['shipping'] >= 0) {
             $input['grand_total'] += $input['shipping'];
         } else {
             throw new UnprocessableEntityHttpException("Shipping amount should not be greater than total.");
-        }
+        }*/
 
         $input['reference_code'] = 'QA_111'.$quotation->id;
         $quotation->update($input);
@@ -212,6 +246,13 @@ class QuotationRepository extends BaseRepository
                     'sub_total',
                 ]);
                 $this->updateItem($quotationItemArray, $input['warehouse_id']);
+
+                if (isset($input['images']) && !empty($input['images'])) {
+                foreach ($input['images'] as $image) {
+                    $product['image_url'] = $product->addMedia($image)->toMediaCollection(Quotation::PATH,
+                        config('app.media_disc'));
+                    }
+                }
                 //create new product items
                 if (is_null($quotationItem['quotation_item_id'])) {
                     $quotationItem = $this->calculationQuotationItems($quotationItem);
@@ -260,18 +301,39 @@ class QuotationRepository extends BaseRepository
 
         $input['grand_total'] += $input['tax_amount'];
 
-        if ($input['shipping'] > $input['grand_total'] || $input['shipping'] < 0) {
+        /*if ($input['shipping'] > $input['grand_total'] || $input['shipping'] < 0) {
 
             throw new UnprocessableEntityHttpException("Shipping amount should not be greater than total.");
-        }
+        }*/
 
         $input['grand_total'] += $input['shipping'];
 
         $quotationInputArray = Arr::only($input, [
             'customer_id', 'warehouse_id', 'tax_rate', 'tax_amount', 'discount', 'shipping', 'grand_total',
-            'received_amount', 'paid_amount', 'note', 'date', 'status',
+            'received_amount', 'paid_amount', 'note', 'date', 'status','shipping_data','tax_data',
         ]);
+        $quotationInputArray['shipping_data'] = json_encode($input['shipping_data']);
+        $quotationInputArray['tax_data'] = json_encode($input['tax_data']);
         $quotation->update($quotationInputArray);
+
+        /*new code*/
+            if(!empty($input['shipping_data']))
+            {
+             $last_id = \App\Models\Shipping_has_values::where('slug','quotation')->where('sale_purchases_id',$id)->delete();
+              for ($i = 0; $i < count($input['shipping_data']); $i++) {
+                        if ($input['shipping_data'][$i]['shipping_value'] != '') {
+                            $requestData = [
+                                'shipping_type_id' => (!empty($input['shipping_data'][$i]['shipping_value']) ? $input['shipping_data'][$i]['shipping_value']: ''),
+                                'sale_purchases_id' =>  (!empty($id) ? $id: ''),
+                                'slug' => 'quotation',
+                                'shipping_type_name' => (!empty($input['shipping_data'][$i]['shipping_type_name']) ? $input['shipping_data'][$i]['shipping_type_name']: ''),           
+                            ];
+                         $shipping_has_values = \App\Models\Shipping_has_values::create($requestData);
+
+                        }
+                    }
+            }
+            /**/
 
         return $quotation;
     }

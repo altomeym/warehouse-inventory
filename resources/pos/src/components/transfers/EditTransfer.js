@@ -1,6 +1,8 @@
 import React, {useEffect} from 'react';
 import {connect} from 'react-redux';
 import {fetchAllWarehouses} from '../../store/action/warehouseAction';
+import {fetchShippingTypes} from '../../store/action/shippingAction'
+import {fetchStatusTypes} from '../../store/action/tranStatusTypesAction';
 import {useParams} from 'react-router-dom'
 import HeaderTitle from '../header/HeaderTitle';
 import MasterLayout from '../MasterLayout';
@@ -11,12 +13,18 @@ import { fetchTransfer } from '../../store/action/transfersAction';
 import { transferCreatStatusOptions } from '../../constants';
 
 const EditTransfer = (props) => {
-    const {fetchTransfer, tansfers, warehouses, fetchAllWarehouses, isLoading} = props;
+    const {fetchTransfer, tansfers, warehouses, fetchAllWarehouses, shipingTypes,fetchShippingTypes, allStatusTypes, fetchStatusTypes,  isLoading} = props;
     const {id} = useParams();
 
     useEffect(() => {
         fetchAllWarehouses();
         fetchTransfer(id);
+    }, []);
+
+    useEffect(() => {
+        fetchShippingTypes();
+        fetchStatusTypes();
+
     }, []);
 
     const selectedStatus = tansfers.attributes && tansfers.attributes.status && TransferStatusType.filter((item) => item.value === tansfers.attributes.status)
@@ -41,6 +49,8 @@ const EditTransfer = (props) => {
         tax_amount: tansfers.attributes.tax_amount,
         discount: tansfers.attributes.discount,
         shipping: tansfers.attributes.shipping,
+        shipping_data:tansfers?.attributes?.shipping_data ? JSON.parse(tansfers?.attributes?.shipping_data) : [],
+        tax_data:tansfers?.attributes?.tax_data ? JSON.parse(tansfers?.attributes?.tax_data) : [],
         grand_total: tansfers.attributes.grand_total,
         amount: tansfers.attributes.amount,
         transfer_items: tansfers.attributes.transfer_items.map((item) => ({
@@ -73,26 +83,25 @@ const EditTransfer = (props) => {
         id: tansfers.id,
         notes: tansfers.attributes.note,
         status_id: {
-            label: transferStatusDefaultValue[0] && transferStatusDefaultValue[0].name,
-            value: transferStatusDefaultValue[0] && transferStatusDefaultValue[0].id
+            label: tansfers.attributes.toStatus?.name && tansfers.attributes.toStatus?.name,
+            value: tansfers.attributes.toStatus?.id && tansfers.attributes.toStatus?.id
         },
 
     };
-
 
     return (
         <MasterLayout>
             <HeaderTitle title={getFormattedMessage('transfer.edit.title')} to='/app/transfers'/>
             {isLoading ? <div className='text-center custom-loading mx-auto fs-1 fw-bold'>Loading...</div> :
-                <TransferForm singleTransfer={itemsValue} id={id} warehouses={warehouses}/>}
+                <TransferForm singleTransfer={itemsValue} id={id} warehouses={warehouses} allShipingTypes={shipingTypes} allStatusTypes={allStatusTypes} />}
         </MasterLayout>
     )
 };
 
 const mapStateToProps = (state) => {
-    const { warehouses, isLoading, tansfers} = state;
-    return { warehouses, isLoading, tansfers}
+    const { warehouses, isLoading, tansfers, shipingTypes, allStatusTypes} = state;
+    return { warehouses, isLoading, tansfers, shipingTypes, allStatusTypes}
 };
 
-export default connect(mapStateToProps, {fetchAllWarehouses, fetchTransfer})(EditTransfer);
-
+export default connect(mapStateToProps, {fetchAllWarehouses, fetchTransfer, fetchShippingTypes, fetchStatusTypes})(EditTransfer);
+;

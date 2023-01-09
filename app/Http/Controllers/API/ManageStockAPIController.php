@@ -52,4 +52,17 @@ class ManageStockAPIController extends AppBaseController
 
         return new ManageStockCollection($stocks);
     }
+    public function stockGet(Request $request)
+    {
+        $stock = \App\Models\ManageStock::leftjoin('warehouses','manage_stocks.warehouse_id','warehouses.id');
+        $stock->leftjoin('products','manage_stocks.product_id','products.id');
+        $stock->select('manage_stocks.*','warehouses.name as warehousesName','products.name as productName','products.code as productCode');
+        $stocks = $stock->get();
+
+         if($stocks != ''){
+            return response(['status'=>'200','Message'=>'stocks retrieved successfully','stocks' => $stocks]);
+        }else{
+            return response(['status'=>'401','Failed'=>"Failed"]);
+        }
+    }
 }

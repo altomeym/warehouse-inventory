@@ -47,6 +47,8 @@ const Expenses = (props) => {
         expense_category_name: expense.attributes.expense_category_name,
         amount: expense.attributes.amount,
         details: expense.attributes.details,
+        payment_status: expense.attributes?.payment_status,
+        payment_type: expense.attributes?.payment_type,
         id: expense.id,
         currency: currencySymbol
 
@@ -91,6 +93,53 @@ const Expenses = (props) => {
             selector: row => currencySymbolHendling(allConfigData, row.currency, row.amount),
             sortField: 'amount',
             sortable: true,
+        },
+        {
+            name: getFormattedMessage('dashboard.recentSales.paymentStatus.label'),
+            sortField: 'payment_status',
+            sortable: false,
+            cell: row => {
+                return (
+                    row.payment_status === 1 &&
+                    <span className='badge bg-light-success'>
+                        <span>{getFormattedMessage("payment-status.filter.paid.label")}</span>
+                    </span> ||
+                    row.payment_status === 2 &&
+                    <span className='badge bg-light-danger'>
+                        <span>{getFormattedMessage("payment-status.filter.unpaid.label")}</span>
+                    </span> ||
+                    row.payment_status === 3 &&
+                    <span className='badge bg-light-warning'>
+                        {/*<span>{getFormattedMessage("payment-status.filter.unpaid.label")}</span>*/}
+                        <span>{getFormattedMessage("payment-status.filter.partial.label")}</span>
+                    </span>
+                )
+            }
+        },
+        {
+            name: getFormattedMessage('select.payment-type.label'),
+            sortField: 'payment_type',
+            sortable: false,
+            cell: row => {
+                return (
+                    row.payment_type === 1 &&
+                    <span className='badge bg-light-primary'>
+                        <span>{getFormattedMessage('cash.label')}</span>
+                    </span> ||
+                    row.payment_type === 2 &&
+                    <span className='badge bg-light-primary'>
+                        <span>{getFormattedMessage('payment-type.filter.cheque.label')}</span>
+                    </span> ||
+                    row.payment_type === 3 &&
+                    <span className='badge bg-light-primary'>
+                        <span>{getFormattedMessage('payment-type.filter.bank-transfer.label')}</span>
+                    </span> ||
+                    row.payment_type === 4 &&
+                    <span className='badge bg-light-primary'>
+                        <span>{getFormattedMessage('payment-type.filter.other.label')}</span>
+                    </span>
+                )
+            }
         },
         {
             name: getFormattedMessage('globally.react-table.column.created-date.label'),

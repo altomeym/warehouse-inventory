@@ -2,6 +2,8 @@ import React, {useState, useEffect} from 'react';
 import {connect, useDispatch} from 'react-redux';
 import {useNavigate} from 'react-router-dom';
 import moment from 'moment';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import { faTrash} from '@fortawesome/free-solid-svg-icons';
 import {InputGroup, Table} from 'react-bootstrap-v5';
 import {editTransfer} from '../../store/action/transfersAction';
 import TransferStatusType from '../../shared/option-lists/TransferStatusType.json'
@@ -18,6 +20,8 @@ import ReactDatePicker from '../../shared/datepicker/ReactDatePicker';
 import ProductMainCalculation from '../sales/ProductMainCalculation';
 import ReactSelect from '../../shared/select/reactSelect';
 import {fetchProductsByWarehouse} from "../../store/action/productAction";
+import TaxChargerTypes from '../purchase/TaxChargerTypes';
+
 
 const TransferForm = (props) => {
     const {
@@ -29,7 +33,7 @@ const TransferForm = (props) => {
         warehouses,
         fetchAllProducts,
         fetchProductsByWarehouse,
-        products, frontSetting, allConfigData
+        products, frontSetting, allConfigData, allShipingTypes, allStatusTypes 
     } = props;
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -51,14 +55,12 @@ const TransferForm = (props) => {
         tax_amount: singleTransfer ? singleTransfer.tax_amount.toFixed(2) : '0.00',
         discount: singleTransfer ? singleTransfer.discount.toFixed(2) : '0.00',
         shipping: singleTransfer ? singleTransfer.shipping.toFixed(2) : '0.00',
+        shipping_data: singleTransfer ? singleTransfer?.shipping_data: [],
+        tax_data: singleTransfer ? singleTransfer?.tax_data: [],
         grand_total: singleTransfer ? singleTransfer.grand_total : '0.00',
         notes: singleTransfer ? singleTransfer.notes : '',
-        status_id: singleTransfer ? singleTransfer.status_id : {
-            label: getFormattedMessage("status.filter.complated.label"),
-            value: 1
-        },
+        status_id: singleTransfer ? singleTransfer?.status_id : '',
     });
-
     const [errors, setErrors] = useState({
         date: '',
         from_warehouse_id: '',
@@ -71,6 +73,14 @@ const TransferForm = (props) => {
         status_id: ''
     });
 
+    const [customDynamicFields, setCustomDynamicFields] = useState([{
+        shipping_type_id:"", 
+        shipping_value:"",
+        shipping_type_name:"",
+    }]);
+    const [customTaxDynamicFields, setCustomTaxDynamicFields] = useState([{tax_type_id: "", tax_value:"", tax_type_name:"",}]);
+
+
     useEffect(() => {
         setUpdateProducts(updateProducts);
     }, [updateProducts, quantity, newCost, newDiscount, newTax, subTotal, newPurchaseUnit]);
@@ -80,8 +90,6 @@ const TransferForm = (props) => {
             setUpdateProducts(singleTransfer.transfer_items);
         }
     }, []);
-
-
 
 
     useEffect(() => {
@@ -94,6 +102,14 @@ const TransferForm = (props) => {
         transferValue.from_warehouse_id.value ? setTransferValue(inputs => ({...inputs, warehouse_id: transferValue.from_warehouse_id})): null
     },[transferValue.from_warehouse_id])
 
+  
+
+    useEffect(()=>{
+        if(singleTransfer){
+          setCustomDynamicFields(singleTransfer?.shipping_data);
+          setCustomTaxDynamicFields(singleTransfer?.tax_data);
+        }
+  },[])
 
     const handleValidation = () => {
         let errorss = {};
@@ -141,7 +157,7 @@ const TransferForm = (props) => {
     const onStatusChange = (obj) => {
         setTransferValue(inputs => ({...inputs, status_id: obj}))
     };
-
+        
     const updateCost = (item) => {
         setNewCost(item);
     };
@@ -200,6 +216,16 @@ const TransferForm = (props) => {
             label: option.name
         }
     })
+ 
+        const statusTypeValues = [];
+        const statusValue = allStatusTypes && allStatusTypes?.length > 0 ? allStatusTypes.map((option) => {
+            statusTypeValues.push({
+                id: option.id,
+                name: option.attributes.name
+            })
+        }) : []
+    
+
     const prepareData = (prepareData) => {
         const formValue = {
             from_warehouse_id: prepareData.from_warehouse_id.value ? prepareData.from_warehouse_id.value : prepareData.from_warehouse_id,
@@ -215,6 +241,9 @@ const TransferForm = (props) => {
             received_amount: 0,
             paid_amount: 0,
             status: prepareData.status_id.value ? prepareData.status_id.value : prepareData.status_id,
+            shipping_data:customDynamicFields ? customDynamicFields : [],
+            tax_data:customTaxDynamicFields ? customTaxDynamicFields : [],
+
         }
         return formValue
     };
@@ -235,16 +264,30 @@ const TransferForm = (props) => {
     const onBlurInput = (el) => {
         if (el.target.value === '') {
             if (el.target.name === 'shipping') {
-                setTransferValue({...transferValue, shipping: '0.00'})
+                // setTransferValue({...transferValue, shipping: '0.00'})
             }
             if (el.target.name === 'discount') {
                 setTransferValue({...transferValue, discount: '0.00'})
             }
             if (el.target.name === 'tax_rate') {
-                setTransferValue({...transferValue, tax_rate: '0.00'})
+                // setTransferValue({...transferValue, tax_rate: '0.00'})
             }
         }
     }
+
+    // ...New changes
+   const handleCustomDynamicFields = (val)=> {
+    setCustomDynamicFields(val)
+ }
+
+ const handleCustomTaxDynamicFields = (val)=> {
+     setCustomTaxDynamicFields(val)
+  }
+  const handleItemValue = (type, shipping_rate, tax_rate )=>{
+             setTransferValue(inputs => ({...inputs, ['shipping']: shipping_rate && shipping_rate}))
+             setTransferValue(inputs => ({...inputs, ['tax_rate']: tax_rate && tax_rate}))
+  }
+
 
     return (
         <div className='card'>
@@ -324,10 +367,10 @@ const TransferForm = (props) => {
                         </Table>
                     </div>
                     <div className='col-12'>
-                        <ProductMainCalculation inputValues={transferValue} updateProducts={updateProducts}
+                        <ProductMainCalculation inputValues={transferValue} shippingInputValues={customDynamicFields} taxInputValues={customTaxDynamicFields} updateProducts={updateProducts}
                                                 frontSetting={frontSetting} allConfigData={allConfigData}/>
                     </div>
-                    <div className='col-md-4 mb-5'>
+                    {/* <div className='col-md-4 mb-5'>
                         <label className='form-label'>
                             {getFormattedMessage('purchase.input.order-tax.label')}:
                         </label>
@@ -344,7 +387,7 @@ const TransferForm = (props) => {
                             <InputGroup.Text>%</InputGroup.Text>
                         </InputGroup>
                         <span className='text-danger d-block fw-400 fs-small mt-2'>{errors['orderTax'] ? errors['orderTax'] : null}</span>
-                    </div>
+                    </div> */}
                     <div className='col-md-4 mb-5'>
                         <label className='form-label'>
                             {getFormattedMessage('purchase.order-item.table.discount.column.label')}:
@@ -362,31 +405,17 @@ const TransferForm = (props) => {
                         </InputGroup>
                         <span className='text-danger d-block fw-400 fs-small mt-2'>{errors['discount'] ? errors['discount'] : null}</span>
                     </div>
-                    <div className='col-md-4 mb-5'>
-                        <label
-                            className='form-label'>
-                            {getFormattedMessage('purchase.input.shipping.label')}:
-                        </label>
-                        <InputGroup>
-                            <input aria-label='Dollar amount (with dot and two decimal places)'
-                                   className='form-control' value={transferValue.shipping}
-                                   type='text' name='shipping'
-                                   onBlur={(event) => onBlurInput(event)}
-                                   onFocus={(event) => onFocusInput(event)}
-                                   onKeyPress={(event) => decimalValidate(event)}
-                                   onChange={(e) => onChangeInput(e)}
-                            />
-                            <InputGroup.Text>{frontSetting.value && frontSetting.value.currency_symbol}</InputGroup.Text>
-                        </InputGroup>
-                        <span className='text-danger d-block fw-400 fs-small mt-2'>{errors['shipping'] ? errors['shipping'] : null}</span>
-                    </div>
+                     
                     <div className='col-md-4 mb-3'>
-                         <ReactSelect multiLanguageOption={transferStatusFilterOptions}
+                         <ReactSelect multiLanguageOption={statusTypeValues}
                                      name='status' onChange={onStatusChange}
                                      title={getFormattedMessage('purchase.select.status.label')}
                                      defaultValue={transferValue.status_id} errors={errors['status_id']}
                                      placeholder={placeholderText('purchase.select.status.placeholder.label')}/>
                     </div>
+                     {/* .......... */}
+                     < TaxChargerTypes frontSetting={frontSetting} allShipingTypes={allShipingTypes}   setItemVal={handleItemValue} itemValue={transferValue} customPropsTaxDynamicFields={handleCustomTaxDynamicFields} customPropsDynamicFields={handleCustomDynamicFields} singleDataEntity={singleTransfer}  />
+                        {/* ................... */}
                     <div className='col-md-12 mb-5'>
                         <label className='form-label'>
                             {getFormattedMessage('globally.input.notes.label')}:
@@ -407,7 +436,7 @@ const TransferForm = (props) => {
 };
 
 const mapStateToProps = (state) => {
-    const {products, frontSetting, allConfigData} = state;
+    const {products, frontSetting, allConfigData } = state;
     return {customProducts: prepareTransferArray(products), products, frontSetting, allConfigData}
 };
 

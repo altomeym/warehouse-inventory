@@ -80,11 +80,15 @@ class Sale extends BaseModel implements HasMedia, JsonResourceful
     public const SALE_PDF = 'sale_pdf';
     public const SALE_BARCODE_PATH = 'sale_barcode_path';
 
+    public const PATH = 'sales';
+
     public const CODE128 = 1;
     public const CODE39 = 2;
     public const EAN8 = 3;
     public const UPC = 4;
     public const EAN13 = 5;
+
+    protected $appends = ['image_url'];
 
     protected $fillable = [
         'date',
@@ -94,6 +98,7 @@ class Sale extends BaseModel implements HasMedia, JsonResourceful
         'tax_amount',
         'discount',
         'shipping_data',
+        'tax_data',
         'shipping',
         'grand_total',
         'received_amount',
@@ -115,6 +120,7 @@ class Sale extends BaseModel implements HasMedia, JsonResourceful
         'tax_amount'      => 'nullable|numeric',
         'discount'        => 'nullable|numeric',
         'shipping_data'   => 'nullable',
+        'tax_data'   => 'nullable',
         'shipping'        => 'nullable|numeric',
         'grand_total'     => 'nullable|numeric',
         'received_amount' => 'numeric|nullable',
@@ -164,6 +170,23 @@ class Sale extends BaseModel implements HasMedia, JsonResourceful
     /**
      * @return array
      */
+
+    public function getImageUrlAttribute()
+    {
+        /** @var Media $media */
+        $medias = $this->getMedia(Sale::PATH);
+        $images = [];
+        if (!empty($medias)) {
+            foreach ($medias as $key => $media) {
+                $images['imageUrls'][$key] = $media->getFullUrl();
+                $images['id'][$key] = $media->id;
+            }
+
+            return $images;
+        }
+
+        return '';
+    }
     function prepareLinks(): array
     {
         return [
@@ -198,6 +221,7 @@ class Sale extends BaseModel implements HasMedia, JsonResourceful
             'tax_amount'      => $this->tax_amount,
             'discount'        => $this->discount,
             'shipping_data'   => $this->shipping_data,
+            'tax_data'        => $this->tax_data,
             'shipping'        => $this->shipping,
             'grand_total'     => $this->grand_total,
             'received_amount' => $this->received_amount,
@@ -206,11 +230,13 @@ class Sale extends BaseModel implements HasMedia, JsonResourceful
             'payment_type'    => $this->payment_type,
             'note'            => $this->note,
             'status'          => $this->status,
+            'toStatus'        => $this->toStatus,
             'payment_status'  => $this->payment_status,
             'reference_code'  => $this->reference_code,
             'sale_items'      => $this->saleItems,
             'created_at'      => $this->created_at,
             'barcode_url'     => Storage::url('sales/barcode-'.$this->reference_code.'.png'),
+            'images'          => $this->image_url,
         ];
 
         return $fields;
@@ -223,6 +249,12 @@ class Sale extends BaseModel implements HasMedia, JsonResourceful
     {
         return $this->belongsTo(Customer::class, 'customer_id', 'id');
     }
+
+    public function toStatus(): BelongsTo
+    {
+        return $this->belongsTo(TranStatusType::class, 'status', 'id');
+    }
+
 
     /**
      * @return BelongsTo

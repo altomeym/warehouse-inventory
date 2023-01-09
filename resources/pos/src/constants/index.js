@@ -92,6 +92,10 @@ export const apiBaseURL = {
     EDIT_SALE_FROM_SALE : "sales-return-edit",
     HOLDS_LIST:"holds",
     SHIPPING: '/shipping_type',
+    TRAN_STATUS_TYPE: '/tran_status_types',
+    COUNTRY: '/country',
+    STATE: '/state',
+    CITY: '/city',
 
 };
 
@@ -444,10 +448,25 @@ export const yearTopProductActionType = {
 
 export const shippingTypeActionType = {
     FETCH_SHIPPINGTYPES: 'FETCH_SHIPPINGTYPES',
+    FETCH_TAXTYPES: 'FETCH_TAXTYPES',
     FETCH_SHIPPINGTYPE: 'FETCH_SHIPPINGTYPE',
     ADD_SHIPPINGTYPE: 'ADD_SHIPPINGTYPE',
     EDIT_SHIPPINGTYPE: 'EDIT_SHIPPINGTYPE',
     DELETE_SHIPPINGTYPE: 'DELETE_SHIPPINGTYPE'
+};
+
+export const tranStatusTypeActionType = {
+    FETCH_TRAN_STATUSTYPES: 'FETCH_TRAN_STATUSTYPES',
+    FETCH_TRAN_STATUSTYPE: 'FETCH_TRAN_STATUSTYPE',
+    ADD_TRAN_STATUSTYPE: 'ADD_TRAN_STATUSTYPE',
+    EDIT_TRAN_STATUSTYPE: 'EDIT_TRAN_STATUSTYPE',
+    DELETE_TRAN_STATUSTYPE: 'DELETE_TRAN_STATUSTYPE'
+};
+
+export const countryStateActionType = {
+    FETCH_COUNTRIES: 'FETCH_COUNTRIES',
+    FETCH_STATES: 'FETCH_STATES',
+    FETCH_CITIES: 'FETCH_CITIES',
 };
 
 
@@ -561,7 +580,8 @@ export const Permissions = {
     MANAGE_QUOTATION : "manage_quotations",
     MANAGE_SMS_API: "manage_sms_apis",
     MANAGE_SMS_TEMPLATES: "manage_sms_templates",
-    MANAGE_SHIPPING_TYPES: "manage_shipping_types"
+    MANAGE_SHIPPING_TYPES: "manage_shipping_type",
+    MANAGE_STATUS_TYPES: "manage_status_types"
 };
 
 //POS Screen Constants
@@ -707,4 +727,16 @@ export const smsStatusOptions = [
 export const saleReturnStatusOptions = [
     { id: 1, name: 'status.filter.received.label' },
     { id: 2, name: 'status.filter.pending.label' }
+];
+export const taxTypesOptions = [
+    { id: 1, name: 'tax.type.shipping.label' },
+    { id: 2, name: 'tax.type.tax.label' }
+]; 
+export const categoryTypesOptions = [
+    { id: 'parent', name: 'category.type.parent.label' },
+    { id: 'child', name: 'category.type.child.label' }
+]; 
+export const adjustmentMethodTypesOptions = [
+    { id: 1, name: 'adjustment.method.add.label' },
+    { id: 2, name: 'adjustment.method.sub.label' }
 ];

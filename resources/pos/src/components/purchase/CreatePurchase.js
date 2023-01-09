@@ -5,13 +5,14 @@ import HeaderTitle from '../header/HeaderTitle';
 import {useNavigate} from 'react-router-dom';
 import {fetchAllWarehouses} from '../../store/action/warehouseAction';
 import {fetchAllSuppliers} from '../../store/action/supplierAction';
-import {fetchShippingTypes} from '../../store/action/shippingAction';
+import {fetchShippingTypes, fetchTaxTypes} from '../../store/action/shippingAction';
 import PurchaseForm from './PurchaseForm';
 import {addPurchase} from '../../store/action/purchaseAction';
+import {fetchStatusTypes} from '../../store/action/tranStatusTypesAction';
 import {getFormattedMessage} from "../../shared/sharedMethod";
 
 const CreatePurchase = (props) => {
-    const {addPurchase, warehouses, fetchAllWarehouses, fetchAllSuppliers, suppliers, shipingTypes, fetchShippingTypes,} = props;
+    const {addPurchase, warehouses, fetchAllWarehouses, fetchAllSuppliers, suppliers, shipingTypes, fetchShippingTypes, allStatusTypes, fetchStatusTypes, allTaxTypes, fetchTaxTypes} = props;
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -21,7 +22,8 @@ const CreatePurchase = (props) => {
     }, []);
 
     useEffect(() => {
-        fetchShippingTypes();
+        fetchStatusTypes();
+        fetchShippingTypes({}, false,'');
     }, []);
 
 
@@ -33,14 +35,14 @@ const CreatePurchase = (props) => {
         <MasterLayout>
             <HeaderTitle title={getFormattedMessage("purchase.create.title")} to='/app/purchases'/>
             <PurchaseForm addPurchaseData={addPurchaseData} warehouses={warehouses} allShipingTypes={shipingTypes}
-                          suppliers={suppliers}/>
+                          suppliers={suppliers} allStatusTypes={allStatusTypes} />
         </MasterLayout>
     );
 };
 
 const mapStateToProps = (state) => {
-    const {warehouses, suppliers, totalRecord, shipingTypes} = state;
-    return {warehouses, suppliers, totalRecord, shipingTypes}
+    const {warehouses, suppliers, totalRecord, shipingTypes, allStatusTypes, allTaxTypes} = state;
+    return {warehouses, suppliers, totalRecord, shipingTypes, allStatusTypes, allTaxTypes}
 };
 
-export default connect(mapStateToProps, {addPurchase, fetchAllWarehouses, fetchAllSuppliers, fetchShippingTypes})(CreatePurchase);
+export default connect(mapStateToProps, {addPurchase, fetchAllWarehouses, fetchAllSuppliers, fetchShippingTypes, fetchStatusTypes, fetchTaxTypes})(CreatePurchase);

@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Illuminate\Support\Facades\Storage;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 /**
@@ -59,9 +60,11 @@ class Purchase extends BaseModel implements HasMedia, JsonResourceful
     use HasFactory, InteractsWithMedia, HasJsonResourcefulData;
 
     protected $table = 'purchases';
+    public const PATH = 'purchases';
 
     const JSON_API_TYPE = 'purchases';
     const PURCHASE_PDF = 'purchase_pdf';
+    protected $appends = ['image_url'];
 
     protected $fillable = [
         'date',
@@ -79,6 +82,7 @@ class Purchase extends BaseModel implements HasMedia, JsonResourceful
         'status',
         'reference_code',
         'shipping_data',
+        'tax_data',
     ];
 
     public static $rules = [
@@ -134,6 +138,23 @@ class Purchase extends BaseModel implements HasMedia, JsonResourceful
     const PENDING = 2;
     const ORDERED = 3;
 
+    public function getImageUrlAttribute()
+    {
+        /** @var Media $media */
+        $medias = $this->getMedia(Purchase::PATH);
+        $images = [];
+        if (!empty($medias)) {
+            foreach ($medias as $key => $media) {
+                $images['imageUrls'][$key] = $media->getFullUrl();
+                $images['id'][$key] = $media->id;
+            }
+
+            return $images;
+        }
+
+        return '';
+    }
+
     /**
      * @return array
      */
@@ -167,6 +188,9 @@ class Purchase extends BaseModel implements HasMedia, JsonResourceful
             'status'          => $this->status,
             'purchase_items'  => $this->purchaseItems,
             'shipping_data'   => $this->shipping_data,
+            'tax_data'   => $this->tax_data,
+            'toStatus'          => $this->toStatus,
+            'images'          => $this->image_url,
         ];
 
         return $fields;
@@ -179,6 +203,11 @@ class Purchase extends BaseModel implements HasMedia, JsonResourceful
     public function warehouse(): BelongsTo
     {
         return $this->belongsTo(Warehouse::class, 'warehouse_id', 'id');
+    }
+
+     public function toStatus(): BelongsTo
+    {
+        return $this->belongsTo(TranStatusType::class, 'status', 'id');
     }
 
     /**

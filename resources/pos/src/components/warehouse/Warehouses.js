@@ -40,10 +40,12 @@ const Warehouses = (props) => {
         time: moment(warehouse.attributes.created_at).format('LT'),
         name: warehouse.attributes.name,
         phone: warehouse.attributes.phone,
-        country: warehouse.attributes.country,
-        city: warehouse.attributes.city,
+        country: warehouse.attributes?.country_name?.name,
+        state: warehouse.attributes?.state_name?.name,
+        city: warehouse.attributes?.city_name?.name,
         email: warehouse.attributes.email,
         zip_code: warehouse.attributes.zip_code,
+        totalstock: warehouse.attributes.totalstock ? warehouse.attributes.totalstock : 0,
         id: warehouse.id
     }));
 
@@ -78,6 +80,12 @@ const Warehouses = (props) => {
             sortable: true,
         },
         {
+            name: getFormattedMessage('setting.state.lable'),
+            selector: row => row.state,
+            sortField: 'state',
+            sortable: true,
+        },
+        {
             name: getFormattedMessage('globally.input.city.label'),
             selector: row => row.city,
             sortField: 'city',
@@ -86,7 +94,13 @@ const Warehouses = (props) => {
         {
             name: getFormattedMessage('warehouse.input.zip-code.label'),
             selector: row => row.zip_code,
-            sortField: 'zip_code',
+            sortField: 'pin_code',
+            sortable: true,
+        },
+        {
+            name: 'Total Stock',
+            selector: row => row.totalstock,
+            sortField: 'total_stock',
             sortable: true,
         },
         {

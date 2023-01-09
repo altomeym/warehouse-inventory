@@ -24,3 +24,25 @@ export const fetchProfitAndLossReports = (filter = {}, isLoading = true) => asyn
                 {text: response.data.message, type: toastType.ERROR}));
         });
 };
+
+export const productExcelAction = (filter = {}, isLoading = true) => async (dispatch) => {
+    if (isLoading) {
+        dispatch(setLoading(true))
+    }
+    let url =`total-profit-loss-sale-report-excel`;
+    if (!_.isEmpty(filter) && (filter.page || filter.pageSize || filter.search || filter.order_By || filter.created_at)) {
+        url += requestParam(filter);
+    }
+    await apiConfig.get(url)
+        .then((response) => {
+            window.open(response.data.data.total_profit_loss_excel_url, '_blank');
+            // setIsWarehouseValue(false);
+            if (isLoading) {
+                dispatch(setLoading(false))
+            }
+        })
+        .catch(({response}) => {
+            dispatch(addToast(
+                {text: response.data.message, type: toastType.ERROR}));
+        });
+};

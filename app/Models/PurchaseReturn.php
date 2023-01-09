@@ -71,6 +71,8 @@ class PurchaseReturn extends BaseModel implements HasMedia, JsonResourceful
     const JSON_API_TYPE = 'purchases_return';
     const PURCHASE_RETURN_PDF = 'purchase_return_pdf';
 
+    protected $appends = ['image_url'];
+
     protected $fillable = [
         'date',
         'supplier_id',
@@ -79,6 +81,7 @@ class PurchaseReturn extends BaseModel implements HasMedia, JsonResourceful
         'tax_amount',
         'discount',
         'shipping_data',
+        'tax_data',
         'shipping',
         'grand_total',
         'received_amount',
@@ -98,6 +101,7 @@ class PurchaseReturn extends BaseModel implements HasMedia, JsonResourceful
         'tax_amount'      => 'nullable|numeric',
         'discount'        => 'nullable|numeric',
         'shipping_data'   => 'nullable',
+        'tax_data'   => 'nullable',
         'shipping'        => 'nullable|numeric',
         'grand_total'     => 'nullable|numeric',
         'received_amount' => 'numeric|nullable',
@@ -145,6 +149,23 @@ class PurchaseReturn extends BaseModel implements HasMedia, JsonResourceful
         ];
     }
 
+     public function getImageUrlAttribute()
+    {
+        /** @var Media $media */
+        $medias = $this->getMedia(PurchaseReturn::PATH);
+        $images = [];
+        if (!empty($medias)) {
+            foreach ($medias as $key => $media) {
+                $images['imageUrls'][$key] = $media->getFullUrl();
+                $images['id'][$key] = $media->id;
+            }
+
+            return $images;
+        }
+
+        return '';
+    }
+
     /**
      * @return array
      */
@@ -160,6 +181,7 @@ class PurchaseReturn extends BaseModel implements HasMedia, JsonResourceful
             'tax_amount'            => $this->tax_amount,
             'discount'              => $this->discount,
             'shipping_data'         => $this->shipping_data,
+            'tax_data'         => $this->tax_data,
             'shipping'              => $this->shipping,
             'grand_total'           => $this->grand_total,
             'received_amount'       => $this->received_amount,
@@ -169,6 +191,8 @@ class PurchaseReturn extends BaseModel implements HasMedia, JsonResourceful
             'status'                => $this->status,
             'payment_status'        => $this->payment_status,
             'purchase_return_items' => $this->purchaseReturnItems,
+            'toStatus'              => $this->toStatus,
+            'images'          => $this->image_url,
         ];
 
         return $fields;
@@ -181,6 +205,11 @@ class PurchaseReturn extends BaseModel implements HasMedia, JsonResourceful
     public function warehouse(): BelongsTo
     {
         return $this->belongsTo(Warehouse::class, 'warehouse_id', 'id');
+    }
+
+    public function toStatus(): BelongsTo
+    {
+        return $this->belongsTo(TranStatusType::class, 'status', 'id');
     }
 
     /**

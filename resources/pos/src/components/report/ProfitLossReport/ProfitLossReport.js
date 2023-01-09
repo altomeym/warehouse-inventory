@@ -6,6 +6,7 @@ import {connect} from 'react-redux';
 import TopProgressBar from "../../../shared/components/loaders/TopProgressBar";
 import {Col, Row} from "react-bootstrap";
 import ProfitLossWidget from "../../../shared/Widget/ProfitLossWidget";
+import {Button} from 'react-bootstrap-v5';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
     faArrowLeft,faArrowRight,
@@ -17,12 +18,12 @@ import DateRangePicker from "../../../shared/datepicker/DateRangePicker";
 import {Filters} from "../../../constants";
 import {dateFormat} from '../../../constants';
 import moment from 'moment';
-import { fetchProfitAndLossReports } from '../../../store/action/profitAndLossReportAction';
+import { fetchProfitAndLossReports, productExcelAction } from '../../../store/action/profitAndLossReportAction';
 import { fetchFrontSetting } from '../../../store/action/frontSettingAction';
 
 
 const ProfitLossReport = (props) => {
-    const {fetchFrontSetting,frontSetting, fetchProfitAndLossReports, profitAndLossReport, allConfigData} = props
+    const {fetchFrontSetting,frontSetting, fetchProfitAndLossReports, profitAndLossReport, allConfigData, productExcelAction} = props
     const [selectDate, setSelectDate] = useState();
     const [created_at] = useState(Filters.OBJ.created_at);
     const startMonth = moment().startOf('month').format(dateFormat.NATIVE);
@@ -54,12 +55,24 @@ const ProfitLossReport = (props) => {
         onChange(filters);
     };
 
+    const onExcelClick = (e)=>{
+        const filters = {
+            created_at: created_at,
+            search: '',
+            start_date: selectDate ? selectDate.start_date : startMonth,
+            end_date: selectDate ? selectDate.end_date : today,
+        };
+       productExcelAction(filters);
+    }
+
     return (
         <MasterLayout>
             <TopProgressBar/>
             <TabTitle title={placeholderText('profit-loss.reports.title')}/>
                <div className={"d-flex justify-content-center"}>
                    <DateRangePicker onDateSelector={onDateSelector} isProfitReport={true} selectDate={selectDate}/>
+                            <Button type='button' variant='primary' onClick={() => onExcelClick()}
+                                    className='me-3 btn-light-primary'> {getFormattedMessage("excel.btn.label")}</Button>
                </div>
             <Row className='g-4'>
                 <Col className='col-12 mb-4'>
@@ -139,6 +152,7 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, {
     fetchProfitAndLossReports,
-    fetchFrontSetting
+    fetchFrontSetting,
+    productExcelAction
 })(ProfitLossReport);
 

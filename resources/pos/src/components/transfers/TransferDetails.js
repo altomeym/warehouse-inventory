@@ -64,8 +64,7 @@ const TransferDetails = (props) => {
                         </tr>
                         <tr>
                             <td>{getFormattedMessage("globally.detail.status")}</td>
-                            <td>{transferDetails?.attributes?.status === 1 && "Completed"  || transferDetails?.attributes?.status === 2 && "Sent" || transferDetails?.attributes?.status === 3 && "Pending"}</td>
-
+                            <td>  {transferDetails?.attributes?.toStatus?.name ? transferDetails?.attributes?.toStatus?.name : ''}</td>
                         </tr>
                         </tbody>
                     </Table>

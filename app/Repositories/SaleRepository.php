@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Validator;
 use Picqer\Barcode\BarcodeGeneratorPNG;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
+
 /**
  * Class SaleRepository
  */
@@ -45,6 +46,8 @@ class SaleRepository extends BaseRepository
         'note',
         'created_at',
         'reference_code',
+        'shipping_data',
+        'tax_data',
     ];
 
     /**
@@ -59,6 +62,8 @@ class SaleRepository extends BaseRepository
         'grand_total',
         'received_amount',
         'note',
+        'shipping_data',
+        'tax_data',
     ];
 
     /**
@@ -86,6 +91,7 @@ class SaleRepository extends BaseRepository
      */
     public function storeSale($input): Sale
     {
+
         try {
             DB::beginTransaction();
 
@@ -94,11 +100,12 @@ class SaleRepository extends BaseRepository
             $QuotationId = $input['quotation_id'] ?? false;
             $saleInputArray = Arr::only($input, [
                 'customer_id', 'warehouse_id', 'tax_rate', 'tax_amount', 'discount', 'shipping', 'grand_total',
-                'received_amount', 'paid_amount', 'payment_type', 'note', 'date', 'status', 'payment_status',
+                'received_amount', 'paid_amount', 'payment_type', 'note', 'date', 'status', 'payment_status','shipping_data','tax_data',
             ]);
 
             /** @var Sale $sale */
             $saleInputArray['shipping_data'] = json_encode($input['shipping_data']);
+            $saleInputArray['tax_data'] = json_encode($input['tax_data']);
             $sale = Sale::create($saleInputArray);
             if ($input['is_sale_created'] && $QuotationId) {
                 $quotation =Quotation::find($QuotationId);
@@ -111,18 +118,20 @@ class SaleRepository extends BaseRepository
             $reference_code = getSettingValue('sale_code').'_111'.$sale->id;
             $this->generateBarcode($reference_code);
             $sale['barcode_image_url'] = Storage::url('sales/barcode-'.$reference_code.'.png');
-
-            foreach ($input['sale_items'] as $saleItem) {
-                $product = ManageStock::whereWarehouseId($input['warehouse_id'])->whereProductId($saleItem['product_id'])->first();
-                if ($product && $product->quantity >= $saleItem['quantity']) {
-                    $totalQuantity = $product->quantity - $saleItem['quantity'];
-                    $product->update([
-                        'quantity' => $totalQuantity,
-                    ]);
-                } else {
-                    throw new UnprocessableEntityHttpException("Quantity must be less than Available quantity.");
+            /*if($input['status'] == '2')
+            {*/
+                foreach ($input['sale_items'] as $saleItem) {
+                    $product = ManageStock::whereWarehouseId($input['warehouse_id'])->whereProductId($saleItem['product_id'])->first();
+                    if ($product && $product->quantity >= $saleItem['quantity']) {
+                        $totalQuantity = $product->quantity - $saleItem['quantity'];
+                        $product->update([
+                            'quantity' => $totalQuantity,
+                        ]);
+                    } else {
+                        throw new UnprocessableEntityHttpException("Quantity must be less than Available quantity.");
+                    }
                 }
-            }
+            /*}*/
 
             $mailTemplate = MailTemplate::where('type', MailTemplate::MAIL_TYPE_SALE)->first();
             $smsTemplate = SmsTemplate::where('type', SmsTemplate::SMS_TYPE_SALE)->first();
@@ -197,6 +206,12 @@ class SaleRepository extends BaseRepository
 
             DB::commit();
             /*new code*/
+            if (isset($input['images']) && !empty($input['images'])) {
+                foreach ($input['images'] as $image) {
+                    $product['image_url'] = $product->addMedia($image)->toMediaCollection(Sale::PATH,
+                        config('app.media_disc'));
+                }
+            }
             if(!empty($input['shipping_data']))
             {
              $last_id = Sale::orderBy('id','DESC')->first();
@@ -308,11 +323,12 @@ class SaleRepository extends BaseRepository
             throw new UnprocessableEntityHttpException("Please enter tax value between 0 to 100.");
         }
         $input['grand_total'] += $input['tax_amount'];
-        if ($input['shipping'] <= $input['grand_total'] && $input['shipping'] >= 0) {
+        $input['grand_total'] += $input['shipping'];
+        /*if ($input['shipping'] <= $input['grand_total'] && $input['shipping'] >= 0) {
             $input['grand_total'] += $input['shipping'];
         } else {
             throw new UnprocessableEntityHttpException("Shipping amount should not be greater than total.");
-        }
+        }*/
 
         if ($input['payment_status'] == Sale::PAID) {
 
@@ -364,52 +380,65 @@ class SaleRepository extends BaseRepository
                 ]);
                 $this->updateItem($saleItemArray, $input['warehouse_id']);
                 //create new product items
-                if (is_null($saleItem['sale_item_id'])) {
+                //if (is_null($saleItem['sale_item_id'])) {
                     $saleItem = $this->calculationSaleItems($saleItem);
                     $saleItemArray = Arr::only($saleItem, [
                         'product_id', 'product_price', 'net_unit_price', 'tax_type', 'tax_value', 'tax_amount',
-                        'discount_type', 'discount_value', 'discount_amount', 'sale_unit', 'quantity', 'sub_total',
+                        'discount_type', 'discount_value', 'discount_amount', 'sale_unit', 'quantity', 'sub_total','status'
                     ]);
                     $sale->saleItems()->create($saleItemArray);
-                    $product = ManageStock::whereWarehouseId($input['warehouse_id'])->whereProductId($saleItem['product_id'])->first();
-                    if ($product) {
-                        if ($product->quantity >= $saleItem['quantity']) {
-                            $product->update([
-                                'quantity' => $product->quantity - $saleItem['quantity'],
-                            ]);
-                        } else {
-                            throw new UnprocessableEntityHttpException("Quantity must be less than Available quantity.");
+                    /*if($input['status'] == '2')
+                    {*/
+                        $product = ManageStock::whereWarehouseId($input['warehouse_id'])->whereProductId($saleItem['product_id'])->first();
+                        if ($product && $product->quantity != 0) {
+                            if ($product->quantity >= $saleItem['quantity']) {
+                                $product->update([
+                                    'quantity' => $product->quantity - $saleItem['quantity'],
+                                ]);
+                            } else {
+                                throw new UnprocessableEntityHttpException("Quantity must be less than Available quantity.");
+                            }
                         }
-                    }
-                }
+                    /*}*/
+                /*}*/
             }
             $removeItemIds = array_diff($saleItemIds, $saleItmOldIds);
             //delete remove product
-            if (!empty(array_values($removeItemIds))) {
-                foreach ($removeItemIds as $removeItemId) {
-                    // remove quantity manage storage
-                    $oldProduct = SaleItem::whereId($removeItemId)->first();
-                    $productQuantity = ManageStock::whereWarehouseId($input['warehouse_id'])->whereProductId($oldProduct->product_id)->first();
-                    if ($productQuantity) {
-                        if ($oldProduct) {
-                            $productQuantity->update([
-                                'quantity' => $productQuantity->quantity + $oldProduct->quantity,
+            if($input['status'] == '1')
+            {
+                if (!empty(array_values($removeItemIds))) {
+                    foreach ($removeItemIds as $removeItemId) {
+                        // remove quantity manage storage
+                        $oldProduct = SaleItem::whereId($removeItemId)->first();
+                        $productQuantity = ManageStock::whereWarehouseId($input['warehouse_id'])->whereProductId($oldProduct->product_id)->first();
+                        if ($productQuantity) {
+                            if ($oldProduct) {
+                                $productQuantity->update([
+                                    'quantity' => $productQuantity->quantity + $oldProduct->quantity,
+                                ]);
+                            }
+                        } else {
+                            ManageStock::create([
+                                'warehouse_id' => $input['warehouse_id'],
+                                'product_id'   => $oldProduct->product_id,
+                                'quantity'     => $oldProduct->quantity,
                             ]);
                         }
-                    } else {
-                        ManageStock::create([
-                            'warehouse_id' => $input['warehouse_id'],
-                            'product_id'   => $oldProduct->product_id,
-                            'quantity'     => $oldProduct->quantity,
-                        ]);
                     }
+                    SaleItem::whereIn('id', array_values($removeItemIds))->delete();
                 }
-                SaleItem::whereIn('id', array_values($removeItemIds))->delete();
             }
             $this->generateBarcode($sale->reference_code);
             $sale['barcode_image_url'] = Storage::url('sales/barcode-'.$sale->reference_code.'.png');
             $sale = $this->updateSaleCalculation($input, $id);
             DB::commit();
+
+            if (isset($input['images']) && !empty($input['images'])) {
+            foreach ($input['images'] as $image) {
+                    $product['image_url'] = $product->addMedia($image)->toMediaCollection(Sale::PATH,
+                        config('app.media_disc'));
+                }
+            }
 
             return $sale;
         } catch (Exception $e) {
@@ -435,7 +464,7 @@ class SaleRepository extends BaseRepository
             if ($oldItem && $oldItem->quantity != $saleItem['quantity']) {  
                 $totalQuantity = 0;
                 if ($oldItem->quantity > $saleItem['quantity']) {
-                    if ($product) {
+                    if ($product && $input['status'] == 2) {
                         $totalQuantity = $product->quantity + ($oldItem->quantity - $saleItem['quantity']);
                         $product->update([      
                             'quantity' => $totalQuantity,
@@ -488,10 +517,10 @@ class SaleRepository extends BaseRepository
 
         $input['grand_total'] += $input['tax_amount'];
 
-        if ($input['shipping'] > $input['grand_total'] || $input['shipping'] < 0) {
+        /*if ($input['shipping'] > $input['grand_total'] || $input['shipping'] < 0) {
 
             throw new UnprocessableEntityHttpException("Shipping amount should not be greater than total.");
-        }
+        }*/
 
         $input['grand_total'] += $input['shipping'];
 
@@ -504,9 +533,10 @@ class SaleRepository extends BaseRepository
 
         $saleInputArray = Arr::only($input, [
             'customer_id', 'warehouse_id', 'tax_rate', 'tax_amount', 'discount', 'shipping', 'grand_total',
-            'received_amount', 'paid_amount', 'payment_type', 'note', 'date', 'status', 'payment_status','shipping_data',
+            'received_amount', 'paid_amount', 'payment_type', 'note', 'date', 'status', 'payment_status','shipping_data','tax_data',
         ]);
         $saleInputArray['shipping_data'] = json_encode($input['shipping_data']);
+        $saleInputArray['tax_data'] = json_encode($input['tax_data']);
         $sale->update($saleInputArray);
         /*new code*/
             if(!empty($input['shipping_data']))

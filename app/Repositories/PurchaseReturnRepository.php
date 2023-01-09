@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 /**
@@ -29,6 +30,7 @@ class PurchaseReturnRepository extends BaseRepository
         'discount',
         'discount',
         'shipping_data',
+        'tax_data',
         'shipping',
         'grand_total',
         'received_amount',
@@ -47,6 +49,7 @@ class PurchaseReturnRepository extends BaseRepository
         'tax_amount',
         'discount',
         'shipping_data',
+        'tax_data',
         'shipping',
         'grand_total',
         'received_amount',
@@ -88,33 +91,44 @@ class PurchaseReturnRepository extends BaseRepository
             }
 
             $purchaseReturnInputArray = Arr::only($input, [
-                'supplier_id', 'warehouse_id', 'date', 'tax_rate', 'tax_amount', 'discount', 'shipping_data','shipping', 'grand_total',
+                'supplier_id', 'warehouse_id', 'date', 'tax_rate', 'tax_amount', 'discount', 'shipping_data','tax_data','shipping', 'grand_total',
                 'received_amount', 'paid_amount', 'payment_type', 'notes', 'status', 'payment_status',
             ]);
 
             $purchaseReturnInputArray['shipping_data'] = json_encode($input['shipping_data']);
+            $purchaseReturnInputArray['tax_data'] = json_encode($input['tax_data']);
             $purchaseReturn = PurchaseReturn::create($purchaseReturnInputArray);
-
             $purchaseReturn = $this->storePurchaseReturnItems($purchaseReturn, $input);
-            foreach ($input['purchase_return_items'] as $saleItem) {
-                $product = ManageStock::whereWarehouseId($input['warehouse_id'])->whereProductId($saleItem['product_id'])->first();
-                $purchaseExist = PurchaseItem::where('product_id', $saleItem['product_id'])->whereHas('purchase',
-                    function (Builder $q) use ($input) {
-                        $q->where('supplier_id', $input['supplier_id'])->where('warehouse_id', $input['warehouse_id']);
-                    })->exists();
-                if ($purchaseExist) {
-                    if ($product && $product->quantity >= $saleItem['quantity']) {
-                        $totalQuantity = $product->quantity - $saleItem['quantity'];
-                        $product->update([
-                            'quantity' => $totalQuantity,
-                        ]);
-                    } else {
-                        throw new UnprocessableEntityHttpException("Quantity must be less than Available quantity.");
-                    }
-                } else {
-                    throw new UnprocessableEntityHttpException("Purchase Does Not exist");
+
+            if (isset($input['images']) && !empty($input['images'])) {
+                foreach ($input['images'] as $image) {
+                    $product['image_url'] = $product->addMedia($image)->toMediaCollection(PurchaseReturn::PATH,
+                        config('app.media_disc'));
                 }
             }
+
+           /* if($input['status'] == '2')
+            {*/
+                foreach ($input['purchase_return_items'] as $saleItem) {
+                    $product = ManageStock::whereWarehouseId($input['warehouse_id'])->whereProductId($saleItem['product_id'])->first();
+                    $purchaseExist = PurchaseItem::where('product_id', $saleItem['product_id'])->whereHas('purchase',
+                        function (Builder $q) use ($input) {
+                            $q->where('supplier_id', $input['supplier_id'])->where('warehouse_id', $input['warehouse_id']);
+                        })->exists();
+                    if ($purchaseExist) {
+                        if ($product && $product->quantity >= $saleItem['quantity']) {
+                            $totalQuantity = $product->quantity - $saleItem['quantity'];
+                            $product->update([
+                                'quantity' => $totalQuantity,
+                            ]);
+                        } else {
+                            throw new UnprocessableEntityHttpException("Quantity must be less than Available quantity.");
+                        }
+                    } else {
+                        throw new UnprocessableEntityHttpException("Purchase Does Not exist");
+                    }
+                }
+            /*}*/
             DB::commit();
              /*new code*/
             if(!empty($input['shipping_data']))
@@ -169,11 +183,12 @@ class PurchaseReturnRepository extends BaseRepository
             throw new UnprocessableEntityHttpException("Please enter tax value between 0 to 100.");
         }
         $input['grand_total'] = $input['grand_total'] + $input['tax_amount'];
-        if ($input['shipping'] <= $input['grand_total'] && $input['shipping'] >= 0) {
+        $input['grand_total'] += $input['shipping'];
+        /*if ($input['shipping'] <= $input['grand_total'] && $input['shipping'] >= 0) {
             $input['grand_total'] += $input['shipping'];
         } else {
             throw new UnprocessableEntityHttpException("Shipping amount should not be greater than total.");
-        }
+        }*/
 
         if ($input['payment_status'] == PurchaseReturn::PAID) {
             $input['received_amount'] = $input['grand_total'];
@@ -265,16 +280,24 @@ class PurchaseReturnRepository extends BaseRepository
                     'sub_total',
                 ]);
                 $this->updateItem($purchaseReturnItemArr, $input['warehouse_id']);
+
+                if (isset($input['images']) && !empty($input['images'])) {
+                foreach ($input['images'] as $image) {
+                        $product['image_url'] = $product->addMedia($image)->toMediaCollection(PurchaseReturn::PATH,
+                            config('app.media_disc'));
+                    }
+                }
                 //create new product items
                 if (is_null($purchaseReturnItem['purchase_return_item_id'])) {
                     $purchaseReturnItem = $this->calculationPurchaseReturnItems($purchaseReturnItem);
                     $purchaseReturnItemArr = Arr::only($purchaseReturnItem, [
                         'purchase_return_item_id', 'product_id', 'product_cost', 'net_unit_cost', 'tax_type',
                         'tax_value',
-                        'tax_amount', 'discount_type', 'discount_value', 'discount_amount', 'purchase_unit', 'quantity',
+                        'tax_amount', 'discount_type', 'discount_value', 'discount_amount', 'purchase_unit', 'quantity','shipping_data','tax_data',
                         'sub_total',
                     ]);
                     $purchaseReturnItemArr['shipping_data'] = json_encode($input['shipping_data']);
+                    $purchaseReturnItemArr['tax_data'] = json_encode($input['tax_data']);
                     $purchaseReturn->purchaseReturnItems()->create($purchaseReturnItemArr);
                     $product = ManageStock::whereWarehouseId($input['warehouse_id'])->whereProductId($purchaseReturnItem['product_id'])->first();
                     $purchaseExist = PurchaseItem::where('product_id',
@@ -401,10 +424,10 @@ class PurchaseReturnRepository extends BaseRepository
 
         $input['grand_total'] += $input['tax_amount'];
 
-        if ($input['shipping'] > $input['grand_total'] || $input['shipping'] < 0) {
+        /*if ($input['shipping'] > $input['grand_total'] || $input['shipping'] < 0) {
 
             throw new UnprocessableEntityHttpException("Shipping amount should not be greater than total.");
-        }
+        }*/
 
         $input['grand_total'] += $input['shipping'];
 
@@ -416,9 +439,10 @@ class PurchaseReturnRepository extends BaseRepository
 
         $purchaseReturnInputArray = Arr::only($input, [
             'supplier_id', 'warehouse_id', 'date', 'tax_rate', 'tax_amount', 'discount', 'shipping', 'grand_total',
-            'received_amount', 'paid_amount', 'payment_type', 'notes', 'status', 'payment_status', 'shipping_data'
+            'received_amount', 'paid_amount', 'payment_type', 'notes', 'status', 'payment_status', 'shipping_data','tax_data',
         ]);
         $purchaseReturnInputArray['shipping_data'] = json_encode($input['shipping_data']);
+        $purchaseReturnInputArray['tax_data'] = json_encode($input['tax_data']);
         $purchaseReturn->update($purchaseReturnInputArray);
         /*new code*/
             if(!empty($input['shipping_data']))

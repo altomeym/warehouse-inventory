@@ -16,6 +16,7 @@ import TopProgressBar from "../../shared/components/loaders/TopProgressBar";
 const PurchaseReturnDetails = (props) => {
     const {fetchPurchaseReturnDetails, purchaseReturnDetails, fetchFrontSetting, frontSetting, allConfigData} = props;
     const shippingData = purchaseReturnDetails?.shipping_data ? JSON.parse(purchaseReturnDetails?.shipping_data) : [];
+    const TaxData = purchaseReturnDetails?.tax_data ? JSON.parse(purchaseReturnDetails?.tax_data) : [];
 
     const {id} = useParams();
 
@@ -98,17 +99,11 @@ const PurchaseReturnDetails = (props) => {
                                     </div>
                                     <div className='pb-1'>
                                         <span className='me-2'>{getFormattedMessage('globally.detail.status')} :</span>
-                                        {purchaseReturnDetails && purchaseReturnDetails.status === 1 &&
-                                        <span className='badge bg-light-success'>
-                                                <span>Received</span>
-                                           </span> || purchaseReturnDetails.status === 2 &&
-                                        <span className='badge bg-light-primary'>
-                                                <span>Pending</span>
-                                        </span> || purchaseReturnDetails.status === 3 &&
-                                        <span className='badge bg-light-warning'>
-                                                <span>Ordered</span>
-                                        </span>
-                                        }
+                                        {purchaseReturnDetails && purchaseReturnDetails?.to_status?.name ? 
+                                          <span className='badge bg-light-primary'>
+                                             <span> {purchaseReturnDetails?.to_status?.name} </span>
+                                           </span> 
+                                         : '' }
                                     </div>
                                     <div className='pb-1'>
                                         <span
@@ -154,12 +149,12 @@ const PurchaseReturnDetails = (props) => {
                                     <div className='table-responsive'>
                                         <table className='table border'>
                                             <tbody>
+                                            {TaxData && TaxData.map((taxItem)=>(
                                             <tr>
-                                                <td className='py-3'>{getFormattedMessage('globally.detail.order.tax')}</td>
-                                                <td className='py-3'>
-                                                    {currencySymbolHendling(allConfigData, frontSetting.value && frontSetting.value.currency_symbol, purchaseReturnDetails && purchaseReturnDetails.tax_amount > 0 ? purchaseReturnDetails.tax_amount : '0.00')} ({purchaseReturnDetails && parseFloat(purchaseReturnDetails.tax_rate).toFixed(2)}%)
-                                                </td>
+                                                <td className='py-3'>{taxItem?.tax_type_name ? taxItem?.tax_type_name : 'Tax'} </td>
+                                                <td className='py-3'>{currencySymbolHendling(allConfigData, frontSetting.value && frontSetting.value.currency_symbol, taxItem?.tax_value ? taxItem?.tax_value : 0)}</td>
                                             </tr>
+                                            )) }
                                             <tr>
                                                 <td className='py-3'>{getFormattedMessage('globally.detail.discount')}</td>
                                                 <td className='py-3'>

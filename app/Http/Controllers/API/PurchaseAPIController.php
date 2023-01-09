@@ -140,6 +140,7 @@ class PurchaseAPIController extends AppBaseController
             DB::beginTransaction();
             //manage stock
             $purchase = $this->purchaseRepository->with('purchaseItems')->where('id', $id)->first();
+           
             foreach ($purchase->purchaseItems as $purchaseItem) {
                 $product = ManageStock::whereWarehouseId($purchase->warehouse_id)
                     ->whereProductId($purchaseItem['product_id'])
@@ -201,7 +202,7 @@ class PurchaseAPIController extends AppBaseController
      */
     public function purchaseInfo(Purchase $purchase)
     {
-        $purchase = $purchase->load(['purchaseItems.product', 'warehouse', 'supplier']);
+        $purchase = $purchase->load(['purchaseItems.product', 'warehouse', 'supplier', 'toStatus']);
         $keyName = [
             'email', 'company_name', 'phone', 'address',
         ];

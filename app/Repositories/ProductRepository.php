@@ -9,6 +9,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Picqer\Barcode\BarcodeGeneratorPNG;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 /**
@@ -95,6 +96,9 @@ class ProductRepository extends BaseRepository
             $this->generateBarcode($input, $reference_code);
             $product['barcode_image_url'] = Storage::url('product_barcode/barcode-'.$reference_code.'.png');
 
+            $this->generateQrcode($input, $reference_code);
+            $product['qrcode_image_url'] = Storage::url('product_qrcode/qrcode-'.$reference_code.'.svg');
+             
             DB::commit();
 
             return $product;
@@ -125,6 +129,10 @@ class ProductRepository extends BaseRepository
             $reference_code = 'PR_'.$product->id;
             $this->generateBarcode($input, $reference_code);
             $product['barcode_image_url'] = Storage::url('product_barcode/barcode-'.$reference_code.'.png');
+
+            $product->clearMediaCollection(Product::PRODUCT_QRCODE_PATH);
+            $this->generateQrcode($input, $reference_code);
+            $product['qrcode_image_url'] = Storage::url('product_qrcode/qrcode-'.$reference_code.'.svg');
 
             DB::commit();
 
@@ -161,10 +169,15 @@ class ProductRepository extends BaseRepository
                 $barcodeType = $generator::TYPE_UPC_A;
                 break;
         }
-
         Storage::disk(config('app.media_disc'))->put('product_barcode/barcode-'.$reference_code.'.png',
+      
             $generator->getBarcode($input['code'], $barcodeType, 4, 70));
 
+        return true;
+    }
+    public function generateQrcode($input, $reference_code): bool
+    {
+        QrCode::generate($input['code'], public_path('uploads/product_qrcode/qrcode-'.$reference_code.'.svg') );
         return true;
     }
 }

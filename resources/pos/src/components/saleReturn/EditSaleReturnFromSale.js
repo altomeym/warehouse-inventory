@@ -12,9 +12,10 @@ import {getFormattedMessage} from '../../shared/sharedMethod';
 import Spinner from "../../shared/components/loaders/Spinner";
 import TopProgressBar from "../../shared/components/loaders/TopProgressBar";
 import {fetchShippingTypes} from '../../store/action/shippingAction'
+import {fetchStatusTypes} from '../../store/action/tranStatusTypesAction';
 
 const EditSaleReturn = (props) => {
-    const {fetchSaleReturn, salesReturn, customers, fetchAllCustomer, warehouses, fetchAllWarehouses,shipingTypes, fetchShippingTypes,  isLoading} = props;
+    const {fetchSaleReturn, salesReturn, customers, fetchAllCustomer, warehouses, fetchAllWarehouses,shipingTypes, fetchShippingTypes, allStatusTypes, fetchStatusTypes,  isLoading} = props;
     const {id} = useParams();
     const isSaleReturnFromSale = true
 
@@ -26,6 +27,7 @@ const EditSaleReturn = (props) => {
 
     useEffect(() => {
         fetchShippingTypes();
+        fetchStatusTypes();
     }, []);
 
     const selectedStatus = salesReturn.attributes && salesReturn.attributes.status && saleReturnStatus.filter((item) => item.value === salesReturn.attributes.status)
@@ -55,7 +57,8 @@ const EditSaleReturn = (props) => {
         tax_amount: salesReturn.attributes.tax_amount,
         discount: salesReturn.attributes.discount,
         shipping: salesReturn.attributes.shipping,
-        shipping_data:  JSON.parse(salesReturn.attributes.shipping_data),
+        shipping_data: salesReturn && salesReturn?.attributes?.shipping_data ?  JSON.parse(salesReturn.attributes?.shipping_data) : [],
+        tax_data: salesReturn && salesReturn?.attributes?.tax_data ?  JSON.parse(salesReturn.attributes?.tax_data) : [],
         grand_total : salesReturn.attributes.grand_total,
         amount: salesReturn.attributes.amount,
         sale_items: salesReturn.attributes.sale_return_items.map((item) => ({
@@ -104,14 +107,14 @@ const EditSaleReturn = (props) => {
             <TopProgressBar/>
             <HeaderTitle title={getFormattedMessage('sale-return.edit.title')} to='/app/sales'/>
             {isLoading ? <Spinner /> :
-                salesReturn && <SaleReturnForm singleSale={itemsValue} isEdit={true} id={itemsValue?.sale_return_id} customers={customers} warehouses={warehouses} allShipingTypes={shipingTypes} />}
+                salesReturn && <SaleReturnForm singleSale={itemsValue} isEdit={true} id={itemsValue?.sale_return_id} customers={customers} warehouses={warehouses} allShipingTypes={shipingTypes} allStatusTypes={allStatusTypes} />}
         </MasterLayout>
     )
 }
 
 const mapStateToProps = (state) => {
-    const {salesReturn, customers, warehouses, shipingTypes, isLoading} = state;
-    return {salesReturn, customers, warehouses, shipingTypes, isLoading}
+    const {salesReturn, customers, warehouses, shipingTypes, allStatusTypes, isLoading} = state;
+    return {salesReturn, customers, warehouses, shipingTypes, allStatusTypes, isLoading}
 };
 
-export default connect(mapStateToProps, {fetchSaleReturn, fetchAllCustomer, fetchAllWarehouses, fetchShippingTypes})(EditSaleReturn);
+export default connect(mapStateToProps, {fetchSaleReturn, fetchAllCustomer, fetchAllWarehouses, fetchShippingTypes, fetchStatusTypes})(EditSaleReturn);

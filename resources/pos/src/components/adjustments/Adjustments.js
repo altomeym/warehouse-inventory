@@ -58,6 +58,8 @@ const Adjustments = (props) => {
         date: getFormattedDate(item.attributes.created_at, allConfigData && allConfigData),
         time: moment(item.attributes.created_at).format('LT'),
         warehouse_name: item.attributes.warehouse_name,
+        method_type: item.attributes?.adjustment_items[0]?.method_type,
+        quantity: item.attributes?.adjustment_items[0]?.quantity,
         id: item.id,
         currency: currencySymbol
     }));
@@ -73,9 +75,16 @@ const Adjustments = (props) => {
             sortField: 'reference_code',
             sortable: false,
             cell: row => {
-                return <span>
-                            <span>{row.reference_code}</span>
-                        </span>
+                return (
+                    row.method_type === 1 ?
+                    <span className='badge bg-light-success'>
+                        <span>{row.reference_code}</span>
+                    </span>
+                   :
+                    <span className='badge bg-light-primary'>
+                        <span>{row.reference_code}</span>
+                    </span>
+                )
             }
         },
         {
@@ -91,6 +100,26 @@ const Adjustments = (props) => {
             cell: row => {
                 return <span>
                             <span>{row.total_products}</span>
+                        </span>
+            }
+        },
+        {
+            name: getFormattedMessage('dashboard.stockAlert.quantity.label'),
+            sortField: 'quantities',
+            sortable: false,
+            cell: row => {
+                return <span>
+                            <span>{row.quantity}</span>
+                        </span>
+            }
+        },
+        {
+            name: getFormattedMessage('globally.type.label'),
+            sortField: 'type',
+            sortable: false,
+            cell: row => {
+                return <span>
+                            <span>{row.method_type === 1 ? 'Addition' : "Subtraction"}</span>
                         </span>
             }
         },
@@ -123,6 +152,7 @@ const Adjustments = (props) => {
     const array = warehouses
     const newFirstElement = {attributes: {name: getFormattedMessage('unit.filter.all.label')}, id: "0"}
     const newArray = [newFirstElement].concat(array)
+    const newMethodTypeArray = adjustments && adjustments.length >0 ? adjustments : [] ;
 
     return (
         <MasterLayout>
@@ -132,7 +162,7 @@ const Adjustments = (props) => {
             <ReactDataTable columns={columns} items={itemsValue} to='#/app/adjustments/create'
                             ButtonValue={is_addedAble ? getFormattedMessage('adjustments.create.title') : null } isShowPaymentModel={isShowPaymentModel} isCallSaleApi={isCallSaleApi}
                             onChange={onChange} totalRows={totalRecord} goToEdit={goToEdit} isShowFilterField
-                            isLoading={isLoading} isWarehouseType={true} warehouseOptions={newArray}  warehouses={warehouses} />}
+                            isLoading={isLoading} isWarehouseType={true} warehouseOptions={newArray} isAdjustmentType={false} adjustmentOptions={newMethodTypeArray}  warehouses={warehouses} />}
             <DeleteSaleAdjustMents onClickDeleteModel={onClickDeleteModel} deleteModel={deleteModel} onDelete={isDelete}/>
             <AdjustMentDetail onClickDetailsModel={onClickDetailsModel} detailsModel={detailsModel} onDetails={isDetails} setLgShow={setLgShow} lgShow={lgShow}/>
         </MasterLayout>

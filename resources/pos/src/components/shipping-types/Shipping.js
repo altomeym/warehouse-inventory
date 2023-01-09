@@ -1,4 +1,5 @@
 import React,  {useEffect, useState} from 'react';
+import { useSearchParams } from "react-router-dom";
 import {connect} from 'react-redux';
 import MasterLayout from '../MasterLayout';
 import {fetchShippingTypes} from '../../store/action/shippingAction';
@@ -17,6 +18,8 @@ const Shipping = (props) => {
     const [isDelete, setIsDelete] = useState(null);
     const [toggle, setToggle] = useState(false);
     const [shippingType, setShippingType] = useState();
+    const [searchParams, setSearchParams] = useSearchParams();
+     
 
     const handleClose = (item = null) => {
         setToggle(!toggle);
@@ -29,17 +32,18 @@ const Shipping = (props) => {
     };
 
     const onChange = (filter) => {
-        fetchShippingTypes(filter, true);
+        fetchShippingTypes(filter, true,);
     };
    
     const itemsValue = shipingTypes?.length >= 0 && shipingTypes.map(item => ({
         name: item?.attributes?.name,
-        id: item?.id
+        id: item?.id,
+        slug:  item?.attributes?.slug
     }));
     let user_permissions = new Set(config);
-    const is_addedAble = user_permissions.has('manage_sale-create') ? true : false
-    const is_editAdable = user_permissions.has('manage_shipping-edit') ? true : false
-    const is_deleteAdable = user_permissions.has('manage_shipping-delete') ? true: false
+    const is_addedAble = user_permissions.has('manage_shipping_type-create') ? true : false
+    const is_editAdable = user_permissions.has('manage_shipping_type-edit') ? true : false
+    const is_deleteAdable = user_permissions.has('manage_shipping_type-delete') ? true: false
      
     const columns = [
         {
@@ -48,7 +52,22 @@ const Shipping = (props) => {
             sortable: true,
             sortField: 'name',
         },
-        
+        {
+            name: getFormattedMessage('tax.type.label'),
+            sortable: true,
+            sortField: 'slug',
+            cell: row => {
+                return row?.slug == 'Shipping' ? 
+                      <span className='badge bg-light-primary'>
+                            <span>{row?.slug}</span>
+                        </span>
+                        :
+                        <span className='badge bg-light-info'>
+                            <span>{row?.slug}</span>
+                        </span>
+
+            }
+        },
         {
             name: getFormattedMessage('react-data-table.action.column.label'),
             right: true,
@@ -68,8 +87,8 @@ const Shipping = (props) => {
             <TabTitle title={placeholderText('shipping.title')}/>
             <ReactDataTable columns={columns} items={itemsValue} onChange={onChange} isLoading={isLoading}
                             totalRows={totalRecord}  AddButton={is_addedAble ==true ? <CreateShipping />  : null} />
-            <EditShipping handleClose={handleClose} show={toggle} shippingType={shippingType}/> {is_addedAble}
-              <DeletShipping onClickDeleteModel={onClickDeleteModel} deleteModel={deleteModel} onDelete={isDelete}/>
+            <EditShipping handleClose={handleClose} show={toggle} shippingType={shippingType}  /> {is_addedAble}
+              <DeletShipping onClickDeleteModel={onClickDeleteModel} deleteModel={deleteModel} onDelete={isDelete}  />
         </MasterLayout>
     )
 };

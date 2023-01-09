@@ -10,11 +10,13 @@ import status from '../../shared/option-lists/quotationStatus.json';
 import Spinner from "../../shared/components/loaders/Spinner";
 import TopProgressBar from "../../shared/components/loaders/TopProgressBar";
 import { fetchQuotation, editQuotation } from '../../store/action/quotationAction';
+import {fetchShippingTypes} from '../../store/action/shippingAction';
+import {fetchStatusTypes} from '../../store/action/tranStatusTypesAction';
 import { getFormattedMessage, getFormattedOptions } from '../../shared/sharedMethod';
 import { quotationStatusOptions } from '../../constants';
 
 const EditQuotation = (props) => {
-    const {fetchQuotation, quotations, customers, fetchAllCustomer, warehouses, fetchAllWarehouses, isLoading} = props;
+    const {fetchQuotation, quotations, customers, fetchAllCustomer, warehouses, fetchAllWarehouses, shipingTypes, fetchShippingTypes, allStatusTypes, fetchStatusTypes, isLoading} = props;
     const {id} = useParams();
 
     useEffect(() => {
@@ -23,6 +25,10 @@ const EditQuotation = (props) => {
         fetchQuotation(id);
     }, []);
 
+    useEffect(() => {
+        fetchStatusTypes();
+        fetchShippingTypes({}, false,'');
+    }, []);
 
     const selectedStatus = quotations && quotations.attributes && quotations.attributes.status && status.filter((item) => item.value === quotations.attributes.status)
     const quotationStatusFilterOptions = getFormattedOptions(quotationStatusOptions)
@@ -42,6 +48,8 @@ const EditQuotation = (props) => {
         tax_amount: quotations.attributes.tax_amount,
         discount: quotations.attributes.discount,
         shipping: quotations.attributes.shipping,
+        shipping_data: JSON.parse(quotations.attributes.shipping_data),
+        tax_data: JSON.parse(quotations.attributes.tax_data),
         grand_total: quotations.attributes.grand_total,
         amount: quotations.attributes.amount,
         quotation_items: quotations.attributes.quotation_items.map((item) => ({
@@ -82,14 +90,14 @@ const EditQuotation = (props) => {
             <TopProgressBar/>
             <HeaderTitle title={getFormattedMessage('edit-quotation.title')} to='/app/quotations'/>
             {isLoading ? <Spinner /> :
-                <QuotationForm singleQuotation={itemsValue} id={id} customers={customers} warehouses={warehouses}/>}
+                <QuotationForm singleQuotation={itemsValue} id={id} customers={customers} warehouses={warehouses} allStatusTypes={allStatusTypes} allShipingTypes={shipingTypes} />}
         </MasterLayout>
     )
 };
 
 const mapStateToProps = (state) => {
-    const {customers, warehouses, isLoading, quotations} = state;
-    return {customers, warehouses, isLoading, quotations}
+    const {customers, warehouses, isLoading, quotations, shipingTypes, allStatusTypes} = state;
+    return {customers, warehouses, isLoading, quotations, shipingTypes, allStatusTypes}
 };
 
-export default connect(mapStateToProps, {fetchQuotation, editQuotation, fetchAllCustomer, fetchAllWarehouses})(EditQuotation);
+export default connect(mapStateToProps, {fetchQuotation, editQuotation, fetchAllCustomer, fetchAllWarehouses, fetchShippingTypes, fetchStatusTypes})(EditQuotation);

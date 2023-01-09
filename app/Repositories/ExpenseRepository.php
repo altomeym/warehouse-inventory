@@ -22,6 +22,8 @@ class ExpenseRepository extends BaseRepository
         'amount',
         'details',
         'reference_code',
+        'payment_status',
+        'payment_type',
         'created_at',
         'title',
     ];

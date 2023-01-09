@@ -9,6 +9,7 @@ use Exception;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 /**
@@ -32,6 +33,7 @@ class PurchaseRepository extends BaseRepository
         'payment_type',
         'notes',
         'shipping_data',
+        'tax_data',
         'created_at',
     ];
 
@@ -48,6 +50,7 @@ class PurchaseRepository extends BaseRepository
         'received_amount',
         'notes',
         'shipping_data',
+        'tax_data',
     ];
 
     /**
@@ -81,20 +84,29 @@ class PurchaseRepository extends BaseRepository
 
             $purchaseInputArray = Arr::only($input, [
                 'supplier_id', 'warehouse_id', 'date', 'tax_rate', 'tax_amount', 'discount', 'shipping', 'grand_total',
-                'received_amount', 'paid_amount', 'payment_type', 'notes', 'status','shipping_data',
+                'received_amount', 'paid_amount', 'payment_type', 'notes', 'status','shipping_data','tax_data',
             ]);
 
            
              /** @var Purchase $purchase */
             $purchaseInputArray['shipping_data'] = json_encode($input['shipping_data']);
+            $purchaseInputArray['tax_data'] = json_encode($input['tax_data']);
             $purchase = Purchase::create($purchaseInputArray);
 
             $purchase = $this->storePurchaseItems($purchase, $input);
-
+            if (isset($input['images']) && !empty($input['images'])) {
+                foreach ($input['images'] as $image) {
+                    $product['image_url'] = $product->addMedia($image)->toMediaCollection(Purchase::PATH,
+                        config('app.media_disc'));
+                }
+            }
 
             // manage stock 
-            foreach ($input['purchase_items'] as $purchaseItem) {
-                manageStock($input['warehouse_id'], $purchaseItem['product_id'], $purchaseItem['quantity']);
+            if($input['status'] == 2)
+            {
+                foreach ($input['purchase_items'] as $purchaseItem) {
+                    manageStock($input['warehouse_id'], $purchaseItem['product_id'], $purchaseItem['quantity']);
+                }
             }          
             DB::commit();
              /*new code*/
@@ -199,11 +211,12 @@ class PurchaseRepository extends BaseRepository
             throw new UnprocessableEntityHttpException("Please enter tax value between 0 to 100.");
         }
         $input['grand_total'] = $input['grand_total'] + $input['tax_amount'];
-        if ($input['shipping'] <= $input['grand_total'] && $input['shipping'] >= 0) {
+        $input['grand_total'] += $input['shipping'];
+        /*if ($input['shipping'] <= $input['grand_total'] && $input['shipping'] >= 0) {
             $input['grand_total'] += $input['shipping'];
         } else {
             throw new UnprocessableEntityHttpException("Shipping amount should not be greater than total.");
-        }
+        }*/
 
         $input['reference_code'] = getSettingValue('purchase_code').'_111'.$purchase->id;
         $purchase->update($input);
@@ -239,15 +252,24 @@ class PurchaseRepository extends BaseRepository
                 ]);
                 $this->updateItem($purchaseItemArr, $input['warehouse_id']);
                 //create new product items
+                if (isset($input['images']) && !empty($input['images'])) {
+                foreach ($input['images'] as $image) {
+                        $product['image_url'] = $product->addMedia($image)->toMediaCollection(Purchase::PATH,
+                            config('app.media_disc'));
+                    }
+                }
                 if (is_null($purchaseItem['purchase_item_id'])) {
                     $purchaseItem = $this->calculationPurchaseItems($purchaseItem);
                     $purchaseItemArr = Arr::only($purchaseItem, [
                         'purchase_item_id', 'product_id', 'product_cost', 'net_unit_cost', 'tax_type', 'tax_value',
                         'tax_amount', 'discount_type', 'discount_value', 'discount_amount', 'purchase_unit', 'quantity',
-                        'sub_total',
+                        'sub_total','status',
                     ]);
                     $purchase->purchaseItems()->create($purchaseItemArr);
-                    // manage new product
+                }
+                // manage new product
+                if($input['status'] == 2)
+                {
                     manageStock($input['warehouse_id'], $purchaseItem['product_id'], $purchaseItem['quantity']);
                 }
             }
@@ -302,18 +324,19 @@ class PurchaseRepository extends BaseRepository
 
         $input['grand_total'] += $input['tax_amount'];
 
-        if ($input['shipping'] > $input['grand_total'] || $input['shipping'] < 0) {
+        /*if ($input['shipping'] > $input['grand_total'] || $input['shipping'] < 0) {
 
             throw new UnprocessableEntityHttpException("Shipping amount should not be greater than total.");
-        }
+        }*/
 
         $input['grand_total'] += $input['shipping'];
 
         $purchaseInputArray = Arr::only($input, [
             'supplier_id', 'warehouse_id', 'date', 'tax_rate', 'tax_amount', 'discount', 'shipping', 'grand_total',
-            'received_amount', 'paid_amount', 'payment_type', 'notes', 'status', 'shipping_data'
+            'received_amount', 'paid_amount', 'payment_type', 'notes', 'status', 'shipping_data','tax_data'
         ]);
         $purchaseItemArr['shipping_data'] = json_encode($input['shipping_data']);
+        $purchaseItemArr['tax_data'] = json_encode($input['tax_data']);
         $purchase->update($purchaseInputArray);
 
         /*new code*/

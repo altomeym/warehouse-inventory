@@ -6,25 +6,44 @@ import {
 } from '../../store/action/productCategoryAction';
 import ImagePicker from '../../shared/image-picker/ImagePicker';
 import user from '../../assets/images/productCategory_logo.jpeg';
-import {getFormattedMessage, placeholderText} from '../../shared/sharedMethod';
+import {getFormattedMessage, placeholderText, getFormattedOptions} from '../../shared/sharedMethod';
 import ModelFooter from '../../shared/components/modelFooter';
+import { categoryTypesOptions } from '../../constants';
+import ReactSelect from '../../shared/select/reactSelect';
 
 const ProductCategoryForm = (props) => {
-    const {handleClose, show, title, addProductData, editProductCategory, singleProductCategory} = props;
+    const {handleClose, show, title, addProductData, editProductCategory, singleProductCategory, fetchProductCategories, productCategories} = props;
     const innerRef = createRef();
+    const editType =  singleProductCategory && singleProductCategory?.parent_id == 0 ? 'parent' : 'child';
+    const typeoptions = getFormattedOptions(categoryTypesOptions)
+    let typeDefaultValue =  singleProductCategory && editType && typeoptions.filter((option) => option.id === editType)
+    const categoryDefaultValue =  singleProductCategory  && productCategories.filter((option) => option.id === singleProductCategory.parent_id)
+    
     const [productCategoryValue, setProductCategoryValue] = useState({
         name: singleProductCategory ? singleProductCategory.name : '',
+        category_type: {
+            value:  typeDefaultValue && typeDefaultValue[0] && typeDefaultValue[0]?.id,
+            label:  typeDefaultValue && typeDefaultValue[0] && typeDefaultValue[0]?.name,
+        },
+        product_category_id: {
+            value: categoryDefaultValue && categoryDefaultValue[0] && categoryDefaultValue[0]?.id,
+            label: categoryDefaultValue && categoryDefaultValue[0] && categoryDefaultValue[0]?.attributes?.name,
+        },
         image: singleProductCategory ? singleProductCategory.image : '',
     });
     const [errors, setErrors] = useState({
         name: '',
     });
+    console.log('categoryDefaultValue ', categoryDefaultValue);
+    console.log('singleProductCategory ', singleProductCategory);
+
     const editImg = singleProductCategory ? singleProductCategory.image : user;
     const newImg = productCategoryValue.image === false ? user : editImg;
     const [imagePreviewUrl, setImagePreviewUrl] = useState(newImg);
     const [selectImg, setSelectImg] = useState(null);
+    const [isParent, setIsParent] = useState(editType=='parent' ? true : false);
 
-    const disabled = selectImg ? false : singleProductCategory && singleProductCategory.name === productCategoryValue.name.trim();
+    const disabled = selectImg ? false : singleProductCategory && singleProductCategory.name === productCategoryValue.name.trim() && singleProductCategory.parent_id === productCategoryValue.product_category_id[0]?.value;
 
     const handleImageChanges = (e) => {
         e.preventDefault();
@@ -62,9 +81,30 @@ const ProductCategoryForm = (props) => {
         setErrors('');
     };
 
+    const onSTypesChange = (obj) => {
+        setProductCategoryValue(inputs => ({...inputs, category_type: obj}));
+        console.log(obj.value)
+        if(obj.value=='child')
+            setIsParent(false);
+         else
+           setIsParent(true);
+    };
+    const onProductCategoryChange = (obj) => {
+        setProductCategoryValue(inputs => ({...inputs, product_category_id: obj}));
+        setErrors('');
+    };
+
+    const onChange = (filter) => {
+        fetchProductCategories(filter, true);
+    };
+
     const prepareFormData = (data) => {
         const formData = new FormData();
         formData.append('name', data.name);
+        formData.append('category_type', data.category_type?.value);
+        if(data.category_type?.value && data.category_type?.value == 'child'){
+           formData.append('product_category_id', data.product_category_id?.value);
+        }
         if (selectImg) {
             formData.append('image', data.image);
         }
@@ -101,6 +141,22 @@ const ProductCategoryForm = (props) => {
         handleClose(false);
     };
 
+    let categoryOptions=[];
+    const itemsValue = productCategories?.length >= 0 && productCategories.map(product => {
+        categoryOptions.push({ 
+             value: product?.id,
+             label: product?.attributes?.name,
+      })
+    });
+
+    const slugFilterOptions = getFormattedOptions(categoryTypesOptions)
+    const slugDefaultValue = slugFilterOptions.map((option) => {
+        return {
+            value: option.id,
+            label: option.name
+        }
+    })
+
     return (
         <Modal show={show}
                onHide={clearField}
@@ -130,6 +186,22 @@ const ProductCategoryForm = (props) => {
                                               value={productCategoryValue.name}/>
                                 <span className='text-danger d-block fw-400 fs-small mt-2'>{errors['name'] ? errors['name'] : null}</span>
                         </div>
+                        <div className='col-md-12'>
+                             <ReactSelect multiLanguageOption={slugFilterOptions} onChange={e => onSTypesChange( e)} name='category_type'
+                                title={'Type'}
+                                value={productCategoryValue.category_type || ""}  errors={errors['category_type']}
+                                placeholder={'Category type '}/>
+                        </div>
+                        {!isParent ? 
+                        <div className='col-md-12'>
+                        <ReactSelect title={getFormattedMessage('product.input.product-category.label')} 
+                                                     placeholder={placeholderText('product.input.product-category.placeholder.label')}
+                                                    name='product_category_id' 
+                                                     value={productCategoryValue.product_category_id}
+                                                     data={productCategories} onChange={onProductCategoryChange}
+                                                      errors={errors['product_category_id']}/>
+                        </div>
+                        : null }
                         <ImagePicker imagePreviewUrl={imagePreviewUrl} handleImageChange={handleImageChanges}
                                      user={user} imageTitle={placeholderText('globally.input.change-logo.tooltip')}/>
                     </div>
@@ -140,5 +212,9 @@ const ProductCategoryForm = (props) => {
         </Modal>
     )
 };
+const mapStateToProps = (state) => {
+    const {productCategories} = state;
+    return {productCategories}
+};
 
-export default connect(null, {fetchProductCategory, editProductCategory, fetchProductCategories})(ProductCategoryForm);
+export default connect(mapStateToProps, {fetchProductCategory, editProductCategory, fetchProductCategories})(ProductCategoryForm);

@@ -63,7 +63,7 @@ const Transfers = (props) => {
             to_warehouse_id: tansfer.attributes.to_warehouse.name,
             items: tansfer.attributes.transfer_items.length,
             grand_total: tansfer.attributes.grand_total,
-            status: tansfer.attributes.status,
+            status: tansfer?.attributes?.toStatus?.name,
             id: tansfer.id,
             currency: currencySymbol
         })
@@ -114,22 +114,32 @@ const Transfers = (props) => {
             sortField: 'status',
             sortable: false,
             cell: row => {
-                return (
-                    row.status === 1 &&
-                    <span className='badge bg-light-success'>
-                        <span>{getFormattedMessage("status.filter.complated.label")}</span>
-                    </span> ||
-                    row.status === 2 &&
-                    <span className='badge bg-light-primary'>
-                        <span>{getFormattedMessage("status.filter.sent.label")}</span>
-                    </span> ||
-                    row.status === 3 &&
-                    <span className='badge bg-light-warning'>
-                        <span>{getFormattedMessage("status.filter.pending.label")}</span>
-                    </span>
-                )
+                return <span className='badge bg-light-primary'>
+                            <span>{row?.status}</span>
+                        </span>
             }
         },
+        // {
+        //     name: getFormattedMessage('purchase.select.status.label'),
+        //     sortField: 'status',
+        //     sortable: false,
+        //     cell: row => {
+        //         return (
+        //             row.status === 1 &&
+        //             <span className='badge bg-light-success'>
+        //                 <span>{getFormattedMessage("status.filter.complated.label")}</span>
+        //             </span> ||
+        //             row.status === 2 &&
+        //             <span className='badge bg-light-primary'>
+        //                 <span>  {getFormattedMessage("status.filter.sent.label")}</span>
+        //             </span> ||
+        //             row.status === 3 &&
+        //             <span className='badge bg-light-warning'>
+        //                 <span>{getFormattedMessage("status.filter.pending.label")}</span>
+        //             </span>
+        //         )
+        //     }
+        // },
 
         {
             name: getFormattedMessage('globally.react-table.column.created-date.label'),

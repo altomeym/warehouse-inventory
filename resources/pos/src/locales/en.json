@@ -175,10 +175,10 @@
     "warehouse.create.title": "Create Warehouse",
     "warehouse.edit.title": "Edit Warehouse",
     "warehouse.details.title": "Warehouse Details",
-    "warehouse.input.zip-code.label": "Zip Code",
-    "warehouse.input.zip-code.placeholder.label": "Enter Zip Code",
-    "warehouse.input.zip-code.validate.label": "Please enter zip code",
-    "warehouse.input.zip-code.valid.validate.label": "Please enter valid zip code",
+    "warehouse.input.zip-code.label": "Pin Code",
+    "warehouse.input.zip-code.placeholder.label": "Enter pin Code",
+    "warehouse.input.zip-code.validate.label": "Please enter pin code",
+    "warehouse.input.zip-code.valid.validate.label": "Please enter valid pin code",
     "warehouse.success.create.message": "Warehouse created successfully",
     "warehouse.success.edit.message": "Warehouse updated successfully",
     "warehouse.success.delete.message": "Warehouse deleted successfully",
@@ -736,11 +736,33 @@
     "product-items.label" : "Items",
     "Payload.key.lable": "Payload", 
     
-    "shipping.title": "Shipping",
-    "shipping.create.title": "Create Shipping",
-    "shipping.edit.title": "Edit Shipping",
-    "shipping.modal.input.name.placeholder.label": "Enter Shipping Name",
-    "shipping.success.create.message": "Shipping created successfully",
-    "shipping.success.edit.message": "Shipping updated successfully",
-    "shipping.success.delete.message": "Shipping deleted successfully"
+    "tax.title": "Tax Charges",
+    "shipping.title": "Shipping Charges",
+    "shipping.create.title": "Create Charges",
+    "shipping.edit.title": "Edit Charges",
+    "shipping.modal.input.name.placeholder.label": "Enter Name",
+    "shipping.success.create.message": "Created successfully",
+    "shipping.success.edit.message": "Updated successfully",
+    "shipping.success.delete.message": "Deleted successfully",
+    
+    "status-types.title": "Status Types",
+    "status-types.create.title": "Create Status Types",
+    "status-types.edit.title": "Edit Status Types",
+    "status-types.modal.input.name.placeholder.label": "Enter Type Name",
+    "status-types.success.create.message": "Status Types created successfully",
+    "status-types.success.edit.message": "Status Types updated successfully",
+    "status-types.success.delete.message": "Status Types deleted successfully",
+
+    "print.qrcode.title": "Print QRcode",
+    "global.status.placeholder": "Payments Net",
+
+    "tax.type.shipping.label": "Shipping",
+    "tax.type.tax.label": "Tax",
+    "tax.type.label": "Type",
+
+    "category.type.parent.label": "Parent",
+    "category.type.child.label": "child",
+
+    "adjustment.method.add.label": "Addition",
+    "adjustment.method.sub.label": "Subtraction"
 }

@@ -82,6 +82,7 @@ class Product extends BaseModel implements HasMedia, JsonResourceful
 
     public const PATH = 'product';
     public const PRODUCT_BARCODE_PATH = 'product_barcode';
+    public const PRODUCT_QRCODE_PATH = 'product_qrcode';
 
     public const CODE128 = 1;
     public const CODE39 = 2;
@@ -89,7 +90,7 @@ class Product extends BaseModel implements HasMedia, JsonResourceful
     public const UPC = 4;
     public const EAN13 = 5;
 
-    protected $appends = ['image_url', 'barcode_image_url'];
+    protected $appends = ['image_url', 'barcode_image_url' ,'qrcode_image_url'];
 
     protected $fillable = [
         'name',
@@ -170,6 +171,17 @@ class Product extends BaseModel implements HasMedia, JsonResourceful
         return '';
     }
 
+    public function getQrcodeImageUrlAttribute(): string
+    {
+            
+        $media = $this->getMedia(Product::PRODUCT_QRCODE_PATH)->first();
+        if (!empty($media)) {
+            return $media->getFullUrl();
+        }
+
+        return '';
+    }
+
     /**
      * @return array
      */
@@ -204,6 +216,7 @@ class Product extends BaseModel implements HasMedia, JsonResourceful
             'product_category_name' => $this->productCategory->name,
             'brand_name'            => $this->brand->name,
             'barcode_image_url'     => $this->barcode_image_url,
+            'qrcode_image_url'      => $this->qrcode_image_url,
             'barcode_symbol'        => $this->barcode_symbol,
             'created_at'            => $this->created_at,
             'purchase_unit_name'    => $this->getPurchaseUnitName(),
@@ -211,6 +224,7 @@ class Product extends BaseModel implements HasMedia, JsonResourceful
             'stock'                 => $this->stock,
             'warehouse'             => $this->warehouse($this->id) ?? '',
             'barcode_url'           => Storage::url('product_barcode/barcode-PR_'.$this->id.'.png'),
+            'qrcode_url'           => Storage::url('product_qrcode/qrcode-PR_'.$this->id.'.svg'),
             'in_stock' => $this->inStock($this->id),
         ];
 

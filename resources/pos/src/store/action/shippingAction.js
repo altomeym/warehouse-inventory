@@ -6,11 +6,13 @@ import {addInToTotalRecord, removeFromTotalRecord, setTotalRecord} from './total
 import {setLoading} from './loadingAction';
 import {getFormattedMessage} from '../../shared/sharedMethod';
 
-export const fetchShippingTypes = (filter = {}, isLoading = true) => async (dispatch) => {
+export const fetchShippingTypes = (filter = {}, isLoading = true, type='') => async (dispatch) => {
     if (isLoading) {
         dispatch(setLoading(true))
     }
     let url = apiBaseURL.SHIPPING;
+    if(type)
+       url = apiBaseURL.SHIPPING+'?slug='+type;
     if (!_.isEmpty(filter) && (filter.page || filter.pageSize || filter.search || filter.order_By || filter.created_at)) {
         url += requestParam(filter);
     }
@@ -27,6 +29,31 @@ export const fetchShippingTypes = (filter = {}, isLoading = true) => async (disp
                 {text: response.data.message, type: toastType.ERROR}));
         });
 };
+
+export const fetchTaxTypes = (filter = {}, isLoading = true, type='') => async (dispatch) => {
+    if (isLoading) {
+        dispatch(setLoading(true))
+    }
+    let url = apiBaseURL.SHIPPING;
+    if(type)
+       url = apiBaseURL.SHIPPING+'?slug='+type;
+    if (!_.isEmpty(filter) && (filter.page || filter.pageSize || filter.search || filter.order_By || filter.created_at)) {
+        url += requestParam(filter);
+    }
+    apiConfig.get(url)
+        .then((response) => {
+            dispatch({type: shippingTypeActionType.FETCH_TAXTYPES, payload: response.data.data});
+            dispatch(setTotalRecord(response.data.meta.total));
+            if (isLoading) {
+                dispatch(setLoading(false))
+            }
+        })
+        .catch(({response}) => {
+            dispatch(addToast(
+                {text: response.data.message, type: toastType.ERROR}));
+        });
+}
+
 
 export const fetchShippingType = (id) => async (dispatch) => {
     apiConfig.get(apiBaseURL.SHIPPING + '/' + id)

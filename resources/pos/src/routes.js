@@ -3,8 +3,9 @@ import Brands from "./components/brands/Brands";
 import Currencies from "./components/currency/Currencies";
 import Warehouses from "./components/warehouse/Warehouses";
 import CreateWarehouse from "./components/warehouse/CreateWarehouse";
-import EditWarehouse from "./components/warehouse/EditWarehouse";
+import EditWarehouse from "./components/warehouse/EditWarehouse"; 
 import ProductCategory from "./components/productCategory/ProductCategory";
+import CategoryHirerchy from "./components/productCategory/CategoryHirerchy ";
 import Units from "./components/units/Units";
 import Suppliers from "./components/supplier/Suppliers";
 import CreateSupplier from "./components/supplier/CreateSupplier";
@@ -51,6 +52,7 @@ import StockDetails from "./components/report/stockReport/StockDetails";
 import TopSellingProductsReport from "./components/report/topSellingReport/TopSellingProductsReport";
 import PurchaseReport from "./components/report/purchaseReport/PurchaseReport";
 import PrintBarcode from "./components/printBarcode/PrintBarcode";
+import PrintQRcode from "./components/printQRcode/PrintQRcode";
 import {Permissions} from "./constants";
 import Role from "./components/roles/Role";
 import CreateRole from "./components/roles/CreateRole";
@@ -84,8 +86,8 @@ import SmsApi from "./components/sms-api/SmsApi";
 import CreateSaleSaleReturn from "./components/sales/CreateSaleSaleReturn";
 import EditSaleReturnFromSale from "./components/saleReturn/EditSaleReturnFromSale";
 import ShippingTypes from "./components/shipping-types/Shipping";
-import CreateShipping from "./components/shipping-types/CreateShipping";
-import EditShipping from "./components/shipping-types/EditShipping";
+import TranStatusTypes from "./components/tran-status-types/StatusType";
+
 
 export const route = [
     {
@@ -120,11 +122,16 @@ export const route = [
     {
         path: "warehouse/detail/:id",
         ele: <WarehouseDetail/>,
-        permission: Permissions.MANAGE_WAREHOUSES
+        permission: Permissions.MANAGE_WAREHOUSES 
     },
     {
         path: "product-categories",
         ele: <ProductCategory/>,
+        permission: Permissions.MANAGE_PRODUCT_CATEGORIES
+    },
+    {
+        path: "categories-hirerchy",
+        ele: <CategoryHirerchy/>,
         permission: Permissions.MANAGE_PRODUCT_CATEGORIES
     },
     {
@@ -432,11 +439,16 @@ export const route = [
         path: "report/suppliers/details/:id",
         ele: <SupplierReportDetails/>,
         permission: Permissions.MANAGE_REPORTS
-    },
+    }, 
     {
         path: "print/barcode",
         ele: <PrintBarcode/>,
         permission: Permissions.MANAGE_PRODUCTS
+    },
+    {
+        path: "print/qrcode",
+        ele: <PrintQRcode/>,
+        permission: Permissions.MANAGE_ROLES
     },
     {
         path: "roles",
@@ -509,18 +521,14 @@ export const route = [
         permission: Permissions.MANAGE_SMS_API
     },  // Start new development 
     {
-        path: "shipping-types",
+        path: "charges-types",
         ele: <ShippingTypes />,
         permission: Permissions.MANAGE_EXPENSES
-    }, 
+    },
     {
-        path: "shipping-types/create",
-        ele: <CreateShipping />,
-        permission: Permissions.MANAGE_EXPENSES
-    }, 
-    {
-        path: "shipping-types/edit/:id",
-        ele: <EditShipping />,
-        permission: Permissions.MANAGE_EXPENSES
+        path: "status-types",
+        ele: <TranStatusTypes />,
+        permission: Permissions.MANAGE_STATUS_TYPES
     }
+    // MANAGE_STATUS_TYPES
 ]

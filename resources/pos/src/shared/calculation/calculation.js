@@ -65,9 +65,12 @@ export const calculateSubTotal = (carts) => {
 }
 
 export const calculateCartTotalAmount = (carts, inputValue) => {
+   
     let finalTotalAmount
     const value = inputValue && inputValue;
-    let totalAmountAfterDiscount = calculateSubTotal(carts) - value.discount
+    // let totalAmountAfterDiscount = calculateSubTotal(carts) - value.discount
+    let discount =  (calculateSubTotal(carts)  * value.discount / 100).toFixed(2)
+    let totalAmountAfterDiscount = calculateSubTotal(carts) - discount
     let taxCal = (totalAmountAfterDiscount * inputValue.tax_rate / 100).toFixed(2)
     finalTotalAmount = Number(totalAmountAfterDiscount) + Number(taxCal) + Number(value.shipping)
     return (parseFloat(finalTotalAmount).toFixed(2))

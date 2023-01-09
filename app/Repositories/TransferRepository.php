@@ -25,6 +25,8 @@ class TransferRepository extends BaseRepository
         'tax_amount',
         'discount',
         'shipping',
+        'shipping_data',
+        'tax_data',
         'grand_total',
         'note',
         'created_at',
@@ -39,6 +41,8 @@ class TransferRepository extends BaseRepository
         'tax_rate',
         'tax_amount',
         'discount',
+        'shipping_data',
+        'tax_data',
         'shipping',
         'grand_total',
         'note',
@@ -76,14 +80,34 @@ class TransferRepository extends BaseRepository
             $input['date'] = $input['date'] ?? date("Y/m/d");
             $TransferInputArray = Arr::only($input, [
                 'from_warehouse_id', 'to_warehouse_id', 'tax_rate', 'tax_amount', 'discount', 'shipping', 'grand_total',
-                'note', 'date', 'status',
+                'note', 'date', 'status','shipping_data','tax_data',
             ]);
 
             /** @var Transfer $transfer */
+            $TransferInputArray['shipping_data'] = json_encode($input['shipping_data']);
+            $TransferInputArray['tax_data'] = json_encode($input['tax_data']);
             $transfer = Transfer::create($TransferInputArray);
             $transfer = $this->storeTransferItems($transfer, $input);
 
             DB::commit();
+            /*new code*/
+            if(!empty($input['shipping_data']))
+            {
+             $last_id = Transfer::orderBy('id','DESC')->first();
+              for ($i = 0; $i < count($input['shipping_data']); $i++) {
+                        if ($input['shipping_data'][$i]['shipping_value'] != '') {
+                            $requestData = [
+                                'shipping_type_id' => (!empty($input['shipping_data'][$i]['shipping_value']) ? $input['shipping_data'][$i]['shipping_value']: ''),
+                                'sale_purchases_id' =>  (!empty($last_id['id']) ? $last_id['id']: ''),
+                                'slug' => 'transfer',
+                                'shipping_type_name' => (!empty($input['shipping_data'][$i]['shipping_type_name']) ? $input['shipping_data'][$i]['shipping_type_name']: ''),           
+                            ];
+                         $shipping_has_values = \App\Models\Shipping_has_values::create($requestData);
+
+                        }
+                    }
+            }
+            /**/
 
             return $transfer;
 
@@ -102,7 +126,7 @@ class TransferRepository extends BaseRepository
      */
     public function storeTransferItems($transfer, $input)
     {
-
+       
         foreach ($input['transfer_items'] as $transferItem) {
             $product = ManageStock::whereWarehouseId($input['from_warehouse_id'])->whereProductId($transferItem['product_id'])->first();
 
@@ -110,9 +134,13 @@ class TransferRepository extends BaseRepository
                 if ($transferItem['quantity'] > $product->quantity) {
                     throw new UnprocessableEntityHttpException("Quantity should not be greater than available quantity.");
                 } else {
-                    manageStock($input['to_warehouse_id'], $transferItem['product_id'], $transferItem['quantity']);
-                    $exceptQuantity = $product->quantity - $transferItem['quantity'];
-                    $product->update(['quantity' => $exceptQuantity]);
+                        if($transfer['status'] == '2')
+                        {
+
+                            manageStock($input['to_warehouse_id'], $transferItem['product_id'], $transferItem['quantity']);
+                        }
+                        $exceptQuantity = $product->quantity - $transferItem['quantity'];
+                        $product->update(['quantity' => $exceptQuantity]);
                 }
             } else {
                 throw new UnprocessableEntityHttpException("Product stock is not available in selected warehouse.");
@@ -136,11 +164,12 @@ class TransferRepository extends BaseRepository
             throw new UnprocessableEntityHttpException("Please enter tax value between 0 to 100.");
         }
         $input['grand_total'] += $input['tax_amount'];
-        if ($input['shipping'] <= $input['grand_total'] && $input['shipping'] >= 0) {
+        $input['grand_total'] += $input['shipping'];
+        /*if ($input['shipping'] <= $input['grand_total'] && $input['shipping'] >= 0) {
             $input['grand_total'] += $input['shipping'];
         } else {
             throw new UnprocessableEntityHttpException("Shipping amount should not be greater than total.");
-        }
+        }*/
 
         $input['reference_code'] = 'TR_111'.$transfer->id;
         $transfer->update($input);
@@ -211,6 +240,8 @@ class TransferRepository extends BaseRepository
      */
     public function updateTransfer($input, $id)
     {
+        /*echo "<pre>";
+        print_r($input['status']); exit;*/
         try {
             DB::beginTransaction();
 
@@ -234,16 +265,20 @@ class TransferRepository extends BaseRepository
 
                 }
 
-                if (is_null($transferItem['transfer_item_id'])) {
-
-                    $product = ManageStock::whereWarehouseId($transfer->from_warehouse_id)->whereProductId($transferItem['product_id'])->first();
+               //if (is_null($transferItem['transfer_item_id'])) {
+                    $product = ManageStock::where('warehouse_id',$transfer->from_warehouse_id)
+                                        ->where('product_id',$transferItem['product_id'])->first();
+                   // echo "<pre>";print_r($product); exit;
 
                     if ($product) {
                         if ($transferItem['quantity'] > $product->quantity) {
                             throw new UnprocessableEntityHttpException("Quantity should not be greater than available quantity.");
                         } else {
-                            manageStock($transfer->to_warehouse_id, $transferItem['product_id'],
+                            if($input['status'] == 2)
+                            {
+                                manageStock($transfer->to_warehouse_id, $transferItem['product_id'],
                                 $transferItem['quantity']);
+                            }
                             $exceptQuantity = $product->quantity - $transferItem['quantity'];
                             $product->update(['quantity' => $exceptQuantity]);
                         }
@@ -255,7 +290,7 @@ class TransferRepository extends BaseRepository
                     $transferItem = new TransferItem($item);
                     $transfer->transferItems()->save($transferItem);
 
-                }
+                //}
 
             }
 
@@ -381,19 +416,42 @@ class TransferRepository extends BaseRepository
 
         $input['grand_total'] += $input['tax_amount'];
 
-        if ($input['shipping'] > $input['grand_total'] || $input['shipping'] < 0) {
+        /*if ($input['shipping'] > $input['grand_total'] || $input['shipping'] < 0) {
 
             throw new UnprocessableEntityHttpException("Shipping amount should not be greater than total.");
-        }
+        }*/
 
         $input['grand_total'] += $input['shipping'];
 
 
         $transferInputArray = Arr::only($input, [
             'from_warehouse_id', 'to_warehouse_id', 'tax_rate', 'tax_amount', 'discount', 'shipping', 'grand_total',
-            'note', 'date', 'status',
+            'note', 'date', 'status','shipping_data','tax_data',
         ]);
+        $transferInputArray['shipping_data'] = json_encode($input['shipping_data']);
+        $transferInputArray['tax_data'] = json_encode($input['tax_data']);
         $transfer->update($transferInputArray);
+        DB::commit();
+         /*new code*/
+            if(!empty($input['shipping_data']))
+            {
+             $last_id = \App\Models\Shipping_has_values::where('slug','transfer')->where('sale_purchases_id',$id)->delete();
+              for ($i = 0; $i < count($input['shipping_data']); $i++) {
+                        if ($input['shipping_data'][$i]['shipping_value'] != '') {
+                            $requestData = [
+                                'shipping_type_id' => (!empty($input['shipping_data'][$i]['shipping_value']) ? $input['shipping_data'][$i]['shipping_value']: ''),
+                                'sale_purchases_id' =>  (!empty($id) ? $id: ''),
+                                'slug' => 'transfer',
+                                'shipping_type_name' => (!empty($input['shipping_data'][$i]['shipping_type_name']) ? $input['shipping_data'][$i]['shipping_type_name']: ''),           
+                            ];
+                         $shipping_has_values = \App\Models\Shipping_has_values::create($requestData);
+
+                        }
+                    }
+            }
+            /**/
+
+
 
         return $transfer;
     }

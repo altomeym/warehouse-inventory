@@ -15,6 +15,7 @@ import {fetchFrontSetting} from '../../store/action/frontSettingAction';
 const PurchaseDetails = (props) => {
     const {purchaseDetailsAction, purchaseDetails, fetchFrontSetting, frontSetting, allConfigData} = props;
     const shippingData = purchaseDetails?.shipping_data ? JSON.parse(purchaseDetails?.shipping_data) : [];
+    const TaxData = purchaseDetails?.tax_data ? JSON.parse(purchaseDetails?.tax_data) : [];
     const {id} = useParams();
 
     useEffect(() => {
@@ -88,17 +89,11 @@ const PurchaseDetails = (props) => {
                                     </div>
                                     <div className='pb-1'>
                                         <span className='me-2'>{getFormattedMessage('globally.detail.status')} :</span>
-                                        {purchaseDetails && purchaseDetails.status === 1 &&
-                                        <span className='badge bg-light-success'>
-                                                <span>Received</span>
-                                           </span> || purchaseDetails.status === 2 &&
-                                        <span className='badge bg-light-primary'>
-                                                <span>Pending</span>
-                                        </span> || purchaseDetails.status === 3 &&
-                                        <span className='badge bg-light-warning'>
-                                                <span>Ordered</span>
-                                        </span>
-                                        }
+                                        {purchaseDetails && purchaseDetails?.to_status?.name ? 
+                                          <span className='badge bg-light-primary'>
+                                             <span> {purchaseDetails?.to_status?.name} </span>
+                                           </span> 
+                                         : '' }
                                     </div>
                                     <div className='pb-1'>
                                         <span
@@ -144,12 +139,18 @@ const PurchaseDetails = (props) => {
                                     <div className='table-responsive'>
                                         <table className='table border'>
                                             <tbody>
-                                            <tr>
+                                            {/* <tr>
                                                 <td className='py-3'>{getFormattedMessage('globally.detail.order.tax')}</td>
                                                 <td className='py-3'>
                                                     {currencySymbolHendling(allConfigData, frontSetting.value && frontSetting.value.currency_symbol, purchaseDetails && purchaseDetails.tax_amount > 0 ? purchaseDetails.tax_amount : '0.00')} ({purchaseDetails && parseFloat(purchaseDetails.tax_rate).toFixed(2)}%)
                                                 </td>
+                                            </tr> */}
+                                            {TaxData && TaxData.map((taxItem)=>(
+                                            <tr>
+                                                <td className='py-3'>{taxItem?.tax_type_name ? taxItem?.tax_type_name : 'Tax'} </td>
+                                                <td className='py-3'>{currencySymbolHendling(allConfigData, frontSetting.value && frontSetting.value.currency_symbol, taxItem?.tax_value ? taxItem?.tax_value : 0)}</td>
                                             </tr>
+                                            )) }
                                             <tr>
                                                 <td className='py-3'>{getFormattedMessage('globally.detail.discount')}</td>
                                                 <td className='py-3'>{currencySymbolHendling(allConfigData, frontSetting.value && frontSetting.value.currency_symbol, purchaseDetails && purchaseDetails.discount)}</td>

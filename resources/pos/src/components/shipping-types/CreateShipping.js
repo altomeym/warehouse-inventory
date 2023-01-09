@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import { useSearchParams } from "react-router-dom";
 import {connect} from 'react-redux';
 import {Button} from 'react-bootstrap-v5';
 import {Filters} from '../../constants';
@@ -7,6 +8,8 @@ import ShippingForm from './ShippingForm';
 import {getFormattedMessage} from '../../shared/sharedMethod';
 
 const CreateShipping = (props) => {
+
+    const [searchParams, setSearchParams] = useSearchParams();
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(!show);
     const {addShippingType} = props;
@@ -21,7 +24,7 @@ const CreateShipping = (props) => {
                 {getFormattedMessage('shipping.create.title')}
             </Button>
             <ShippingForm addItemFormData={addFormData} handleClose={handleClose} show={show}
-                          title={getFormattedMessage('shipping.create.title')}/>
+                          title={getFormattedMessage('shipping.create.title')} slugType={searchParams.get("slug")} />
         </div>
     )
 };

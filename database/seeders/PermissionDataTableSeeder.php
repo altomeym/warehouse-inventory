@@ -120,6 +120,10 @@ class PermissionDataTableSeeder extends Seeder
         array('permission_id' => 102,'role_id' => '1'),
         array('permission_id' => 103,'role_id' => '1'),
         array('permission_id' => 104,'role_id' => '1'),
+        array('permission_id' => 105,'role_id' => '1'),
+        array('permission_id' => 106,'role_id' => '1'),
+        array('permission_id' => 107,'role_id' => '1'),
+        array('permission_id' => 108,'role_id' => '1'),
         );
         \DB::table('role_has_permissions')->insert($role_has_permissions);
     }
