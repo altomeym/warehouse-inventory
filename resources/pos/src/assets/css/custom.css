@@ -1985,7 +1985,7 @@ div .rdt_Pagination div:first-of-type svg {
   color: #FFFFFF;
   background-color: #F62947;
   border-radius: 50%;
-  width: 55px;
+  width: 40px;
   height: 40px;
   display: flex;
   align-items: center;
@@ -2283,6 +2283,9 @@ img.image {
   .email-template-padding {
     padding-left: 0px !important;
   }
+  .toast-card__icon--error {
+    width: 55px;
+  }
 }
 
 .custom-text-center {
@@ -2502,6 +2505,7 @@ img.image {
     left: auto;
     right: 0;
   }
+  
 }
 @media (max-width: 576px) {
   .pro-sidebar.sm {
@@ -2556,8 +2560,14 @@ img.image {
     left: auto;
     right: 0;
   }
+  .toast-card__icon--error {
+    width: 40px;
+  }
 }
 @media (max-width: 992px) {
+  .toast-card__icon--error {
+    width: 55px;
+  }
   .pro-sidebar.lg {
     position: fixed;
     left: -270px;
@@ -2585,6 +2595,10 @@ img.image {
   }
 }
 @media (max-width: 1200px) {
+  
+  .toast-card__icon--error {
+    width: 40px;
+  }
   .pro-sidebar.xl {
     position: fixed;
     left: -270px;
