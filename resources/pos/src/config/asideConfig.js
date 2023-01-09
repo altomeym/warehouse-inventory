@@ -48,12 +48,20 @@ export default [
                 class: 'd-flex',
                 fontIcon: <FontAwesomeIcon icon={faBoxes}/>,
                 permission: Permissions.MANAGE_PRODUCTS
-            },
+            }, 
             {
                 title: 'product.categories.title',
                 name: "product categories",
                 fontIcon: <FontAwesomeIcon icon={faBoxOpen}/>,
                 to: '/app/product-categories',
+                class: 'd-flex',
+                permission: Permissions.MANAGE_PRODUCT_CATEGORIES,
+            },
+            {
+                title: 'Categories Hhirerchy',
+                name: "categories hirerchy",
+                fontIcon: <FontAwesomeIcon icon={faBoxOpen}/>,
+                to: '/app/categories-hirerchy',
                 class: 'd-flex',
                 permission: Permissions.MANAGE_PRODUCT_CATEGORIES,
             },
