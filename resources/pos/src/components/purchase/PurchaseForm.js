@@ -11,7 +11,7 @@ import {editPurchase} from '../../store/action/purchaseAction';
 import status from '../../shared/option-lists/status.json'
 import {fetchAllProducts} from '../../store/action/productAction';
 // import {fetchShippingTypes} from '../../store/action/shippingAction';
-import MultipleImage from '../product/MultipleImage';
+// import MultipleImage from '../product/MultipleImage';
 import PurchaseTable from '../../shared/components/purchase/PurchaseTable';
 import TaxChargerTypes from './TaxChargerTypes';
 import {preparePurchaseProductArray} from '../../shared/prepareArray/preparePurchaseArray';
@@ -433,14 +433,7 @@ const PurchaseForm = (props) => {
                          placeholder={getFormattedMessage('purchase.select.status.label')}/>
                         </div>
                        {/* ... */}
-                       <div className='col-md-12 mb-5'>
-                            <div className='card'>
-                                <label className='form-label'>
-                                    {getFormattedMessage('product.input.multiple-image.label')}: </label>
-                                <MultipleImage product={singlePurchase} fetchFiles={onChangeFiles}
-                                               transferImage={transferImage}/>
-                            </div>
-                        </div>
+                      
                       < TaxChargerTypes frontSetting={frontSetting} allShipingTypes={allShipingTypes}   setItemVal={handleItemValue} itemValue={purchaseValue} customPropsTaxDynamicFields={handleCustomTaxDynamicFields} customPropsDynamicFields={handleCustomDynamicFields} singleDataEntity={singlePurchase}  />
                        {/* ... */}
                         <div className='col-md-12 mb-5'>
