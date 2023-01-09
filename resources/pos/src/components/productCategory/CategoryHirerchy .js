@@ -63,12 +63,12 @@ const CategoryHirerchy  = (props) => {
             cell: row => {
                 const imageUrl = row.image ? row.image : user;
                 return (
-                    <div className='d-flex align-items-center'>
-                        <div className='me-2 outline-box'>
+                    <div classNameName='d-flex align-items-center'>
+                        <div classNameName='me-2 outline-box'>
                             <img src={imageUrl} height='50' width='50' alt='Product Category Image'
-                                 className='image image-circle image-mini'/>
+                                 classNameName='image image-circle image-mini'/>
                         </div>
-                        <div className='d-flex flex-column'>
+                        <div classNameName='d-flex flex-column'>
                             <span>{row.name}</span>
                         </div>
                     </div>
@@ -97,44 +97,44 @@ const CategoryHirerchy  = (props) => {
         <MasterLayout> 
             <TopProgressBar />
             <section id='treeView'>
-                <div class="tree">
+                <div className="tree">
                     <ul>
                         <li>
-                            <div class="item blue">Bike</div>
+                            <div className="item blue">Bike</div>
                             <ul>
                                 <li>
-                                    <div class="item blue">Honda</div>
+                                    <div className="item blue">Honda</div>
                                     <ul>
                                         <li>
-                                            <div class="item orange">Honda 800</div>
+                                            <div className="item orange">Honda 800</div>
                                         </li>
                                         <li>
-                                            <div class="item orange">Honda 700</div>
+                                            <div className="item orange">Honda 700</div>
                                         </li>
                                         <li>
-                                            <div class="item orange">Honda 600</div>
+                                            <div className="item orange">Honda 600</div>
                                         </li>
                                     </ul>
                                 </li>
                                 <li>
-                                    <div class="item blue">Hero</div>
+                                    <div className="item blue">Hero</div>
                                     <ul>
-                                        <li><div class="item orange">Splender</div></li>
+                                        <li><div className="item orange">Splender</div></li>
                                         <li>
-                                            <div class="item orange">Splender +</div>
+                                            <div className="item orange">Splender +</div>
                                             <ul>
                                                 <li>
-                                                    <div class="item orange">Splender 100</div>
+                                                    <div className="item orange">Splender 100</div>
                                                 </li>
                                                 <li>
-                                                    <div class="item orange">Splender 100</div>
+                                                    <div className="item orange">Splender 100</div>
                                                 </li>
                                                 <li>
-                                                    <div class="item orange">Splender 100</div>
+                                                    <div className="item orange">Splender 100</div>
                                                 </li>
                                             </ul>
                                         </li>
-                                        <li><div class="item orange">Splender Pro</div></li>
+                                        <li><div className="item orange">Splender Pro</div></li>
                                     </ul>
                                 </li>
                             </ul>
@@ -142,28 +142,28 @@ const CategoryHirerchy  = (props) => {
                     </ul>
                 </div>
             </section>
-            {/* <div className='treeStart'>
-                <div className='ct_box'>
+            {/* <div classNameName='treeStart'>
+                <div classNameName='ct_box'>
                     <h3>Category</h3>
-                    <ul className='category'>
+                    <ul classNameName='category'>
                         <li>Honda</li>
                     </ul>
                 </div>
-                <div className='ct_box'>
+                <div classNameName='ct_box'>
                     <h3>Sub Category</h3>
-                    <ul className='subCategory'>
-                        <li className='orange'><span>&nbsp;</span>Honda 800</li>
-                        <li className='orange'><span>&nbsp;</span>Honda 700</li>
-                        <li className='orange'><span>&nbsp;</span>Honda 500</li>
+                    <ul classNameName='subCategory'>
+                        <li classNameName='orange'><span>&nbsp;</span>Honda 800</li>
+                        <li classNameName='orange'><span>&nbsp;</span>Honda 700</li>
+                        <li classNameName='orange'><span>&nbsp;</span>Honda 500</li>
                     </ul>
                 </div>
-                <div className='ct_box'>
+                <div classNameName='ct_box'>
                     <h3>Sub Category</h3>
-                    <ul className='subCategory'>
-                        <li className='orange'><span>&nbsp;</span>Honda 800</li>
-                        <li className='orange'><span>&nbsp;</span>Honda 700</li>
-                        <li className='orange'><span>&nbsp;</span>Honda 500</li>
-                        <li className='orange'><span>&nbsp;</span>Honda 500</li>
+                    <ul classNameName='subCategory'>
+                        <li classNameName='orange'><span>&nbsp;</span>Honda 800</li>
+                        <li classNameName='orange'><span>&nbsp;</span>Honda 700</li>
+                        <li classNameName='orange'><span>&nbsp;</span>Honda 500</li>
+                        <li classNameName='orange'><span>&nbsp;</span>Honda 500</li>
                     </ul>
                 </div>
             </div> */}
