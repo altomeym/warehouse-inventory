@@ -224,7 +224,6 @@ class Product extends BaseModel implements HasMedia, JsonResourceful
             'sale_unit_name'        => $this->getSaleUnitName(),
             'stock'                 => $this->stock,
             'warehouse'             => $this->warehouse($this->id) ?? '',
-            'stock_data'             => $this->stock_data($this->id) ?? '',
             'barcode_url'           => Storage::url('product_barcode/barcode-PR_'.$this->id.'.png'),
             'qrcode_url'           => Storage::url('product_qrcode/qrcode-PR_'.$this->id.'.svg'),
             'in_stock' => $this->inStock($this->id),
@@ -234,12 +233,7 @@ class Product extends BaseModel implements HasMedia, JsonResourceful
     }
 
 
-    public function stock_data($id)
-    {
-        return Managestock::where('product_id', $id)
-               // ->where('warehouse_id',2)
-                ->get();
-    }
+   
     /**
      *
      * @return string[]
