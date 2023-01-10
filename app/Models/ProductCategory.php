@@ -86,6 +86,7 @@ class ProductCategory extends BaseModel implements HasMedia, JsonResourceful
             'parent_id'      => $this->parent_id,
             'image'          => $this->image_url,
             'products_count' => $this->products()->count(),
+            'parent_name' => $this->parent_name($this->parent_id) ?? '',
         ];
 
         return $fields;
@@ -97,5 +98,10 @@ class ProductCategory extends BaseModel implements HasMedia, JsonResourceful
     public function products(): HasMany
     {
         return $this->hasMany(Product::class, 'product_category_id', 'id');
+    }
+    public function parent_name($id)
+    {
+        //echo $id; exit;
+        return \App\Models\ProductCategory::where('parent_id',$id)->select('name')->get();
     }
 }

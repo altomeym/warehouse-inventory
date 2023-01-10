@@ -69,6 +69,7 @@ class PurchaseReturn extends BaseModel implements HasMedia, JsonResourceful
     protected $table = 'purchases_return';
 
     const JSON_API_TYPE = 'purchases_return';
+    public const PATH = 'purchases_return';
     const PURCHASE_RETURN_PDF = 'purchase_return_pdf';
 
     protected $appends = ['image_url'];

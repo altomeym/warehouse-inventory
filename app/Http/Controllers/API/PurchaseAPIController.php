@@ -85,6 +85,7 @@ class PurchaseAPIController extends AppBaseController
     public function store(CreatePurchaseRequest $request)
     {
         $input = $request->all();
+        $input['date'] = date('Y-m-d',strtotime($input['date']));
         $purchase = $this->purchaseRepository->storePurchase($input);
 
         return new PurchaseResource($purchase);

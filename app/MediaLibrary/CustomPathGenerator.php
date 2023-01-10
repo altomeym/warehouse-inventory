@@ -51,6 +51,9 @@ class CustomPathGenerator implements PathGenerator
                 return str_replace('{PARENT_DIR}', SaleReturn::SALE_RETURN_PDF, $path);
             case Sale::SALE_BARCODE_PATH;
                 return str_replace('{PARENT_DIR}', Sale::SALE_BARCODE_PATH, $path);
+                /**/
+            case Purchase::PATH;
+                return str_replace('{PARENT_DIR}', Purchase::PATH, $path);
             case 'default' :
                 return '';
         }

@@ -75,9 +75,12 @@ class PurchaseRepository extends BaseRepository
     public function storePurchase($input)
     {
         try {
+                 
             DB::beginTransaction();
+            $input['purchase_items'] = json_decode($input['purchase_items'],true);
+
             foreach ($input['purchase_items'] as $purchase_items) {
-                if ($purchase_items['quantity'] == 0) {
+               if ($purchase_items['quantity'] == 0) {
                     throw new UnprocessableEntityHttpException("Please Enter Attlist One Quantity.");
                 }
             }
@@ -92,15 +95,16 @@ class PurchaseRepository extends BaseRepository
             $purchaseInputArray['shipping_data'] = json_encode($input['shipping_data']);
             $purchaseInputArray['tax_data'] = json_encode($input['tax_data']);
             $purchase = Purchase::create($purchaseInputArray);
-
+           
             $purchase = $this->storePurchaseItems($purchase, $input);
+
             if (isset($input['images']) && !empty($input['images'])) {
                 foreach ($input['images'] as $image) {
                     $purchase['image_url'] = $purchase->addMedia($image)->toMediaCollection(Purchase::PATH,
                         config('app.media_disc'));
                 }
             }
-
+             
             // manage stock 
             if($input['status'] == 2)
             {
@@ -112,6 +116,8 @@ class PurchaseRepository extends BaseRepository
              /*new code*/
             if(!empty($input['shipping_data']))
             {
+
+             $input['shipping_data'] = json_decode($input['shipping_data'],true);
              $last_id = Purchase::orderBy('id','DESC')->first();
               for ($i = 0; $i < count($input['shipping_data']); $i++) {
                         if ($input['shipping_data'][$i]['shipping_value'] != '') {
@@ -127,6 +133,7 @@ class PurchaseRepository extends BaseRepository
                     }
             }
             /**/
+           
         return $purchase;
         } catch (Exception $e) {
             DB::rollBack();
@@ -146,6 +153,7 @@ class PurchaseRepository extends BaseRepository
             throw new UnprocessableEntityHttpException($validator->errors()->first());
         }
 
+        
         //discount calculation
         $perItemDiscountAmount = 0;
         $purchaseItem['net_unit_cost'] = $purchaseItem['product_cost'];
@@ -166,6 +174,7 @@ class PurchaseRepository extends BaseRepository
                 throw new UnprocessableEntityHttpException("Please enter  discount's value between product's price.");
             }
         }
+       
         //tax calculation
         $perItemTaxAmount = 0;
         if ($purchaseItem['tax_value'] <= 100 && $purchaseItem['tax_value'] >= 0) {
@@ -181,6 +190,7 @@ class PurchaseRepository extends BaseRepository
             throw new UnprocessableEntityHttpException("Please enter tax value between 0 to 100 ");
         }
         $purchaseItem['sub_total'] = ($purchaseItem['net_unit_cost'] + $perItemTaxAmount) * $purchaseItem['quantity'];
+
 
         return $purchaseItem;
     }
@@ -220,7 +230,6 @@ class PurchaseRepository extends BaseRepository
 
         $input['reference_code'] = getSettingValue('purchase_code').'_111'.$purchase->id;
         $purchase->update($input);
-
         return $purchase;
     }
 
@@ -234,8 +243,10 @@ class PurchaseRepository extends BaseRepository
     {
         try {
             DB::beginTransaction();
+            $input['purchase_items'] = json_decode($input['purchase_items'],true);
+
             foreach ($input['purchase_items'] as $purchase_items) {
-                if ($purchase_items['quantity'] == 0) {
+               if ($purchase_items['quantity'] == 0) {
                     throw new UnprocessableEntityHttpException("Please Enter Attlist One Quantity.");
                 }
             }
