@@ -40,11 +40,12 @@ const ProductCategory = (props) => {
     const onChange = (filter) => {
         fetchProductCategories(filter, true);
     };
-
+    console.log('cat =', productCategories.filter((item)=> item.attributes.parent_id===5)?.attributes?.name)
     const itemsValue = productCategories.length >= 0 && productCategories.map(product => ({
         name: product.attributes.name,
         image: product.attributes.image,
-        parent_id: product.attributes?.parent_id,
+        parent_category: productCategories.filter((item)=> item.attributes.parent_id===product.attributes.parent_id)?.attributes?.name,
+        parent_id: product.attributes.parent_id,
         products_count: product.attributes.products_count,
         id: product.id,
     }));
@@ -74,6 +75,12 @@ const ProductCategory = (props) => {
                     </div>
                 )
             },
+        },
+        {
+            name: 'Parent Category',
+            selector: row => row.parent_category,
+            sortField: 'name',
+            sortable: true,
         },
         {
             name: getFormattedMessage('brand.table.product-count.column.label'),

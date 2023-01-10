@@ -292,14 +292,12 @@ const ProductForm = (props) => {
     const onSubmit = (event) => {
         event.preventDefault();
         const valid = handleValidation();
-        productValue.images = multipleFiles;
         if (singleProduct && valid && isClearDropdown === true && isDropdown === true) {
             if (!disabled) {
                 editProduct(id, prepareFormData(productValue), navigate);
             }
         } else {
             if (valid) {
-                productValue.images = multipleFiles;
                 setProductValue(productValue);
                 addProductData(prepareFormData(productValue));
             }
