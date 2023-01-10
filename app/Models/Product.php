@@ -195,6 +195,7 @@ class Product extends BaseModel implements HasMedia, JsonResourceful
     /**
      * @return array
      */
+  
     function prepareAttributes(): array
     {
         $fields = [
@@ -223,6 +224,7 @@ class Product extends BaseModel implements HasMedia, JsonResourceful
             'sale_unit_name'        => $this->getSaleUnitName(),
             'stock'                 => $this->stock,
             'warehouse'             => $this->warehouse($this->id) ?? '',
+            'stock_data'             => $this->stock_data($this->id) ?? '',
             'barcode_url'           => Storage::url('product_barcode/barcode-PR_'.$this->id.'.png'),
             'qrcode_url'           => Storage::url('product_qrcode/qrcode-PR_'.$this->id.'.svg'),
             'in_stock' => $this->inStock($this->id),
@@ -231,6 +233,13 @@ class Product extends BaseModel implements HasMedia, JsonResourceful
         return $fields;
     }
 
+
+    public function stock_data($id)
+    {
+        return Managestock::where('product_id', $id)
+               // ->where('warehouse_id',2)
+                ->get();
+    }
     /**
      *
      * @return string[]
@@ -360,9 +369,11 @@ class Product extends BaseModel implements HasMedia, JsonResourceful
      */
     public function warehouse($id)
     {
-        return Managestock::where('product_id', $id)->Join('warehouses', 'manage_stocks.warehouse_id',
-            'warehouses.id')->select(DB::raw('sum(quantity) as total_quantity'),
-            'warehouses.name')->groupBy('warehouse_id')->get();
+        return Managestock::where('product_id', $id)
+                        ->Join('warehouses', 'manage_stocks.warehouse_id','warehouses.id')
+                        ->select(DB::raw('sum(quantity) as total_quantity'),'warehouses.name','warehouses.id as warehouse_id','manage_stocks.product_id')
+                        ->groupBy('warehouse_id')
+                        ->get();
     }
 
     /**

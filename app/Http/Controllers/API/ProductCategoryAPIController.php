@@ -105,4 +105,29 @@ class ProductCategoryAPIController extends AppBaseController
 
         return $this->sendSuccess('Product category deleted successfully');
     }
+
+    public function product_sub_categories(Request $request)
+    {
+        
+        $productCategory = \App\Models\ProductCategory::get();
+        /*echo "<pre>";
+        print_r($productCategory); exit;*/
+        $count =0;
+        foreach ($productCategory as $value) {
+            $subcat = \App\Models\ProductCategory::where('parent_id',$value->id)->get();
+
+            $productCategory[$count] = $value;
+            $productCategory[$count]['subcat'] =  $subcat;
+        }
+       
+        if(!empty($productCategory))
+        {
+             return response(['status'=>'true','Message'=>'Product sub category retrieved successfully','data'=>$productCategory]);   
+        }
+        else
+        {
+            return response(['status'=>'false','Failed'=>"Failed" ,'Message'=>"Somthing went wrong"]);
+
+        }
+    }
 }
