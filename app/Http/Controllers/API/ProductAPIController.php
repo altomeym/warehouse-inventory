@@ -103,36 +103,7 @@ class ProductAPIController extends AppBaseController
 
         return new ProductResource($product);
     }
-    public function show_product($id,$warehouse_id)
-    {
-        //echo "dd"; exit;
-        //echo $warehouse_id; exit;
-         $product = $this->productRepository->find($id);
-         $product['stock_data'] = \App\Models\Managestock::where('product_id', $id)
-                                    ->where('warehouse_id',$warehouse_id)
-                                    ->get();;
-
-        /* if ($warehouse_id && $warehouse_id != "null") {
-            $warehouseId = $warehouse_id;
-            $product->whereHas('stock', function ($q) use ($warehouseId,$id) {
-                $q->where('manage_stocks.product_id', $id);
-                $q->where('manage_stocks.warehouse_id', $warehouseId);
-            })->with([
-                'stock' => function (HasOne $query) use ($warehouseId,$id) {
-                    $query->where('manage_stocks.product_id', $id);
-                    $query->where('manage_stocks.warehouse_id', $warehouseId);
-                },
-            ]);
-        }*/
-        /*$product = \App\Models\Product::where('product.id'$id)
-                                ->leftjoin('manage_stocks','product.id','manage_stocks.product_id')
-                                ->where('manage_stocks.warehouse_id'$warehouse_id)
-                                ->first();*/
-        /*echo "<pre>";
-        print_r($product); exit;*/
-
-        return new ProductResource($product);
-    }
+  
 
     /**
      * @param UpdateProductRequest $request

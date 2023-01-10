@@ -61,6 +61,7 @@ const PurchaseForm = (props) => {
         notes: singlePurchase ? singlePurchase.notes : '',
         shipping_data: singlePurchase ? singlePurchase.shipping_data : '',
         status_id: singlePurchase ? singlePurchase.status_id : '',
+        images: singlePurchase ? singlePurchase.images : '',
     });
 
     const [errors, setErrors] = useState({
@@ -216,27 +217,7 @@ const PurchaseForm = (props) => {
     }) : []
     
     const prepareFormData = (data) => {
-        const formValue = {
-            date: moment(data.date).toDate(),
-            warehouse_id: data.warehouse_id.value ? data.warehouse_id.value : data.warehouse_id,
-            supplier_id: data.supplier_id.value ? data.supplier_id.value : data.supplier_id,
-            discount: data.discount,
-            tax_rate: data.tax_rate,
-            tax_amount: calculateCartTotalTaxAmount(updateProducts, purchaseValue),
-            purchase_items: updateProducts,
-            shipping: data.shipping,
-            grand_total: calculateCartTotalAmount(updateProducts, purchaseValue),
-            received_amount: '',
-            paid_amount: '',
-            payment_type: 0, 
-            notes: data.notes,
-            reference_code: '',
-            status: data.status_id.value ? data.status_id.value : data.status_id,
-            shipping_data:customDynamicFields ? customDynamicFields : [],
-            tax_data:customTaxDynamicFields ? customTaxDynamicFields : [],
-            images:multipleFiles,
-        }
-            // return formValue
+       
             const formData = new FormData();
         formData.append('date',  JSON.stringify(moment(data.date).toDate()));
         formData.append('warehouse_id', data.warehouse_id.value ? data.warehouse_id.value : data.warehouse_id);

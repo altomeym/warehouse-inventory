@@ -65,7 +65,7 @@ export const addPurchase = (purchase, navigate) => async (dispatch) => {
 
 export const editPurchase = (purchaseId, purchase, navigate) => async (dispatch) => {
     dispatch(setSavingButton(true))
-    apiConfig.put(apiBaseURL.PURCHASES + '/' + purchaseId, purchase)
+    apiConfig.patch(apiBaseURL.PURCHASES + '/' + purchaseId, purchase)
         .then((response) => {
             navigate('/app/purchases')
             dispatch(addToast({text: getFormattedMessage('purchase.success.edit.message')}));
