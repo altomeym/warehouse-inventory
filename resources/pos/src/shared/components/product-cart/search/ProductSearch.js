@@ -42,7 +42,6 @@ const ProductSearch = (props) => {
                         type: toastType.ERROR
                     }));
                 } else {
-                    console.log('warehouse_id ', values?.warehouse_id?.value);
                     searchPurchaseProduct(newId[0], values?.warehouse_id?.value)
                     const pushArray = [...customProducts]
                     if (updateProducts.filter(product => product.code === code || product.code === code.code).length > 0) {

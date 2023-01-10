@@ -1,4 +1,4 @@
-import apiConfig from '../../config/apiConfig';
+import apiConfig from '../../config/apiConfigWthFormData';
 import {apiBaseURL, purchaseActionType, toastType} from '../../constants';
 import {addToast} from './toastAction'
 import {setTotalRecord, addInToTotalRecord, removeFromTotalRecord} from './totalRecordAction';

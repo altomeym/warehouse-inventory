@@ -1,8 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import {connect, useDispatch} from 'react-redux';
 import {useNavigate} from 'react-router-dom';
-import moment from 'moment';
 import Form from 'react-bootstrap/Form';
+import moment from 'moment';
 import {InputGroup, Table} from 'react-bootstrap-v5';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import { faTrash} from '@fortawesome/free-solid-svg-icons';
@@ -11,7 +11,7 @@ import {editPurchase} from '../../store/action/purchaseAction';
 import status from '../../shared/option-lists/status.json'
 import {fetchAllProducts} from '../../store/action/productAction';
 // import {fetchShippingTypes} from '../../store/action/shippingAction';
-// import MultipleImage from '../product/MultipleImage';
+import MultipleImage from '../product/MultipleImage';
 import PurchaseTable from '../../shared/components/purchase/PurchaseTable';
 import TaxChargerTypes from './TaxChargerTypes';
 import {preparePurchaseProductArray} from '../../shared/prepareArray/preparePurchaseArray';
@@ -215,63 +215,66 @@ const PurchaseForm = (props) => {
         })
     }) : []
     
-    const prepareData = (prepareData) => {
+    const prepareFormData = (data) => {
         const formValue = {
-            date: moment(prepareData.date).toDate(),
-            warehouse_id: prepareData.warehouse_id.value ? prepareData.warehouse_id.value : prepareData.warehouse_id,
-            supplier_id: prepareData.supplier_id.value ? prepareData.supplier_id.value : prepareData.supplier_id,
-            discount: prepareData.discount,
-            tax_rate: prepareData.tax_rate,
+            date: moment(data.date).toDate(),
+            warehouse_id: data.warehouse_id.value ? data.warehouse_id.value : data.warehouse_id,
+            supplier_id: data.supplier_id.value ? data.supplier_id.value : data.supplier_id,
+            discount: data.discount,
+            tax_rate: data.tax_rate,
             tax_amount: calculateCartTotalTaxAmount(updateProducts, purchaseValue),
             purchase_items: updateProducts,
-            shipping: prepareData.shipping,
+            shipping: data.shipping,
             grand_total: calculateCartTotalAmount(updateProducts, purchaseValue),
             received_amount: '',
             paid_amount: '',
             payment_type: 0, 
-            notes: prepareData.notes,
+            notes: data.notes,
             reference_code: '',
-            status: prepareData.status_id.value ? prepareData.status_id.value : prepareData.status_id,
+            status: data.status_id.value ? data.status_id.value : data.status_id,
             shipping_data:customDynamicFields ? customDynamicFields : [],
             tax_data:customTaxDynamicFields ? customTaxDynamicFields : [],
+            images:multipleFiles,
         }
-            return formValue
-        // const formData = new FormData();
-        // formData.append('date',  new Date(prepareData.date));
-        // formData.append('warehouse_id', prepareData.warehouse_id.value ? prepareData.warehouse_id.value : prepareData.warehouse_id);
-        // formData.append('supplier_id   ', prepareData.supplier_id.value ? prepareData.supplier_id.value : prepareData.supplier_id);
-        // formData.append('discount   ',  prepareData.discount);
-        // formData.append('tax_rate   ',  prepareData.tax_rate);
-        // formData.append('tax_amount   ',  calculateCartTotalTaxAmount(updateProducts, purchaseValue));
-        // formData.append('purchase_items   ', updateProducts);
-        // formData.append('shipping',   prepareData.shipping);
-        // formData.append('grand_total',   calculateCartTotalAmount(updateProducts, purchaseValue));
-        // formData.append('received_amount',   '');
-        // formData.append('paid_amount',   '');
-        // formData.append('payment_type',   0);
-        // formData.append('notes',   prepareData.notes);
-        // formData.append('reference_code',   '');
-        // formData.append('status',   prepareData.status_id.value ? prepareData.status_id.value : prepareData.status_id);
-        // formData.append('shipping_data',   customDynamicFields ? customDynamicFields : []);
-        // formData.append('tax_data',   customTaxDynamicFields ? customTaxDynamicFields : []);
-        // formData.append('notes', prepareData.notes);
-        // if (multipleFiles) {
-        //     multipleFiles.forEach((image, index) => {
-        //         formData.append(`images[${index}]`, image);
-        //     })
-        // }
+            // return formValue
+            const formData = new FormData();
+        formData.append('date',  JSON.stringify(moment(data.date).toDate()));
+        formData.append('warehouse_id', data.warehouse_id.value ? data.warehouse_id.value : data.warehouse_id);
+        formData.append('supplier_id', data.supplier_id.value ? data.supplier_id.value : data.supplier_id);
+        formData.append('discount',  data.discount);
+        formData.append('tax_rate',  data.tax_rate);
+        formData.append('tax_amount',  calculateCartTotalTaxAmount(updateProducts, purchaseValue));
+        formData.append('purchase_items',  JSON.stringify(updateProducts));
+        formData.append('shipping',   data.shipping);
+        formData.append('grand_total',   calculateCartTotalAmount(updateProducts, purchaseValue));
+        formData.append('received_amount',   '');
+        formData.append('paid_amount',   '');
+        formData.append('payment_type',   0);
+        formData.append('notes',   data.notes);
+        formData.append('reference_code',   '');
+        formData.append('status',   data.status_id.value ? data.status_id.value : data.status_id);
+        formData.append('shipping_data',   customDynamicFields ? JSON.stringify(customDynamicFields) : []);
+        formData.append('tax_data',   customTaxDynamicFields ? JSON.stringify(customTaxDynamicFields) : []);
+        formData.append('notes', data.notes);
+        // formData.append('images',JSON.stringify(multipleFiles));
+        if (multipleFiles) {
+            multipleFiles.forEach((image, index) => {
+                formData.append(`images[${index}]`, image);
+            })
+        }
         
-        // return formData
+        return formData
     };
 
     const onSubmit = (event) => {
         event.preventDefault();
         const valid = handleValidation();
+        purchaseValue.image = multipleFiles;
         if (valid) {
             if (singlePurchase) {
-                editPurchase(id, prepareData(purchaseValue), navigate);
+                editPurchase(id, prepareFormData(purchaseValue), navigate);
             } else {
-                addPurchaseData(prepareData(purchaseValue));
+                addPurchaseData(prepareFormData(purchaseValue));
                 setPurchaseValue(purchaseValue);
             }
         }
@@ -309,7 +312,6 @@ const PurchaseForm = (props) => {
     const transferImage = (item) => {
         setRemovedImage(item);
     };
-
     return (
         <div className='card'>
             <div className='card-body'>
@@ -433,7 +435,14 @@ const PurchaseForm = (props) => {
                          placeholder={getFormattedMessage('purchase.select.status.label')}/>
                         </div>
                        {/* ... */}
-                      
+                       <div className='col-xl-12 mb-5'>
+                            <div className='card'>
+                                <label className='form-label'>
+                                    {getFormattedMessage('product.input.multiple-image.label')}: </label>
+                                <MultipleImage product={singlePurchase} fetchFiles={onChangeFiles}
+                                               transferImage={transferImage}/>
+                            </div>
+                        </div>
                       < TaxChargerTypes frontSetting={frontSetting} allShipingTypes={allShipingTypes}   setItemVal={handleItemValue} itemValue={purchaseValue} customPropsTaxDynamicFields={handleCustomTaxDynamicFields} customPropsDynamicFields={handleCustomDynamicFields} singleDataEntity={singlePurchase}  />
                        {/* ... */}
                         <div className='col-md-12 mb-5'>
