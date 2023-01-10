@@ -85,7 +85,7 @@ class PurchaseAPIController extends AppBaseController
     public function store(CreatePurchaseRequest $request)
     {
         $input = $request->all();
-        $input['date'] = date('Y-m-d',strtotime($input['date']));
+        $input['date'] = date('Y-m-d',strtotime(json_decode($input['date'])));
         $purchase = $this->purchaseRepository->storePurchase($input);
 
         return new PurchaseResource($purchase);
@@ -125,11 +125,11 @@ class PurchaseAPIController extends AppBaseController
     public function update(UpdatePurchaseRequest $request, $id): PurchaseResource
     {
         $input = $request->all();
-        $input['date'] = date('Y-m-d',strtotime($input['date']));
-
+        // $input['date'] = trim(preg_replace('/\s*\([^)]*\)/', '', $input['date']));
+        $input['date'] = date('Y-m-d',strtotime(json_decode($input['date'])));
         $purchase = $this->purchaseRepository->updatePurchase($input, $id);
 
-        return new PurchaseResource($purchase);
+        return new PurchaseResource($purchase); 
     }
 
     /**
