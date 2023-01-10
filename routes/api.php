@@ -106,7 +106,12 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::resource('product-categories', ProductCategoryAPIController::class);
         Route::post('product-categories/{product_category}',
             [ProductCategoryAPIController::class, 'update'])->name('product-category');
+        
     });
+
+     Route::get('/product_sub_categories', [ProductCategoryAPIController::class, 'product_sub_categories'])->name('product_sub_categories');
+
+
 
     Route::get('product-categories', [ProductCategoryAPIController::class, 'index']);
 
@@ -137,6 +142,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         [ProductAPIController::class, 'productImageDelete'])->name('products-image-delete');
 
     Route::get('products', [ProductAPIController::class, 'index']);
+    Route::get('show_product/{product_id}/{warehouse_id}', [ProductAPIController::class, 'show_product']);
 
     Route::group(['middleware' => ['permission:manage_transfers']], function () {
         Route::resource('transfers', TransferAPIController::class);
