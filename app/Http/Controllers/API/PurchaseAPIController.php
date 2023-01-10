@@ -125,6 +125,8 @@ class PurchaseAPIController extends AppBaseController
     public function update(UpdatePurchaseRequest $request, $id): PurchaseResource
     {
         $input = $request->all();
+        $input['date'] = date('Y-m-d',strtotime($input['date']));
+
         $purchase = $this->purchaseRepository->updatePurchase($input, $id);
 
         return new PurchaseResource($purchase);
