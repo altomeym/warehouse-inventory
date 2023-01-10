@@ -78,6 +78,7 @@ const EditPurchase = (props) => {
             value: purchases.attributes?.toStatus?.id && purchases.attributes?.toStatus?.id
         },
         tax_amount: purchases.attributes.tax_amount,
+        images: purchases.attributes.images,
     };
 
     return (

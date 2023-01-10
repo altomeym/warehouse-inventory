@@ -21,9 +21,9 @@ const MultipleImage = (props) => {
     }, [images]);
 
     useEffect(() => {
-        setOldImages(product && product[0].images.imageUrls && product[0].images.imageUrls.map((item) => item))
-        transferImage(product && product[0].images.imageUrls && product[0].images.imageUrls.map((item) => item))
-        setImageIdArray(product && product[0].images.id && product[0].images.id.map((id) => id))
+        setOldImages(product && product[0]?.images?.imageUrls && product[0]?.images?.imageUrls.map((item) => item))
+        transferImage(product && product[0]?.images?.imageUrls && product[0]?.images?.imageUrls.map((item) => item))
+        setImageIdArray(product && product[0]?.images?.id && product[0]?.images?.id.map((id) => id))
     }, []);
 
     useEffect(() => {

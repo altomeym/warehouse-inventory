@@ -234,7 +234,6 @@ const PurchaseForm = (props) => {
             status: data.status_id.value ? data.status_id.value : data.status_id,
             shipping_data:customDynamicFields ? customDynamicFields : [],
             tax_data:customTaxDynamicFields ? customTaxDynamicFields : [],
-            images:multipleFiles,
         }
             // return formValue
             const formData = new FormData();
