@@ -238,7 +238,7 @@ const PurchaseForm = (props) => {
         }
             // return formValue
             const formData = new FormData();
-        formData.append('date',  JSON.stringify(moment(data.date).toDate()));
+        formData.append('date',  moment(data.date).toDate());
         formData.append('warehouse_id', data.warehouse_id.value ? data.warehouse_id.value : data.warehouse_id);
         formData.append('supplier_id', data.supplier_id.value ? data.supplier_id.value : data.supplier_id);
         formData.append('discount',  data.discount);
