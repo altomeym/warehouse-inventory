@@ -102,6 +102,6 @@ class ProductCategory extends BaseModel implements HasMedia, JsonResourceful
     public function parent_name($id)
     {
         //echo $id; exit;
-        return \App\Models\ProductCategory::where('parent_id',$id)->select('name')->get();
+        return \App\Models\ProductCategory::where('parent_id',$id)->select('name')->first();
     }
 }
