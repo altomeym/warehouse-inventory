@@ -86,7 +86,7 @@ class Purchase extends BaseModel implements HasMedia, JsonResourceful
     ];
 
     public static $rules = [
-        'date'            => 'required|date',
+        'date'            => 'required',
         'supplier_id'     => 'required|exists:suppliers,id',
         'warehouse_id'    => 'required|exists:warehouses,id',
         'tax_rate'        => 'nullable|numeric',

@@ -96,7 +96,7 @@ class PurchaseRepository extends BaseRepository
             $purchase = $this->storePurchaseItems($purchase, $input);
             if (isset($input['images']) && !empty($input['images'])) {
                 foreach ($input['images'] as $image) {
-                    $product['image_url'] = $product->addMedia($image)->toMediaCollection(Purchase::PATH,
+                    $purchase['image_url'] = $purchase->addMedia($image)->toMediaCollection(Purchase::PATH,
                         config('app.media_disc'));
                 }
             }

@@ -48,7 +48,7 @@ export default [
                 class: 'd-flex',
                 fontIcon: <FontAwesomeIcon icon={faBoxes}/>,
                 permission: Permissions.MANAGE_PRODUCTS
-            },
+            }, 
             {
                 title: 'product.categories.title',
                 name: "product categories",
@@ -57,6 +57,14 @@ export default [
                 class: 'd-flex',
                 permission: Permissions.MANAGE_PRODUCT_CATEGORIES,
             },
+            // {
+            //     title: 'Categories Hierarchy ',
+            //     name: "categories hirerchy",
+            //     fontIcon: <FontAwesomeIcon icon={faBoxOpen}/>,
+            //     to: '/app/categories-hirerchy',
+            //     class: 'd-flex',
+            //     permission: Permissions.MANAGE_PRODUCT_CATEGORIES,
+            // },
             {
                 title: 'brands.title',
                 name: "brands",

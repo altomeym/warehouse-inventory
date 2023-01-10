@@ -34,8 +34,7 @@ const ProductCategoryForm = (props) => {
     const [errors, setErrors] = useState({
         name: '',
     });
-    console.log('categoryDefaultValue ', categoryDefaultValue);
-    console.log('singleProductCategory ', singleProductCategory);
+   
 
     const editImg = singleProductCategory ? singleProductCategory.image : user;
     const newImg = productCategoryValue.image === false ? user : editImg;
@@ -128,6 +127,7 @@ const ProductCategoryForm = (props) => {
                 clearField(false);
             }
         }
+        window.location.reload();
         setSelectImg(null);
     };
 
@@ -208,7 +208,7 @@ const ProductCategoryForm = (props) => {
                 </Modal.Body>
             </Form>
             <ModelFooter onEditRecord={singleProductCategory} onSubmit={onSubmit} editDisabled={disabled}
-                         clearField={clearField} addDisabled={!productCategoryValue.name.trim()}/>
+                         clearField={clearField} addDisabled={!productCategoryValue.name.trim()} />
         </Modal>
     )
 };

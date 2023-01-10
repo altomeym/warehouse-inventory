@@ -103,26 +103,26 @@ const Adjustments = (props) => {
                         </span>
             }
         },
-        {
-            name: getFormattedMessage('dashboard.stockAlert.quantity.label'),
-            sortField: 'quantities',
-            sortable: false,
-            cell: row => {
-                return <span>
-                            <span>{row.quantity}</span>
-                        </span>
-            }
-        },
-        {
-            name: getFormattedMessage('globally.type.label'),
-            sortField: 'type',
-            sortable: false,
-            cell: row => {
-                return <span>
-                            <span>{row.method_type === 1 ? 'Addition' : "Subtraction"}</span>
-                        </span>
-            }
-        },
+        // {
+        //     name: getFormattedMessage('dashboard.stockAlert.quantity.label'),
+        //     sortField: 'quantities',
+        //     sortable: false,
+        //     cell: row => {
+        //         return <span>
+        //                     <span>{row.quantity}</span>
+        //                 </span>
+        //     }
+        // },
+        // {
+        //     name: getFormattedMessage('globally.type.label'),
+        //     sortField: 'type',
+        //     sortable: false,
+        //     cell: row => {
+        //         return <span>
+        //                     <span>{row.method_type === 1 ? 'Addition' : "Subtraction"}</span>
+        //                 </span>
+        //     }
+        // },
         {
             name: getFormattedMessage('globally.react-table.column.created-date.label'),
             selector: row => row.date,
