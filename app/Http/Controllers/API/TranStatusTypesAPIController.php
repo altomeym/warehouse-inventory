@@ -41,6 +41,18 @@ class TranStatusTypesAPIController extends AppBaseController
         return new TranStatusTypesCollection($tranStatusType);
     }
 
+    public function tran_status_types_show(Request $request)
+    {
+        $tranStatusType = $this->tranStatusTypesRepository->get();
+       
+        TranStatusTypesResource::usingWithCollection();
+
+        return new TranStatusTypesCollection($tranStatusType);
+    }
+
+
+    
+
 
     /**
      * @param CreateShippingTypeRequest $request
