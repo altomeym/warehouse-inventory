@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 /**
  * App\Models\Quotation
@@ -131,9 +133,9 @@ class Quotation extends BaseModel implements JsonResourceful
      * @return array
      */
 
-     public function getImageUrlAttribute()
+    /* public function getImageUrlAttribute()
     {
-        /** @var Media $media */
+        
         $medias = $this->getMedia(Quotation::PATH);
         $images = [];
         if (!empty($medias)) {
@@ -146,7 +148,7 @@ class Quotation extends BaseModel implements JsonResourceful
         }
 
         return '';
-    }
+    }*/
     function prepareLinks(): array
     {
         return [
