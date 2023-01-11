@@ -6,11 +6,34 @@ import {addInToTotalRecord, removeFromTotalRecord, setTotalRecord} from './total
 import {setLoading} from './loadingAction';
 import {getFormattedMessage} from '../../shared/sharedMethod';
 
-export const fetchStatusTypes = (filter = {}, isLoading = true) => async (dispatch) => {
+
+export const fetchCrudStatusTypes = (filter = {}, isLoading = true) => async (dispatch) => {
     if (isLoading) {
         dispatch(setLoading(true))
     }
     let url = apiBaseURL.TRAN_STATUS_TYPE;
+    if (!_.isEmpty(filter) && (filter.page || filter.pageSize || filter.search || filter.order_By || filter.created_at)) {
+        url += requestParam(filter);
+    }
+    apiConfig.get(url)
+        .then((response) => {
+            dispatch({type: tranStatusTypeActionType.FETCH_TRAN_STATUSTYPES, payload: response.data.data});
+            dispatch(setTotalRecord(response.data.meta.total));
+            if (isLoading) {
+                dispatch(setLoading(false))
+            }
+        })
+        .catch(({response}) => {
+            dispatch(addToast(
+                {text: response.data.message, type: toastType.ERROR}));
+        });
+};
+
+export const fetchStatusTypes = (filter = {}, isLoading = true) => async (dispatch) => {
+    if (isLoading) {
+        dispatch(setLoading(true))
+    }
+    let url = apiBaseURL.TRAN_CRUD_STATUS_TYPE;
     if (!_.isEmpty(filter) && (filter.page || filter.pageSize || filter.search || filter.order_By || filter.created_at)) {
         url += requestParam(filter);
     }

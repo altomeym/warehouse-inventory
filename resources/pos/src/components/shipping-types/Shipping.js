@@ -13,14 +13,13 @@ import ActionButton from '../../shared/action-buttons/ActionButton';
 import TopProgressBar from "../../shared/components/loaders/TopProgressBar";
 
 const Shipping = (props) => {
-    const {fetchShippingTypes, fetchTaxTypes, shipingTypes, totalRecord, isLoading, config} = props;
+    const {fetchShippingTypes, shipingTypes, fetchTaxTypes, allTaxTypes,  totalRecord, isLoading, config} = props;
     const [deleteModel, setDeleteModel] = useState(false);
     const [isDelete, setIsDelete] = useState(null);
     const [toggle, setToggle] = useState(false);
     const [shippingType, setShippingType] = useState();
     const [searchParams, setSearchParams] = useSearchParams();
      
-
     const handleClose = (item = null) => {
         setToggle(!toggle);
         setShippingType(item);
@@ -35,7 +34,7 @@ const Shipping = (props) => {
         fetchTaxTypes(filter, true,);
     };
    
-    const itemsValue = shipingTypes?.length >= 0 && shipingTypes.map(item => ({
+    const itemsValue = allTaxTypes?.length >= 0 && allTaxTypes.map(item => ({
         name: item?.attributes?.name,
         id: item?.id,
         slug:  item?.attributes?.slug
@@ -94,8 +93,8 @@ const Shipping = (props) => {
 };
 
 const mapStateToProps = (state) => { 
-    const {shipingTypes, totalRecord, isLoading, config } = state;
-    return {shipingTypes, totalRecord, isLoading, config }
+    const {allTaxTypes, shipingTypes, totalRecord, isLoading, config } = state;
+    return {allTaxTypes, shipingTypes, totalRecord, isLoading, config }
 };
 
 export default connect(mapStateToProps, {fetchShippingTypes, fetchTaxTypes})(Shipping);

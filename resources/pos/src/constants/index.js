@@ -94,6 +94,7 @@ export const apiBaseURL = {
     SHIPPING: '/shipping_type',
     SHIPPING_SHOW: '/shipping_type_show',
     TRAN_STATUS_TYPE: '/tran_status_types',
+    TRAN_CRUD_STATUS_TYPE: '/tran_status_types_show',
     COUNTRY: '/country',
     STATE: '/state',
     CITY: '/city',
