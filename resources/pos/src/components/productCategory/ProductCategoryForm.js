@@ -149,7 +149,8 @@ const ProductCategoryForm = (props) => {
       })
     });
 
-    const slugFilterOptions = getFormattedOptions(categoryTypesOptions)
+    let slugFilterOptions = getFormattedOptions(categoryTypesOptions)
+    slugFilterOptions = slugFilterOptions.filter((item)=>item.iid='child')
     const slugDefaultValue = slugFilterOptions.map((option) => {
         return {
             value: option.id,
@@ -190,15 +191,18 @@ const ProductCategoryForm = (props) => {
                              <ReactSelect multiLanguageOption={slugFilterOptions} onChange={e => onSTypesChange( e)} name='category_type'
                                 title={'Type'}
                                 value={productCategoryValue.category_type || ""}  errors={errors['category_type']}
-                                placeholder={'Category type '}/>
+                                placeholder={'Category type '}
+                                defaultValue={slugDefaultValue}
+                                />
                         </div>
                         {!isParent ? 
                         <div className='col-md-12'>
                         <ReactSelect title={getFormattedMessage('product.input.product-category.label')} 
                                                      placeholder={placeholderText('product.input.product-category.placeholder.label')}
-                                                    name='product_category_id' 
-                                                     value={productCategoryValue.product_category_id}
-                                                     data={productCategories} onChange={onProductCategoryChange}
+                                                      name='product_category_id' 
+                                                      single_entry={singleProductCategory}
+                                                      value={productCategoryValue.product_category_id}
+                                                      data={productCategories} onChange={onProductCategoryChange}
                                                       errors={errors['product_category_id']}/>
                         </div>
                         : null }

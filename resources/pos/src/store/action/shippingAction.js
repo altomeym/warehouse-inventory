@@ -10,9 +10,9 @@ export const fetchShippingTypes = (filter = {}, isLoading = true, type='') => as
     if (isLoading) {
         dispatch(setLoading(true))
     }
-    let url = apiBaseURL.SHIPPING;
+    let url = apiBaseURL.SHIPPING_SHOW;
     if(type)
-       url = apiBaseURL.SHIPPING+'?slug='+type;
+       url = apiBaseURL.SHIPPING_SHOW+'?slug='+type;
     if (!_.isEmpty(filter) && (filter.page || filter.pageSize || filter.search || filter.order_By || filter.created_at)) {
         url += requestParam(filter);
     }
