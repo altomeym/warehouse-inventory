@@ -44,7 +44,8 @@ const TaxChargerTypes = (props) => {
         handleCustomDynamicFields(newFormValues);
     };
 
-    let  addDynamicField = ()=>{
+    let  addDynamicField = (e)=>{
+        e.preventDefault();
         setCustomDynamicFields([...customDynamicFields, { shipping_type_id: "", shipping_value: "" }])
         handleCustomDynamicFields([...customDynamicFields, { shipping_type_id: "", shipping_value: "" }]);
     }
@@ -78,7 +79,8 @@ const TaxChargerTypes = (props) => {
     }
 
 
-    let  addTaxDynamicField = ()=>{
+    let  addTaxDynamicField = (e)=>{
+           e.preventDefault();
         setCustomTaxDynamicFields([...customTaxDynamicFields, { tax_type_id: "", tax_value: "" }])
         handleCustomTaxDynamicFields([...customTaxDynamicFields, { tax_type_id: "", tax_value: "" }]);
     }
