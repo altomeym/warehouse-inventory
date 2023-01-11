@@ -81,6 +81,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     });
     Route::resource('tran_status_types', TranStatusTypesAPIController::class);
     Route::get('tran_status_types', [TranStatusTypesAPIController::class, 'index']);
+    Route::get('tran_status_types_show', [TranStatusTypesAPIController::class, 'tran_status_types_show']);
     
 
     //Dashboard
