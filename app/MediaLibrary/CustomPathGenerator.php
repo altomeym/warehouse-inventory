@@ -54,6 +54,12 @@ class CustomPathGenerator implements PathGenerator
                 /**/
             case Purchase::PATH;
                 return str_replace('{PARENT_DIR}', Purchase::PATH, $path);
+            case purchases_return::PATH;
+                return str_replace('{PARENT_DIR}', purchases_return::PATH, $path);
+            case Sale::PATH;
+                return str_replace('{PARENT_DIR}', Sale::PATH, $path);
+            case SaleReturn::PATH;
+                return str_replace('{PARENT_DIR}', SaleReturn::PATH, $path);
             case 'default' :
                 return '';
         }

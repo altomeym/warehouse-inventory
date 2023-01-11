@@ -142,6 +142,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         [ProductAPIController::class, 'productImageDelete'])->name('products-image-delete');
 
     Route::get('products', [ProductAPIController::class, 'index']);
+
     Route::get('show_product/{product_id}/{warehouse_id}', [ProductAPIController::class, 'show_product']);
 
     Route::group(['middleware' => ['permission:manage_transfers']], function () {
@@ -242,6 +243,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     //purchase routes
     Route::resource('purchases', PurchaseAPIController::class);
+    Route::post('purchases/{purchases}',
+        [PurchaseAPIController::class, 'update']);
     Route::get('purchase-pdf-download/{purchase}',
         [PurchaseAPIController::class, 'pdfDownload'])->name('purchase-pdf-download');
     Route::get('purchase-info/{purchase}', [PurchaseAPIController::class, 'purchaseInfo'])->name('purchase-info');
