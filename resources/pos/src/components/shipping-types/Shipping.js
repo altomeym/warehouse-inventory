@@ -2,7 +2,7 @@ import React,  {useEffect, useState} from 'react';
 import { useSearchParams } from "react-router-dom";
 import {connect} from 'react-redux';
 import MasterLayout from '../MasterLayout';
-import {fetchShippingTypes} from '../../store/action/shippingAction';
+import {fetchShippingTypes, fetchTaxTypes} from '../../store/action/shippingAction';
 import ReactDataTable from '../../shared/table/ReactDataTable';
 import DeletShipping from './DeleteShipping';
 import CreateShipping from './CreateShipping';
@@ -13,7 +13,7 @@ import ActionButton from '../../shared/action-buttons/ActionButton';
 import TopProgressBar from "../../shared/components/loaders/TopProgressBar";
 
 const Shipping = (props) => {
-    const {fetchShippingTypes, shipingTypes, totalRecord, isLoading, config} = props;
+    const {fetchShippingTypes, fetchTaxTypes, shipingTypes, totalRecord, isLoading, config} = props;
     const [deleteModel, setDeleteModel] = useState(false);
     const [isDelete, setIsDelete] = useState(null);
     const [toggle, setToggle] = useState(false);
@@ -32,7 +32,7 @@ const Shipping = (props) => {
     };
 
     const onChange = (filter) => {
-        fetchShippingTypes(filter, true,);
+        fetchTaxTypes(filter, true,);
     };
    
     const itemsValue = shipingTypes?.length >= 0 && shipingTypes.map(item => ({
@@ -98,5 +98,5 @@ const mapStateToProps = (state) => {
     return {shipingTypes, totalRecord, isLoading, config }
 };
 
-export default connect(mapStateToProps, {fetchShippingTypes})(Shipping);
+export default connect(mapStateToProps, {fetchShippingTypes, fetchTaxTypes})(Shipping);
 

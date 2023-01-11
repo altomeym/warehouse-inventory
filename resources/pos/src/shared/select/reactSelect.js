@@ -6,11 +6,15 @@ import {useDispatch, useSelector} from "react-redux";
 import { getFormattedMessage } from '../sharedMethod';
 
 const ReactSelect = (props) => {
-    const {title, placeholder, data, defaultValue, onChange, errors, value, isRequired, multiLanguageOption, isWarehouseDisable, addSearchItems} = props;
+    const {title, placeholder, data, defaultValue, onChange, errors, value, isRequired, multiLanguageOption, isWarehouseDisable, addSearchItems, single_entry} = props;
     const dispatch = useDispatch();
     const isOptionDisabled = useSelector((state) => state.isOptionDisabled);
+    
+    let selectData = data;
+    if(selectData && single_entry?.id)
+        selectData = data.filter((item)=>item.id !== single_entry?.id);
 
-    const option = data ? data.map((da) => {
+    const option = selectData ? selectData.map((da) => {
         return {
             value: da.value ? da.value : da.id,
             label: da.label ? da.label : da.attributes?.symbol ? da.attributes?.symbol : da.attributes?.name
