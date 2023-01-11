@@ -70,6 +70,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     });
     Route::resource('shipping_type', ShippingTypeAPIController::class);
     Route::get('shipping_type', [ShippingTypeAPIController::class, 'index']);
+    Route::get('shipping_type_show', [ShippingTypeAPIController::class, 'shipping_type_show']);
     /*product_sub_category route*/
     Route::group(['middleware' => ['permission:manage_product_sub_category']], function () {
     });
@@ -142,6 +143,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         [ProductAPIController::class, 'productImageDelete'])->name('products-image-delete');
 
     Route::get('products', [ProductAPIController::class, 'index']);
+    Route::get('product_show/{product_id?}/{warehouse_id}', [ProductAPIController::class, 'product_show']);
 
     Route::get('show_product/{product_id}/{warehouse_id}', [ProductAPIController::class, 'show_product']);
 

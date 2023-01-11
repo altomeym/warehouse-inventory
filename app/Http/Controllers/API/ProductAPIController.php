@@ -103,6 +103,25 @@ class ProductAPIController extends AppBaseController
 
         return new ProductResource($product);
     }
+
+    public function product_show($id,$warehouse_id)
+    {
+        $product = $this->productRepository->find($id);
+        $product['warehouse_stock']= \App\Models\Managestock::where('product_id', $id)
+                        ->where('warehouse_id', $warehouse_id)
+                        ->get();
+        if(!empty($product))
+        {
+             return response(['status'=>'true','Message'=>'Product sub category retrieved successfully','data'=>$product]);   
+        }
+        else
+        {
+            return response(['status'=>'false','Failed'=>"Failed" ,'Message'=>"Somthing went wrong"]);
+
+        }
+
+        //return new ProductResource($product);
+    }
   
 
     /**
