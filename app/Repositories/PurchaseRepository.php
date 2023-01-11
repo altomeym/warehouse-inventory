@@ -265,7 +265,7 @@ class PurchaseRepository extends BaseRepository
                 //create new product items
                 if (isset($input['images']) && !empty($input['images'])) {
                 foreach ($input['images'] as $image) {
-                        $product['image_url'] = $product->addMedia($image)->toMediaCollection(Purchase::PATH,
+                        $purchase['image_url'] = $purchase->addMedia($image)->toMediaCollection(Purchase::PATH,
                             config('app.media_disc'));
                     }
                 }
@@ -353,6 +353,8 @@ class PurchaseRepository extends BaseRepository
         /*new code*/
             if(!empty($input['shipping_data']))
             {
+             $input['shipping_data'] = json_decode($input['shipping_data'],true);
+                
              $last_id = \App\Models\Shipping_has_values::where('slug','purchases')->where('sale_purchases_id',$id)->delete();
               for ($i = 0; $i < count($input['shipping_data']); $i++) {
                         if ($input['shipping_data'][$i]['shipping_value'] != '') {

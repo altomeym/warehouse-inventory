@@ -3,6 +3,7 @@ import MasterLayout from '../MasterLayout';
 import {connect} from 'react-redux';
 import moment from 'moment';
 import ReactDataTable from '../../shared/table/ReactDataTable';
+import {Button, Image} from 'react-bootstrap-v5';
 import ActionDropDownButton from '../../shared/action-buttons/ActionDropDownButton';
 import TabTitle from '../../shared/tab-title/TabTitle';
 import {fetchPurchases} from '../../store/action/purchaseAction';
@@ -10,6 +11,8 @@ import DeletePurchase from './DeletePurchase';
 import {fetchAllSuppliers} from '../../store/action/supplierAction';
 import {fetchAllWarehouses} from '../../store/action/warehouseAction';
 import status from '../../shared/option-lists/status.json'
+import user from '../../assets/images/brand_logo.png';
+import ProductImageLightBox from '../product/ProductImageLightBox';
 import {currencySymbolHendling, getFormattedDate, placeholderText} from '../../shared/sharedMethod';
 import {getFormattedMessage} from '../../shared/sharedMethod';
 import {purchasePdfAction} from '../../store/action/purchasePdfAction';
@@ -38,6 +41,8 @@ const Product = (props) => {
     const [isShowPaymentModel, setIsShowPaymentModel] = useState(false);
     const currencySymbol = frontSetting && frontSetting.value && frontSetting.value.currency_symbol
     const [tableArray, setTableArray] = useState([])
+    const [isOpen, setIsOpen] = useState(false);
+    const [lightBoxImage, setLightBoxImage] = useState([]);
 
     useEffect(() => {
         fetchFrontSetting();
@@ -87,6 +92,7 @@ const Product = (props) => {
             time: moment(purchase.attributes.created_at).format('LT'),
             grand_total: purchase.attributes.grand_total,
             currency: currencySymbol,
+            images: purchase.attributes.images,
             id: purchase.id
         })
     });
@@ -144,6 +150,40 @@ const Product = (props) => {
     const is_deleteAdable = user_permissions.has('manage_purchase-delete') ? true: false
 
     const columns = [
+        {
+            name: getFormattedMessage('purchases.title'),
+            sortField: 'name',
+            sortable: true,
+            cell: row => {
+                const imageUrl = row?.images ? row?.images?.imageUrls && row?.images?.imageUrls[0] : null;
+                return (
+                    imageUrl ?
+                        <div className='d-flex align-items-center'>
+                            <Button type='button'
+                                    className='btn-transparent me-2 d-flex align-items-center justify-content-center'
+                                    onClick={(e) => {
+                                        e.stopPropagation()
+                                        setIsOpen(!isOpen)
+                                        setLightBoxImage(row.images.imageUrls)
+                                    }}>
+                                <Image src={imageUrl} height='50' width='50' alt='Product Image'
+                                       className='image image-circle image-mini cursor-pointer'/>
+                            </Button>
+                            <div className='d-flex flex-column'>
+                                <span>{row.name}</span>
+                            </div>
+                        </div> :
+                        <div className='d-flex align-items-center'>
+                            <div className='me-2'>
+                                <Image src={user} height='50' width='50' alt='Product Image' className='image image-circle image-mini'/>
+                            </div>
+                            <div className='d-flex flex-column'>
+                                <span>{row.name}</span>
+                            </div>
+                        </div>
+                )
+            },
+        },
         {
             name: getFormattedMessage('dashboard.recentSales.reference.label'),
             sortField: 'reference_code',
@@ -249,7 +289,7 @@ const Product = (props) => {
                                                onPdfClick={onPdfClick}
                                                goToDetailScreen={goToDetailScreen}
                                                onShowPaymentClick={onShowPaymentClick}
-                // isPaymentShow={true}
+                                               // isPaymentShow={true}
                                                title={getFormattedMessage('purchase.title')} isDeleteMode={is_deleteAdable} />
         }
     ];
@@ -263,6 +303,8 @@ const Product = (props) => {
                             ButtonValue={is_addedAble ? getFormattedMessage('purchase.create.title') : null} totalRows={totalRecord}
                             to='#/app/purchases/create' isShowFilterField isStatus/>
             <DeletePurchase onClickDeleteModel={onClickDeleteModel} deleteModel={deleteModel} onDelete={isDelete}/>
+            {isOpen && lightBoxImage.length !== 0 && <ProductImageLightBox setIsOpen={setIsOpen} isOpen={isOpen}
+                                                                           lightBoxImage={lightBoxImage}/>}
             <ShowPayment onShowPaymentClick={onShowPaymentClick} isShowPaymentModel={isShowPaymentModel}/>
         </MasterLayout>
     )

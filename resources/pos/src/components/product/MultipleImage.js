@@ -21,9 +21,13 @@ const MultipleImage = (props) => {
     }, [images]);
 
     useEffect(() => {
-        setOldImages(product && product[0]?.images?.imageUrls && product[0]?.images?.imageUrls.map((item) => item))
-        transferImage(product && product[0]?.images?.imageUrls && product[0]?.images?.imageUrls.map((item) => item))
-        setImageIdArray(product && product[0]?.images?.id && product[0]?.images?.id.map((id) => id))
+        let  filedata =  product && product[0]?.images && product[0]?.images
+        if(product && product?.images?.imageUrls)
+           filedata =  product && product?.images && product?.images
+
+        setOldImages(filedata && filedata?.imageUrls.map((item) => item))
+        transferImage(filedata && filedata?.imageUrls.map((item) => item))
+        setImageIdArray(filedata && filedata?.id && filedata?.id.map((id) => id))
     }, []);
 
     useEffect(() => {
@@ -70,7 +74,7 @@ const MultipleImage = (props) => {
     return (
         <>
             <Form.Group controlId='formFileMultiple' className='mb-3'>
-                <Form.Control type='file' accept='.png, .jpg, .jpeg' onClick={handleClick}
+                <Form.Control type='file' accept='*' onClick={handleClick}
                               className='upload-input-file' multiple onChange={onUploadImage}
                 />
             </Form.Group>

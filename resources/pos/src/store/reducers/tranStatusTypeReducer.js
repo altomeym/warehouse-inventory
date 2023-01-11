@@ -1,9 +1,10 @@
 import {tranStatusTypeActionType} from '../../constants';
 
 export default (state = [], action) => {
-    switch (action.type) {
+    switch (action.type) { 
         case tranStatusTypeActionType.FETCH_TRAN_STATUSTYPES:
             return action.payload;
+      
         case tranStatusTypeActionType.FETCH_TRAN_STATUSTYPE:
             return [action.payload];
         case tranStatusTypeActionType.ADD_TRAN_STATUSTYPE:

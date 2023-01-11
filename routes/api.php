@@ -70,6 +70,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     });
     Route::resource('shipping_type', ShippingTypeAPIController::class);
     Route::get('shipping_type', [ShippingTypeAPIController::class, 'index']);
+    Route::get('shipping_type_show', [ShippingTypeAPIController::class, 'shipping_type_show']);
     /*product_sub_category route*/
     Route::group(['middleware' => ['permission:manage_product_sub_category']], function () {
     });
@@ -80,6 +81,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     });
     Route::resource('tran_status_types', TranStatusTypesAPIController::class);
     Route::get('tran_status_types', [TranStatusTypesAPIController::class, 'index']);
+    Route::get('tran_status_types_show', [TranStatusTypesAPIController::class, 'tran_status_types_show']);
     
 
     //Dashboard
@@ -142,6 +144,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         [ProductAPIController::class, 'productImageDelete'])->name('products-image-delete');
 
     Route::get('products', [ProductAPIController::class, 'index']);
+    Route::get('product_show/{product_id?}/{warehouse_id}', [ProductAPIController::class, 'product_show']);
+
     Route::get('show_product/{product_id}/{warehouse_id}', [ProductAPIController::class, 'show_product']);
 
     Route::group(['middleware' => ['permission:manage_transfers']], function () {
@@ -242,6 +246,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     //purchase routes
     Route::resource('purchases', PurchaseAPIController::class);
+    Route::post('purchases/{purchases}',
+        [PurchaseAPIController::class, 'update']);
     Route::get('purchase-pdf-download/{purchase}',
         [PurchaseAPIController::class, 'pdfDownload'])->name('purchase-pdf-download');
     Route::get('purchase-info/{purchase}', [PurchaseAPIController::class, 'purchaseInfo'])->name('purchase-info');

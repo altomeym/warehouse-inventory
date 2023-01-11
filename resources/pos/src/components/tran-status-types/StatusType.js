@@ -1,7 +1,7 @@
 import React,  {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
 import MasterLayout from '../MasterLayout';
-import {fetchStatusTypes} from '../../store/action/tranStatusTypesAction';
+import {fetchStatusTypes, fetchCrudStatusTypes} from '../../store/action/tranStatusTypesAction';
 import ReactDataTable from '../../shared/table/ReactDataTable';
 import DeletShipping from './DeleteStatusType';
 import CreateShipping from './CreateStatusType';
@@ -12,7 +12,7 @@ import ActionButton from '../../shared/action-buttons/ActionButton';
 import TopProgressBar from "../../shared/components/loaders/TopProgressBar";
 
 const StatusType = (props) => {
-    const {fetchStatusTypes, allStatusTypes, totalRecord, isLoading, config} = props;
+    const {fetchStatusTypes, fetchCrudStatusTypes, allStatusTypes, totalRecord, isLoading, config} = props;
     const [deleteModel, setDeleteModel] = useState(false);
     const [isDelete, setIsDelete] = useState(null);
     const [toggle, setToggle] = useState(false);
@@ -29,7 +29,7 @@ const StatusType = (props) => {
     };
 
     const onChange = (filter) => {
-        fetchStatusTypes(filter, true);
+        fetchCrudStatusTypes(filter, true);
     };
    
     const itemsValue = allStatusTypes?.length >= 0 && allStatusTypes.map(item => ({
@@ -79,5 +79,5 @@ const mapStateToProps = (state) => {
     return {allStatusTypes, totalRecord, isLoading, config }
 };
 
-export default connect(mapStateToProps, {fetchStatusTypes})(StatusType);
+export default connect(mapStateToProps, {fetchStatusTypes, fetchCrudStatusTypes})(StatusType);
 

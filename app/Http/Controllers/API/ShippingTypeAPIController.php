@@ -50,6 +50,26 @@ class ShippingTypeAPIController extends AppBaseController
         return new ShippingTypeCollection($shippingType);
     }
 
+     public function shipping_type_show(Request $request)
+    {
+        $slug = request()->get('slug'); 
+        
+        if(empty($slug))
+        {
+            $shippingType = $this->shippingTypeRepository->get();
+
+        }else{
+            $slug_data = explode('?',$slug);
+            $shippingType = $this->shippingTypeRepository->where('slug',$slug_data[0])->get();
+
+        }
+       
+        ShippingTypeResource::usingWithCollection();
+
+        return new ShippingTypeCollection($shippingType);
+    }
+    
+
 
     /**
      * @param CreateShippingTypeRequest $request
